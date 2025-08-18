@@ -1,0 +1,69 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-prereq-cloud.html 
+summary: Cloud Manager コネクタとCloud Volumes ONTAPをインストールしてSnapMirrorを構成する前に、クラウド環境の準備を行う必要があります。このページでは、Cloud Volumes ONTAP を導入する際に実行する必要がある作業と考慮事項について説明します。 
+keywords: prerequisites, aws, azure, gcp, cloud central, cloud volumes ontap 
+---
+= パブリッククラウドの前提条件
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Cloud Manager コネクタとCloud Volumes ONTAPをインストールしてSnapMirrorを構成する前に、クラウド環境の準備を行う必要があります。このページでは、Cloud Volumes ONTAP を導入する際に実行する必要がある作業と考慮事項について説明します。
+
+
+
+== Cloud Manager およびCloud Volumes ONTAP の導入前提条件チェックリスト
+
+* NetApp Cloud Centralログイン
+* ウェブブラウザから複数のエンドポイントへのネットワークアクセス
+* コネクタのネットワークの場所
+* クラウドプロバイダーの権限
+* 個々のサービスのためのネットワーキング
+
+
+始めるために必要なものの詳細については、 https://docs.netapp.com/us-en/occm/reference_checklist_cm.html["クラウドドキュメント"^] 。
+
+
+
+== 考慮事項
+
+
+
+=== 1.Cloud Manager コネクタとは何ですか?
+
+ほとんどの場合、Cloud Central アカウント管理者は、クラウドまたはオンプレミス ネットワークにコネクタを展開する必要があります。コネクタにより、Cloud Manager はパブリック クラウド環境内のリソースとプロセスを管理できるようになります。
+
+コネクタの詳細については、 https://docs.netapp.com/us-en/occm/concept_connectors.html["クラウドドキュメント"^] 。
+
+
+
+=== 2.Cloud Volumes ONTAP のサイズとアーキテクチャ
+
+Cloud Volumes ONTAPをデプロイする場合、事前定義されたパッケージを選択するか、独自の構成を作成するかを選択できます。これらの値の多くは、後で中断することなく変更できますが、クラウドに展開されるワークロードに基づいて、展開前に行う必要がある重要な決定がいくつかあります。
+
+各クラウド プロバイダーにはデプロイメントのオプションが異なり、ほぼすべてのワークロードには独自のプロパティがあります。  NetAppは https://bluexp.netapp.com/calculator-hub["TCO計算機"^]容量とパフォーマンスに基づいてデプロイメントのサイズを適切に決定するのに役立ちますが、考慮する価値のあるいくつかの基本的な概念に基づいて構築されています。
+
+* 必要な容量
+* クラウド仮想マシンのネットワーク機能
+* クラウドストレージのパフォーマンス特性
+
+
+重要なのは、現在の容量とパフォーマンスの要件を満たすだけでなく、将来の成長も見据えた構成を計画することです。これは一般に、容量ヘッドルームおよびパフォーマンス ヘッドルームと呼ばれます。
+
+さらに詳しい情報をお知りになりたい場合は、以下の適切な計画に関するドキュメントをお読みください。 https://docs.netapp.com/us-en/occm/task_planning_your_config.html["AWS"^] 、 https://docs.netapp.com/us-en/occm/task_planning_your_config_azure.html["Azure"^] 、 そして https://docs.netapp.com/us-en/occm/task_planning_your_config_gcp.html["GCP"^]。
+
+
+
+=== 3.単一ノードか高可用性か?
+
+すべてのクラウドでは、CVO を単一ノードで展開するか、2 つのノードを持つクラスター化された高可用性ペアで展開するかを選択できます。ユースケースに応じて、コストを節約するために単一のノードを展開したり、可用性と冗長性をさらに高めるために HA ペアを展開したりすることができます。
+
+DR ユースケースや、開発およびテスト用の一時ストレージを起動する場合、突然のゾーンまたはインフラストラクチャの停止の影響が少ないため、単一ノードが一般的です。ただし、実稼働環境でのユースケースでは、データが 1 つの場所にのみ存在する場合や、データセットにさらに冗長性と可用性が必要な場合は、高可用性が推奨されます。
+
+各クラウドの高可用性バージョンのアーキテクチャの詳細については、次のドキュメントをご覧ください。 https://docs.netapp.com/us-en/occm/concept_ha.html["AWS"^] 、 https://docs.netapp.com/us-en/occm/concept_ha_azure.html["Azure"^]そして https://docs.netapp.com/us-en/occm/concept_ha_google_cloud.html["GCP"^]。

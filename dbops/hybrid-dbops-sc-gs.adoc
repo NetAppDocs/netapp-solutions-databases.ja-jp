@@ -1,0 +1,45 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-gs.html 
+summary: このセクションでは、前のセクションで概説した前提条件を満たすために完了する必要があるタスクの概要を示します。次のセクションでは、オンプレミスとパブリック クラウドの両方の運用に関する高レベルのタスク リストを示します。詳細なプロセスと手順については、関連リンクをクリックするとアクセスできます。 
+keywords: introduction, workflow 
+---
+= はじめにの概要
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+このセクションでは、前のセクションで概説した前提条件を満たすために完了する必要があるタスクの概要を示します。次のセクションでは、オンプレミスとパブリック クラウドの両方の運用に関する高レベルのタスク リストを示します。詳細なプロセスと手順については、関連リンクをクリックするとアクセスできます。
+
+
+
+== オンプレミス
+
+* SnapCenterでデータベース管理者ユーザーを設定する
+* SnapCenterプラグインのインストールの前提条件
+* SnapCenterホストプラグインのインストール
+* DBリソースの検出
+* ストレージ クラスター ピアリングと DB ボリューム レプリケーションを設定する
+* CVOデータベースストレージSVMをSnapCenterに追加する
+* SnapCenterでデータベースバックアップポリシーを設定する
+* データベースを保護するためのバックアップポリシーを実装する
+* バックアップを検証する
+
+
+
+
+== AWSパブリッククラウド
+
+* 飛行前点検
+* AWS に Cloud Manager とCloud Volumes ONTAPを導入する手順
+* データベースワークロード用の EC2 コンピューティングインスタンスをデプロイする
+
+
+詳細については、次のリンクをクリックしてください。
+
+link:hybrid-dbops-sc-gs-onprem.html["オンプレミス"]、link:hybrid-dbops-sc-gs-aws.html["パブリッククラウド - AWS"]

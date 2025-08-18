@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: blogs.html 
+summary: ONTAPストレージとNetAppデータベース ソリューションを統合するための実用的なガイダンスとベスト プラクティスを紹介するブログをお読みください。 
+keywords: netapp, solutions, blogs 
+---
+= NetApp の専門家によるデータベース ソリューションのブログを読む
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAPストレージとNetAppデータベース ソリューションを統合するための実用的なガイダンスとベスト プラクティスを紹介するブログをお読みください。
+
+* link:https://aws.amazon.com/blogs/storage/using-netapp-snapcenter-with-amazon-fsx-for-netapp-ontap-to-protect-your-sql-server-workloads/["NetApp SnapCenterとAmazon FSx ONTAPを使用して SQL Server ワークロードを保護する"]
+* link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Modernize-your-Oracle-database-operation-in-hybrid-cloud-with-Amazon-FSx-storage/ba-p/437554["Amazon FSxストレージを使用してハイブリッドクラウドで Oracle データベース運用を最新化します"]
+* link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Hybrid-cloud-database-solutions-with-SnapCenter/ba-p/171061#M5["SnapCenterを使用したハイブリッド クラウド データベース ソリューション"]
+* link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Automate-Your-Oracle-Database-Infrastructure-in-the-Hybrid-Cloud/ba-p/167046["ハイブリッドクラウドでOracleデータベースインフラストラクチャを自動化"]
+

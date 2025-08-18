@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-arch.html 
+summary: このセクションでは、開発/テストおよび DR 操作のための一般的なハイブリッド クラウド アーキテクチャについて説明します。 
+keywords: architecture, synchronized database 
+---
+= ソリューション アーキテクチャ
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+次のアーキテクチャ図は、開発/テストおよび災害復旧操作のためのハイブリッド クラウドでのエンタープライズ データベース操作の一般的な実装を示しています。
+
+image:hybrid-cloud-db-diagram.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+通常の業務運用では、クラウド内の同期されたデータベース ボリュームを複製し、アプリケーションの開発やテストのために開発/テスト データベース インスタンスにマウントできます。障害が発生した場合は、クラウド内の同期されたデータベース ボリュームをアクティブ化して災害復旧を行うことができます。

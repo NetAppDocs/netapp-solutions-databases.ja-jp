@@ -1,0 +1,494 @@
+---
+sidebar: sidebar 
+permalink: postgres/snapctr-psql-ontap.html 
+keywords: Database, PostgreSQL, ONTAP, backup, recovery, clone, SnapCenter 
+summary: このソリューションは、 NetApp SnapCenterデータベース管理 UI ツールを使用して、パブリック クラウドまたはオンプレミスのONTAPストレージ上の PostgreSQL データベースのバックアップ、リカバリ、クローン作成の概要と詳細を提供します。 
+---
+= TR-5000: SnapCenterを使用したONTAPでの PostgreSQL データベースのバックアップ、リカバリ、クローン
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、ニヤズ・モハメド、NetApp
+
+[role="lead"]
+このソリューションは、 NetApp SnapCenterデータベース管理 UI ツールを使用して、パブリック クラウドまたはオンプレミスのONTAPストレージ上の PostgreSQL データベースのバックアップ、リカバリ、クローン作成の概要と詳細を提供します。
+
+
+
+== 目的
+
+NetApp SnapCenter softwareは、アプリケーション、データベース、ファイル システム全体のデータ保護を安全に調整および管理するための使いやすいエンタープライズ プラットフォームです。ストレージ システム上のアクティビティを監視および制御する機能を犠牲にすることなく、これらのタスクをアプリケーション所有者にオフロードすることで、バックアップ、復元、およびクローンのライフサイクル管理を簡素化します。ストレージベースのデータ管理を活用することで、パフォーマンスと可用性が向上し、テストと開発の時間が短縮されます。
+
+このドキュメントでは、非常にユーザーフレンドリーなSnapCenter UI ツールを使用して、パブリック クラウドまたはオンプレミスのNetApp ONTAPストレージ上の PostgreSQL データベースの保護と管理について説明します。
+
+このソリューションは、次のユースケースに対応します。
+
+* パブリック クラウドまたはオンプレミスのNetApp ONTAPストレージに展開された PostgreSQL データベースのバックアップとリカバリ。
+* PostgreSQL データベースのスナップショットとクローンコピーを管理して、アプリケーション開発を加速し、データ ライフサイクル管理を改善します。
+
+
+
+
+== 観客
+
+このソリューションは次の人々を対象としています。
+
+* NetApp ONTAPストレージに PostgreSQL データベースを導入したい DBA。
+* NetApp ONTAPストレージ上で PostgreSQL ワークロードをテストしたいデータベース ソリューション アーキテクト。
+* NetApp ONTAPストレージ上に PostgreSQL データベースを導入および管理したいストレージ管理者。
+* NetApp ONTAPストレージ上に PostgreSQL データベースを立ち上げたいアプリケーション所有者。
+
+
+
+
+== ソリューションのテストおよび検証環境
+
+このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
+
+
+
+=== アーキテクチャ
+
+image:snapctr-psql-brc-architecture.png["この画像は、 SnapCenterを使用した PostgreSQL のバックアップ、リカバリ、クローンの詳細な図を示しています。"]
+
+
+
+=== ハードウェアおよびソフトウェアコンポーネント
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+| *ハードウェア* 
+
+
+| NetApp AFF A220 | バージョン9.12.1P2 | ディスク シェルフ DS224-12、IOM12E モジュール、24 ディスク / 12 TiB 容量 
+
+
+| VMware vSphere クラスタ | バージョン6.7 | 4台のNetApp HCI H410CコンピューティングESXiノード 
+
+
+3+| *ソフトウェア* 
+
+
+| レッドハットリナックス | RHEL Linux 8.6 (LVM) - x64 Gen2 | テスト用にRedHatサブスクリプションを導入 
+
+
+| Windows Server | 2022 データセンター; AE ホットパッチ - x64 Gen2 | SnapCenterサーバーのホスティング 
+
+
+| PostgreSQLデータベース | バージョン14.13 | HammerDB tpcc スキーマで作成された PostgreSQL DB クラスター 
+
+
+| SnapCenter Server | バージョン6.0 | ワークグループ展開 
+
+
+| Open JDK | バージョン java-11-openjdk | DB VM でのSnapCenterプラグインの要件 
+
+
+| NFS | バージョン3.0 | データとログを異なるマウントポイントに分離する 
+
+
+| Ansible | コア 2.16.2 | Python 3.6.8 
+|===
+
+
+=== ラボ環境でのPostgreSQLデータベース構成
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+|  
+
+
+| *サーバ* | *データベース* | *DBストレージ* 
+
+
+| psql01 | プライマリデータベースサーバー | /pgdata、/pglogs NFSボリュームはONTAPストレージにマウントされます 
+
+
+| psql02 | データベースサーバーのクローン | /pgdata_clone、/pglogs_clone NFSシンクローンボリュームはONTAPストレージにマウントされます 
+|===
+
+
+=== 導入検討の重要な要素
+
+* * SnapCenter の展開。* SnapCenter は、Windows ドメインまたはワークグループ環境に展開できます。ドメインベースの展開の場合、ドメイン ユーザー アカウントはドメイン管理者アカウントである必要があります。または、ドメイン ユーザーはSnapCenterホスティング サーバーのローカル管理者グループに属している必要があります。
+* *名前解決。* SnapCenterサーバーは、管理対象の各ターゲット データベース サーバー ホストの名前を IP アドレスに解決する必要があります。各ターゲット データベース サーバー ホストは、 SnapCenterサーバー名を IP アドレスに解決する必要があります。  DNS サーバーが利用できない場合は、解決のためにローカル ホスト ファイルに名前を追加します。
+* *リソース グループの構成。* SnapCenterのリソース グループは、一緒にバックアップできる類似のリソースの論理的なグループです。したがって、大規模なデータベース環境でのバックアップ ジョブが簡素化され、その数も削減されます。
+* *完全なデータベースとアーカイブ ログのバックアップを個別に実行します。*完全なデータベース バックアップには、データ ボリュームとログ ボリュームの一貫性のあるグループ スナップショットが含まれます。完全なデータベース スナップショットを頻繁に実行すると、ストレージの消費量は増加しますが、RTO は向上します。代替案としては、完全なデータベース スナップショットの頻度を減らし、アーカイブ ログのバックアップの頻度を増やすという方法があります。これにより、消費するストレージが少なくなり、RPO が向上しますが、RTO が延長される可能性があります。バックアップ スキームを設定するときは、RTO と RPO の目標を考慮してください。ボリューム上のスナップショット バックアップの数にも制限 (1023) があります。
+* *Privilegesの委任。*必要に応じて、 SnapCenter UI に組み込まれているロールベースのアクセス制御を活用して、アプリケーション チームとデータベース チームに権限を委任します。
+
+
+
+
+== ソリューションの展開
+
+次のセクションでは、パブリック クラウドまたはオンプレミスのNetApp ONTAPストレージでのSnapCenter の導入、構成、および PostgreSQL データベースのバックアップ、リカバリ、クローン作成の手順を段階的に説明します。
+
+
+
+=== 展開の前提条件
+
+[%collapsible%open]
+====
+. 導入には、 ONTAPストレージ上で実行される既存の PostgreSQL データベースが 2 つ必要です。1 つはプライマリ DB サーバーとして、もう 1 つはクローン DB サーバーとして必要です。  ONTAPでの PostgreSQL データベースの導入については、TR-4956 を参照してください。link:aws-postgres-fsx-ec2-hadr.html["AWS FSx/EC2 における PostgreSQL の高可用性の自動化と災害復旧"^] 、プライマリインスタンス上の PostgreSQL 自動デプロイメント プレイブックを検索します。
+. 最新バージョンのNetApp SnapCenter UI ツールを実行するために Windows サーバーをプロビジョニングします。詳細については、次のリンクを参照してください。link:https://docs.netapp.com/us-en/snapcenter/install/task_install_the_snapcenter_server_using_the_install_wizard.html["SnapCenter Serverのインストール"^] 。
+
+
+====
+
+
+=== SnapCenterのインストールとセットアップ
+
+[%collapsible%open]
+====
+オンラインでのご利用をお勧めしますlink:https://docs.netapp.com/us-en/snapcenter/index.html["SnapCenterソフトウェアのドキュメント"^]SnapCenter のインストールと構成に進む前に: .以下は、 ONTAP上の PostgreSQL 用SnapCenter softwareのインストールとセットアップの手順の概要です。
+
+. SnapCenter Windowsサーバーから、最新のJava JDKをダウンロードしてインストールします。link:https://www.java.com/en/["デスクトップアプリケーション用のJavaを入手する"^] 。  Windows ファイアウォールをオフにします。
+. SnapCenter Windows サーバーから、 SnapCenter 6.0 Windows の前提条件 (PowerShell - PowerShell-7.4.3-win-x64.msi および .Net ホスティング パッケージ - dotnet-hosting-8.0.6-win) をダウンロードしてインストールまたは更新します。
+. SnapCenter Windows サーバーで、 NetAppサポート サイトから最新バージョン (現在は 6.0) のSnapCenterインストール実行ファイルをダウンロードしてインストールします。link:https://mysupport.netapp.com/site/["NetApp | サポート"^] 。
+. データベースDB VMから、管理者ユーザーに対してSSHパスワードレス認証を有効にする `admin`パスワードなしで sudo 権限も使用できます。
+. データベース DB VM から、Linux ファイアウォール デーモンを停止して無効にします。  java-11-openjdk をインストールします。
+. SnapCenter Windows サーバーからブラウザを起動し、ポート 8146 経由で Windows ローカル管理者ユーザーまたはドメイン ユーザーの資格情報を使用してSnapCenterにログインします。
++
+image:snapctr-ora-azure-anf-setup-001.png["この画像はSnapCenterサーバのログイン画面を示しています"]
+
+. レビュー `Get Started`オンラインメニュー。
++
+image:snapctr-ora-azure-anf-setup-002.png["この画像はSnapCenterサーバーのオンラインメニューを示しています"]
+
+. で `Settings-Global Settings`、 チェック `Hypervisor Settings`「更新」をクリックします。
++
+image:snapctr-ora-azure-anf-setup-003.png["この画像はSnapCenterサーバのハイパーバイザ設定を提供します"]
+
+. 必要に応じて調整 `Session Timeout`SnapCenter UI を希望の間隔に設定します。
++
+image:snapctr-ora-azure-anf-setup-004.png["この画像はSnapCenterサーバーのセッションタイムアウトを示しています"]
+
+. 必要に応じて、 SnapCenterにユーザーを追加します。
++
+image:snapctr-ora-azure-anf-setup-006.png["この画像はSnapCenterサーバの設定-ユーザーとアクセスを提供します"]
+
+. その `Roles`タブには、さまざまなSnapCenterユーザーに割り当てることができる組み込みロールが一覧表示されます。必要な権限を持つ管理者ユーザーがカスタム ロールを作成することもできます。
++
+image:snapctr-ora-azure-anf-setup-007.png["このイメージはSnapCenterサーバのロールを提供します"]
+
+. から `Settings-Credential`、 SnapCenter管理ターゲットの資格情報を作成します。このデモの使用例では、DB サーバー VM にログインするための Linux ユーザー admin と、PostgreSQL アクセス用の postgres 資格情報です。
++
+image:snapctr-psql-setup-host-001.png["このイメージはSnapCenterサーバーの認証情報を提供します"]
+
++
+
+NOTE: 資格情報を作成する前に、PostgreSQL ユーザーの postgres パスワードをリセットします。
+
+. から `Storage Systems`タブ、追加 `ONTAP cluster`ONTAPクラスタ管理者の認証情報を使用します。  Azure NetApp Filesの場合、容量プールへのアクセス用に特定の資格情報を作成する必要があります。
++
+image:snapctr-psql-setup-ontap-001.png["このイメージは、 SnapCenterサーバー用のAzure NetApp Filesを提供します"] image:snapctr-psql-setup-ontap-002.png["このイメージは、 SnapCenterサーバー用のAzure NetApp Filesを提供します"]
+
+. から `Hosts`タブで、PostgreSQL DB VM を追加します。これにより、Linux 上に PostgreSQL 用のSnapCenterプラグインがインストールされます。
++
+image:snapctr-psql-setup-host-002.png["このイメージはSnapCenterサーバのホストを提供します"] image:snapctr-psql-setup-host-003.png["このイメージはSnapCenterサーバのホストを提供します"] image:snapctr-psql-setup-host-005.png["このイメージはSnapCenterサーバのホストを提供します"]
+
+. ホストプラグインがDBサーバーVMにインストールされると、ホスト上のデータベースは自動的に検出され、 `Resources`タブ。
++
+image:snapctr-psql-bkup-001.png["この画像はSnapCenterサーバーの設定ポリシーを提供します"]
+
+
+
+====
+
+
+=== データベース バックアップ
+
+[%collapsible%open]
+====
+最初に自動検出された PostgreSQL クラスターでは、クラスター名の横に赤いロックが表示されます。前のセクションのSnapCenterセットアップ中に作成された PostgreSQL データベース資格情報を使用してロックを解除する必要があります。次に、データベースを保護するためのバックアップ ポリシーを作成して適用する必要があります。最後に、手動またはスケジューラでバックアップを実行し、スナップショット バックアップを作成します。次のセクションでは、手順を段階的に説明します。
+
+* PostgreSQL クラスターのロックを解除します。
++
+.. ナビゲート `Resources`タブには、 SnapCenterプラグインがデータベース VM にインストールされた後に検出された PostgreSQL クラスターが一覧表示されます。最初はロックされており、 `Overall Status`データベースクラスタは次のように表示されます `Not protected`。
++
+image:snapctr-psql-bkup-001.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. クラスター名をクリックし、 `Configure Credentials`資格情報構成ページを開きます。
++
+image:snapctr-psql-bkup-002.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. 選ぶ `postgres`以前のSnapCenterセットアップ中に作成された資格情報。
++
+image:snapctr-psql-bkup-003.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. 資格情報を適用すると、クラスターのロックが解除されます。
++
+image:snapctr-psql-bkup-004.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+
+
+* PostgreSQL バックアップ ポリシーを作成します。
++
+.. 移動先 `Setting`- `Polices`クリックして `New`バックアップ ポリシーを作成します。
++
+image:snapctr-psql-bkup-006.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. バックアップ ポリシーに名前を付けます。
++
+image:snapctr-psql-bkup-007.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. ストレージタイプを選択します。ほとんどのシナリオでは、デフォルトのバックアップ設定で問題ありません。
++
+image:snapctr-psql-bkup-008.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. バックアップの頻度とスナップショットの保持を定義します。
++
+image:snapctr-psql-bkup-009.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. データベース ボリュームがセカンダリ ロケーションに複製される場合にセカンダリ レプリケーションを選択するオプション。
++
+image:snapctr-psql-bkup-010.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. 要約を確認し、 `Finish`バックアップ ポリシーを作成します。
++
+image:snapctr-psql-bkup-011.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"] image:snapctr-psql-bkup-012.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+
+
+* PostgreSQL データベースを保護するためにバックアップ ポリシーを適用します。
++
+.. 戻る `Resource`タブで、クラスター名をクリックして PostgreSQL クラスター保護ワークフローを起動します。
++
+image:snapctr-psql-bkup-005.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. デフォルトを受け入れる `Application Settings`。このページのオプションの多くは、自動検出されたターゲットには適用されません。
++
+image:snapctr-psql-bkup-013.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. 作成したバックアップ ポリシーを適用します。必要に応じてバックアップ スケジュールを追加します。
++
+image:snapctr-psql-bkup-014.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. バックアップ通知が必要な場合は電子メール設定を提供します。
++
+image:snapctr-psql-bkup-015.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. レビューの概要と `Finish`バックアップポリシーを実装します。これで PostgreSQL クラスターが保護されました。
++
+image:snapctr-psql-bkup-016.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. バックアップはバックアップスケジュールに従って実行されるか、クラスタバックアップトポロジから実行されます。 `Backup Now`手動のオンデマンド バックアップをトリガーします。
++
+image:snapctr-psql-bkup-017-a.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"] image:snapctr-psql-bkup-017.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+.. バックアップジョブを監視する `Monitor`タブ。通常、大規模なデータベースのバックアップには数分かかりますが、私たちのテストケースでは、1TB 近くのデータベース ボリュームをバックアップするのに約 4 分かかりました。
++
+image:snapctr-psql-bkup-019.png["このイメージはSnapCenterサーバのデータベースバックアップを提供します"]
+
+
+
+
+
+====
+
+
+=== データベースの復旧
+
+[%collapsible%open]
+====
+このデータベース復旧のデモンストレーションでは、PostgreSQL データベース クラスターのポイントインタイム復旧を紹介します。まず、 SnapCenterを使用してONTAPストレージ上のデータベース ボリュームの SnapShot バックアップを作成します。次に、データベースにログインし、テスト テーブルを作成し、タイムスタンプを書き留めて、テスト テーブルを削除します。次に、テスト テーブルが作成された時点のタイムスタンプまでのバックアップからリカバリを開始し、削除されたテーブルをリカバリします。以下は、 SnapCenter UI を使用した PostgreSQL データベースのポイントインタイムリカバリのワークフローと検証の詳細を示しています。
+
+. PostgreSQLにログインするには `postgres`ユーザー。テスト テーブルを作成してから削除します。
++
+....
+postgres=# \dt
+Did not find any relations.
+
+
+postgres=# create table test (id integer, dt timestamp, event varchar(100));
+CREATE TABLE
+postgres=# \dt
+        List of relations
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | test | table | postgres
+(1 row)
+
+postgres=# insert into test values (1, now(), 'test PostgreSQL point in time recovery with SnapCenter');
+INSERT 0 1
+
+postgres=# select * from test;
+ id |             dt             |                         event
+----+----------------------------+--------------------------------------------------------
+  1 | 2024-10-08 17:55:41.657728 | test PostgreSQL point in time recovery with SnapCenter
+(1 row)
+
+postgres=# drop table test;
+DROP TABLE
+postgres=# \dt
+Did not find any relations.
+
+postgres=# select current_time;
+    current_time
+--------------------
+ 17:59:20.984144+00
+
+....
+. から `Resources`タブで、データベース バックアップ ページを開きます。復元するスナップショット バックアップを選択します。次に、 `Restore`データベース回復ワークフローを起動するボタン。ポイントインタイムリカバリを実行するときは、バックアップのタイムスタンプをメモしてください。
++
+image:snapctr-psql-restore-001.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. 選択 `Restore scope`。現時点では、完全なリソースが唯一の選択肢です。
++
+image:snapctr-psql-restore-002.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. のために `Recovery Scope`、 選ぶ `Recover to point in time`リカバリがロールフォワードされるタイムスタンプを入力します。
++
+image:snapctr-psql-restore-003.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. その `PreOps`復元/回復操作の前にデータベースに対してスクリプトを実行するか、そのままにしておくことができます。
++
+image:snapctr-psql-restore-004.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. その `PostOps`復元/回復操作後にデータベースに対してスクリプトを実行するか、そのままにしておくことができます。
++
+image:snapctr-psql-restore-005.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. 必要に応じて電子メールで通知します。
++
+image:snapctr-psql-restore-006.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. 仕事の概要を確認し、 `Finish`復元ジョブを開始します。
++
+image:snapctr-psql-restore-007.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. 実行中のジョブをクリックして開きます `Job Details`ウィンドウ。ジョブステータスは、 `Monitor`タブ。
++
+image:snapctr-psql-restore-008.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. PostgreSQLにログインするには `postgres`ユーザーにテスト テーブルが回復されたことを検証します。
++
+....
+
+[postgres@psql01 ~]$ psql
+psql (14.13)
+Type "help" for help.
+
+postgres=# \dt
+        List of relations
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | test | table | postgres
+(1 row)
+
+postgres=# select * from test;
+ id |             dt             |                         event
+----+----------------------------+--------------------------------------------------------
+  1 | 2024-10-08 17:55:41.657728 | test PostgreSQL point in time recovery with SnapCenter
+(1 row)
+
+postgres=# select now();
+              now
+-------------------------------
+ 2024-10-08 18:22:33.767208+00
+(1 row)
+
+
+....
+
+
+====
+
+
+=== データベース クローン
+
+[%collapsible%open]
+====
+SnapCenter経由の PostgreSQL データベース クラスター クローンでは、ソース データベース データ ボリュームのスナップショット バックアップから新しいシン クローン ボリュームが作成されます。さらに重要なのは、開発やテストをサポートするために運用データベースのクローンコピーを作成するのに、他の方法に比べて迅速 (数分) かつ効率的であることです。したがって、ストレージ コストが大幅に削減され、データベース アプリケーションのライフサイクル管理が向上します。次のセクションでは、 SnapCenter UI を使用した PostgreSQL データベース クローンのワークフローについて説明します。
+
+. クローンプロセスを検証します。再度、テスト テーブルに行を挿入します。次に、バックアップを実行してテスト データをキャプチャします。
++
+....
+postgres=# insert into test values (2, now(), 'test PostgreSQL clone to a different DB server host');
+INSERT 0 1
+postgres=# select * from test;
+ id |             dt             |                        event
+----+----------------------------+-----------------------------------------------------
+  2 | 2024-10-11 20:15:04.252868 | test PostgreSQL clone to a different DB server host
+(1 row)
+
+....
+. から `Resources`タブで、データベース クラスターのバックアップ ページを開きます。テスト データが含まれているデータベース バックアップのスナップショットを選択します。次に、 `clone`データベースクローンワークフローを起動するボタン。
++
+image:snapctr-psql-clone-001.png["このイメージはSnapCenterサーバのデータベースクローンを提供します"]
+
+. ソース DB サーバー以外の別の DB サーバー ホストを選択します。ターゲット ホスト上の未使用の TCP ポート 543x を選択します。
++
+image:snapctr-psql-clone-002.png["このイメージはSnapCenterサーバのデータベースクローンを提供します"]
+
+. クローン操作の前または後に実行するスクリプトを入力します。
++
+image:snapctr-psql-clone-003.png["このイメージはSnapCenterサーバのデータベースクローンを提供します"]
+
+. 必要に応じて電子メールで通知します。
++
+image:snapctr-psql-clone-004.png["このイメージはSnapCenterサーバのデータベースクローンを提供します"]
+
+. レビューの概要と `Finish`クローンプロセスを起動します。
++
+image:snapctr-psql-clone-005.png["このイメージはSnapCenterサーバのデータベースクローンを提供します"]
+
+. 実行中のジョブをクリックして開きます `Job Details`ウィンドウ。ジョブステータスは、 `Monitor`タブ。
++
+image:snapctr-psql-clone-006.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. クローンされたデータベースはすぐにSnapCenterに登録されます。
++
+image:snapctr-psql-clone-007.png["このイメージは、 SnapCenterサーバーのデータベース復元を提供します"]
+
+. ターゲット DB サーバー ホスト上でクローンされたデータベース クラスターを検証します。
++
+....
+
+[postgres@psql01 ~]$ psql -d postgres -h 10.61.186.7 -U postgres -p 5433
+Password for user postgres:
+psql (14.13)
+Type "help" for help.
+
+postgres=# select * from test;
+ id |             dt             |                        event
+----+----------------------------+-----------------------------------------------------
+  2 | 2024-10-11 20:15:04.252868 | test PostgreSQL clone to a different DB server host
+(1 row)
+
+postgres=# select pg_read_file('/etc/hostname') as hostname;
+ hostname
+----------
+ psql02  +
+
+(1 row)
+
+
+....
+
+
+====
+
+
+== 詳細情報の入手方法
+
+このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。
+
+* SnapCenterソフトウェアのドキュメント
++
+link:https://docs.netapp.com/us-en/snapcenter/index.html["https://docs.netapp.com/us-en/snapcenter/index.html"^]
+
+* TR-4956: AWS FSx/EC2 における PostgreSQL 高可用性の自動化と災害復旧
++
+link:aws-postgres-fsx-ec2-hadr.html["TR-4956: AWS FSx/EC2 における PostgreSQL 高可用性の自動化と災害復旧"]
+
+

@@ -1,0 +1,52 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-prereq.html 
+summary: ハイブリッド クラウド データベース ワークロードを実行する前に、オンプレミスとクラウドの両方で特定の前提条件を構成する必要があります。次のセクションではこのプロセスの概要を示し、次のリンクでは必要なシステム構成に関する詳細情報を提供します。 
+keywords: workflow, prerequisites, licensing, networking, security 
+---
+= 前提条件の構成
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+ハイブリッド クラウド データベース ワークロードを実行する前に、オンプレミスとクラウドの両方で特定の前提条件を構成する必要があります。次のセクションではこのプロセスの概要を示し、次のリンクでは必要なシステム構成に関する詳細情報を提供します。
+
+
+
+== オンプレミス
+
+* SnapCenterのインストールと構成
+* オンプレミスのデータベースサーバーのストレージ構成
+* ライセンス要件
+* ネットワークとセキュリティ
+* Automation
+
+
+
+
+== パブリッククラウド
+
+* NetApp Cloud Centralログイン
+* ウェブブラウザから複数のエンドポイントへのネットワークアクセス
+* コネクタのネットワークロケーション
+* クラウドプロバイダーの権限
+* 個々のサービスのためのネットワーキング
+
+
+重要な考慮事項:
+
+. Cloud Manager Connector をどこにデプロイしますか?
+. Cloud Volume ONTAP のサイズとアーキテクチャ
+. 単一ノードか高可用性か?
+
+
+詳細については、次のリンクをご覧ください。
+
+link:hybrid-dbops-sc-prereq-onprem.html["オンプレミス"]
+
+link:hybrid-dbops-sc-prereq-cloud.html["パブリック クラウド"]

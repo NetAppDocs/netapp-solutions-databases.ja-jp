@@ -1,0 +1,106 @@
+= 
+:allow-uri-read: 
+
+
+. 資格情報を設定します。
+. 資格情報の種類を作成します。ONTAPを含むソリューションの場合、ユーザー名とパスワードのエントリと一致するように認証情報の種類を構成する必要があります。また、Cloud Central と AWS のエントリも追加します。
++
+.. 「管理」→「資格情報の種類」に移動し、「追加」をクリックします。
+.. 名前と説明を入力します。
+.. 入力構成に次の内容を貼り付けます。
++
+[source, cli]
+----
+fields:
+  - id: dst_cluster_username
+    type: string
+    label: CVO Username
+  - id: dst_cluster_password
+    type: string
+    label: CVO Password
+    secret: true
+  - id: cvo_svm_password
+    type: string
+    label: CVO SVM Password
+    secret: true
+  - id: src_cluster_username
+    type: string
+    label: Source Cluster Username
+  - id: src_cluster_password
+    type: string
+    label: Source Cluster Password
+    secret: true
+  - id: regular_id
+    type: string
+    label: Cloud Central ID
+    secret: true
+  - id: email_id
+    type: string
+    label: Cloud Manager Email
+    secret: true
+  - id: cm_password
+    type: string
+    label: Cloud Manager Password
+    secret: true
+  - id: access_key
+    type: string
+    label: AWS Access Key
+    secret: true
+  - id: secret_key
+    type: string
+    label: AWS Secret Key
+    secret: true
+  - id: token
+    type: string
+    label: Cloud Central Refresh Token
+    secret: true
+----
+.. 次の内容を「Injector Configuration」に貼り付けて、「Save」をクリックします。
++
+[source, cli]
+----
+extra_vars:
+  dst_cluster_username: '{{ dst_cluster_username }}'
+  dst_cluster_password: '{{ dst_cluster_password }}'
+  cvo_svm_password: '{{ cvo_svm_password }}'
+  src_cluster_username: '{{ src_cluster_username }}'
+  src_cluster_password: '{{ src_cluster_password }}'
+  regular_id: '{{ regular_id }}'
+  email_id: '{{ email_id }}'
+  cm_password: '{{ cm_password }}'
+  access_key: '{{ access_key }}'
+  secret_key: '{{ secret_key }}'
+  token: '{{ token }}'
+----
+
+
+. ONTAP/CVO/AWS の認証情報を作成する
++
+.. 「リソース」→「資格情報」に移動し、「追加」をクリックします。
+.. ONTAP認証情報の名前と組織の詳細を入力します
+.. 前の手順で作成した資格情報の種類を選択します。
+.. タイプの詳細で、ソース クラスターと CVO クラスター、Cloud Central/Manager、AWS アクセス/シークレット キー、および Cloud Central 更新トークンのユーザー名とパスワードを入力します。
+.. [Save]をクリックします。
+
+
+. Oracle の資格情報を作成する (ソース)
++
+.. 「リソース」→「資格情報」に移動し、「追加」をクリックします。
+.. Oracleホストの名前と組織の詳細を入力します
+.. マシン資格情報タイプを選択します。
+.. 「タイプの詳細」で、Oracle ホストのユーザー名とパスワードを入力します。
+.. 正しい権限昇格方法を選択し、ユーザー名とパスワードを入力します。
+.. [Save]をクリックします。
+
+
+. Oracle 宛先の資格情報を作成する
++
+.. 「リソース」→「資格情報」に移動し、「追加」をクリックします。
+.. DR Oracleホストの名前と組織の詳細を入力します
+.. マシン資格情報タイプを選択します。
+.. タイプの詳細で、ユーザー名（ec2-userまたはデフォルトから変更した場合はそのユーザー名）とSSH秘密鍵を入力します。
+.. 正しい権限昇格方法 (sudo) を選択し、必要に応じてユーザー名とパスワードを入力します。
+.. [Save]をクリックします。
+
+
+

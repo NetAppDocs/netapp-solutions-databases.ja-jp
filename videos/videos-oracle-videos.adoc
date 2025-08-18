@@ -1,0 +1,62 @@
+---
+sidebar: sidebar 
+permalink: videos/videos-oracle-videos.html 
+summary: NetAppの多くのソリューションの機能を説明するビデオとデモのシリーズ 
+keywords: netapp, solutions, videos, demos 
+---
+= NetAppを使用した Oracle 向けデータベース ソリューションに関するビデオとデモをご覧ください
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+NetAppを使用した Oracle 向けデータベース ソリューションを紹介する NetApp の包括的なビデオ ライブラリをご覧ください。各コレクションでは、エンタープライズ ワークロード向けの実用的なソリューション、統合のベスト プラクティス、最新のデータベース管理に重点が置かれています。
+
+
+
+== 展開と自動化
+
+.NFS を使用したAzure NetApp Filesへの Oracle の簡素化と自動化
+video::d1c859b6-e45a-44c7-8361-b10f012fc89b[panopto,width=360]
+.iSCSI を使用したAmazon FSx ONTAPでの Oracle の導入を簡素化および自動化
+video::81e389a0-d9b8-495c-883b-b0d701710847[panopto,width=360]
+.iSCSI を使用したNetApp ASAへの Oracle の導入を簡素化および自動化
+video::79095731-6b02-41d5-9fa1-b0c00100d055[panopto,width=360]
+.ASM を使用した GCNV 上の DataGuard スタンバイからの Oracle DB クローンの自動化
+video::74062c18-b120-45b7-9bf9-b2db00f73675[panopto,width=360]
+.Ansibleを使用したFlexPodへのOracle 19c RACの自動導入
+video::VcQMJIRzhoY[youtube,width=360]
+
+
+== バックアップ、リカバリ、クローン作成
+
+.SnapCenterを使用した ANF 上の Oracle データベースのバックアップ、リカバリ、およびクローン
+video::960fb370-c6e0-4406-b6d5-b110014130e8[panopto,width=360]
+.パート4a - 複製されたスタンバイコピーからSnapCenter UIを使用して開発/テスト用のデータベースクローンを作成する
+video::2f731d7c-0873-4a4d-8491-b01200f90a82[panopto,width=360]
+.パート4b - SnapCenter UIを使用したデータベースのバックアップ、リストア、クローン作成
+video::97790d62-ff19-40e0-9784-b01200f920ed[panopto,width=360]
+.パート4c - BlueXP SaaSアプリのバックアップとリカバリによるデータベースのバックアップと復元
+video::4b0fd212-7641-46b8-9e55-b01200f9383a[panopto,width=360]
+.ストレージスナップショットを使用した Oracle マルチテナント プラガブル データベース クローン
+video::krzMWjrrMb0[youtube,width=360]
+
+
+== 近代化と移住
+
+.パート1 - AWSとFSx ONTAPのハイブリッドクラウドによるOracleのモダナイゼーション
+video::b1a7bb05-caea-44a0-bd9a-b01200f372e9[panopto,width=360]
+.パート 2a - 最大限の可用性を備えた自動 PDB 再配置を使用したオンプレミスから AWS へのデータベース移行
+video::bb088a3e-bbfb-4927-bf44-b01200f38b17[panopto,width=360]
+.パート2b - SnapMirror経由でBlueXPコンソールを使用してオンプレミスからAWSへのデータベース移行
+video::c0df32f8-d6d3-4b79-b0bd-b01200f3a2e8[panopto,width=360]
+
+
+== 高可用性、災害復旧、レプリケーション
+
+.パート3 - 自動化されたデータベースHA/DRレプリケーションのセットアップ、フェイルオーバー、再同期
+video::5fd03759-a691-4007-9748-b01200f3b79c[panopto,width=360]

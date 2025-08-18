@@ -1,0 +1,78 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-requirements.html 
+summary: このソリューションはハイブリッド クラウド設定で設計されており、開発/テストや災害復旧操作のために一般的なパブリック クラウドすべてにバーストできるオンプレミスの運用データベースをサポートします。 
+keywords: requirements, virtualized, bare metal, versions, automation 
+---
+= SnapCenter の要件
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+このソリューションはハイブリッド クラウド設定で設計されており、開発/テストや災害復旧操作のために一般的なパブリック クラウドすべてにバーストできるオンプレミスの運用データベースをサポートします。
+
+このソリューションは、現在SnapCenterでサポートされているすべてのデータベースをサポートしますが、ここでは Oracle および SQL Server データベースのみを説明します。このソリューションは仮想化データベース ワークロードで検証されますが、ベアメタル ワークロードもサポートされています。
+
+実稼働データベース サーバーはオンプレミスでホストされ、DB ボリュームはONTAPストレージ クラスターから DB ホストに提供されることを前提としています。  SnapCenter softwareは、データベースのバックアップとクラウドへのデータ複製のためにオンプレミスにインストールされます。  Ansible コントローラーは、データベースのデプロイメントの自動化や、パブリック クラウド内のスタンバイ DR インスタンスまたは開発/テスト インスタンスとの OS カーネルおよび DB 構成の同期に推奨されますが、必須ではありません。
+
+
+
+== 要件
+
+[cols="3, 9"]
+|===
+| 環境 | 要件 
+
+
+.7+| *オンプレミス* | SnapCenterでサポートされているデータベースとバージョン 
+
+
+| SnapCenter v4.4以降 
+
+
+| Ansible v2.09以降 
+
+
+| ONTAPクラスタ 9.x 
+
+
+| クラスタ間LIFが設定されている 
+
+
+| オンプレミスからクラウド VPC への接続 (VPN、相互接続など) 
+
+
+| ネットワークポートが開いています - ssh 22 - tcp 8145、8146、10000、11104、11105 
+
+
+.3+| *クラウド - AWS* | https://docs.netapp.com/us-en/occm/task_creating_connectors_aws.html["クラウドマネージャーコネクタ"^] 
+
+
+| https://docs.netapp.com/us-en/occm/task_getting_started_aws.html["Cloud Volumes ONTAP"^] 
+
+
+| DB OS EC2インスタンスをオンプレミスにマッチング 
+
+
+.3+| *クラウド - Azure* | https://docs.netapp.com/us-en/occm/task_creating_connectors_azure.html["クラウドマネージャーコネクタ"^] 
+
+
+| https://docs.netapp.com/us-en/occm/task_getting_started_azure.html["Cloud Volumes ONTAP"^] 
+
+
+| DB OS Azure仮想マシンをオンプレミスにマッチング 
+
+
+.3+| *クラウド - GCP* | https://docs.netapp.com/us-en/occm/task_creating_connectors_gcp.html["クラウドマネージャーコネクタ"^] 
+
+
+| https://docs.netapp.com/us-en/occm/task_getting_started_gcp.html["Cloud Volumes ONTAP"^] 
+
+
+| DB OS Google Compute Engineインスタンスをオンプレミスにマッチング 
+|===

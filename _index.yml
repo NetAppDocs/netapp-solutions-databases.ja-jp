@@ -1,0 +1,116 @@
+---
+indexpage:
+  title: NetAppデータベースソリューション
+  summary: NetAppエンタープライズ データベース ソリューションは、主要なエンタープライズ データベースにおけるNetAppストレージの機能を実証する戦略的機能と技術的機能のセットです。
+  lead: NetAppデータベース ソリューションは、主要なエンタープライズ データベースにおけるNetAppストレージの機能を実証する戦略的機能と技術的機能のセットです。
+  tiles:
+  - title: 始めましょう
+    links:
+    - title: 新機能
+      url: "/whats-new.html"
+    - title: ブログ
+      url: "/blogs.html"
+    - title: ビデオとデモ
+      url: "/videos/index.html"
+  - title: Amazon FSx for ONTAP向け Oracle
+    links:
+    - title: AWS EC2にOracle HAをデプロイする
+      url: "/oracle/aws-ora-ha-pacemaker.html"
+    - title: FSx ONTAPにOracleを導入する
+      url: "/automation/automation-ora-aws-fsx-iscsi.html"
+    - title: FSx ONTAPを使用して VMware Cloud 上で Oracle を実行
+      url: "/oracle/aws-ora-fsx-vmc-guestmount.html"
+    - title: FSx ONTAPでData Guardのコストを削減
+      url: "/oracle/aws-ora-fsx-ec2-data-guard.html"
+    - title: FSx ONTAPで Oracle VLDB をリカバリおよびクローンする
+      url: "/oracle/aws-ora-fsx-ec2-inc-merge.html"
+    - title: FSx/EC2 上で Oracle を保護し、展開する
+      url: "/oracle/aws-ora-fsx-ec2-iscsi-asm.html"
+  - title: Azure NetApp Files向け Oracle
+    links:
+    - title: ANFにOracle VLDBをデプロイする
+      url: "/oracle/azure-ora-anf-vldb-dg.html"
+    - title: ANFでデータガードのコストを削減
+      url: "/oracle/azure-ora-anf-data-guard.html"
+    - title: ANF 上の Oracle VLDB のリカバリとクローン作成
+      url: "/oracle/azure-ora-anf-inc-merge.html"
+    - title: NFS を使用してAzure NetApp Filesに Oracle をデプロイする
+      url: "/automation/automation-ora-anf-nfs.html"
+    - title: ANF 上で Oracle を展開および移行する
+      url: "/oracle/azure-ora-nfile-usecase.html"
+  - title: Google Cloud 向け Oracle
+    links:
+    - title: Google Cloud で Oracle VLDB のバックアップとリカバリを最適化
+      url: "/oracle/gcp-ora-gcnv-inc-merge.html"
+    - title: Google Cloud に Data Guard を搭載した Oracle VLDB をデプロイする
+      url: "/oracle/gcp-ora-gcnv-vldb-dg.html"
+    - title: Google Cloud 上の Oracle ストレージ ソリューションを確認する
+      url: "/oracle/gcp-oracle-gcnv-overview.html"
+  - title: クラウドとオンプレミス向けのSQLサーバーソリューション
+    links:
+    - title: AWS FSx ONTAPでの SQL Server のバックアップとリカバリ
+      url: "/mssql/sqlsb-backup-restore-aws-fsxn.html"
+    - title: FSx ONTAPを使用して AWS EC2 上で SQL Server を実行する
+      url: "/mssql/sql-aws-ec2.html"
+    - title: Azure NetApp Filesで SQL Server を実行する
+      url: "/mssql/sql-srv-anf-overview.html"
+    - title: オンプレミスの SQL ワークロードを FSx ONTAPに移行する
+      url: "/mssql/customer-usecase-mssql-fsx1.html"
+    - title: クラスタ化されたデータONTAPを使用した Windows 上の Microsoft SQL Server と SAP
+      url: https://www.netapp.com/pdf.html?item=/media/16865-tr-4467pdf.pdf
+    - title: Microsoft SQL Server の最新化
+      url: https://www.netapp.com/pdf.html?item=/media/15613-na-446.pdf
+    - title: ONTAPを使用した Microsoft SQL Server のベスト プラクティス
+      url: https://www.netapp.com/pdf.html?item=/media/8585-tr4590.pdf
+    - title: EF シリーズを使用した Microsoft SQL Server のベスト プラクティス
+      url: https://www.netapp.com/pdf.html?item=/media/17086-tr4764pdf.pdf
+  - title: ハイブリッドクラウドデータベースソリューション
+    links:
+    - title: VCF のvVolsを使用して Oracle RAC を導入および保護する
+      url: "/oracle/vcf-ora-rac-vvol.html"
+    - title: VCF のvVolsを使用して Oracle SI を展開および保護する
+      url: "/oracle/vcf-ora-si-vvol.html"
+    - title: NFS 搭載のNetApp C シリーズに Oracle を導入
+      url: "/automation/automation-ora-c-series-nfs.html"
+    - title: iSCSI を使用したNetApp ASAへの Oracle の導入
+      url: "/automation/automation-ora-asa-iscsi.html"
+    - title: ONTAPにOracle19cを自動化して導入
+      url: "/automation/db-protection-overview.html"
+    - title: NetApp EFシリーズでOracleデータベースを実行する
+      url: https://www.netapp.com/pdf.html?item=/media/17248-tr4794pdf.pdf
+  - title: オープンソースデータベース
+    links:
+    - title: AWS FSx/EC2 で PostgreSQL データベースをデプロイし、災害対策を設定する
+      url: "/postgres/aws-postgres-fsx-ec2-hadr.html"
+    - title: ONTAP上のMySQLデータベース
+      url: https://www.netapp.com/pdf.html?item=/media/16423-tr-4722pdf.pdf
+  - title: データベース向けSnapCenter
+    links:
+    - title: SnapCenterを使用してONTAP上の PostgreSQL をバックアップおよびクローンする
+      url: "/postgres/snapctr-psql-ontap.html"
+    - title: Oracle データベースを自動化してセットアップ、クローン作成、更新する
+      url: "/automation/automation-ora-clone-lifecycle.html"
+    - title: Microsoft Azure NetApp File での Oracle の自動導入
+      url: "/oracle/snapctr-ora-azure-anf.html"
+    - title: SnapCenterでハイブリッドクラウドデータベースソリューションを導入
+      url: "/dbops/hybrid-dbops-snapcenter-usecases.html"
+  - title: DB自動化ツールキット
+    links:
+    - title: ASMを使用してGCNV上のOracleクローンライフサイクルを自動化
+      url: "/automation/automation-ora-clone-gcnv-asm.html"
+    - title: ASM を使用して ANF 上の Oracle クローン ライフサイクルを自動化する
+      url: "/automation/automation-ora-clone-anf-asm.html"
+    - title: PDBの再配置によるOracleの移行
+      url: "/automation/automation-ora-migration.html"
+    - title: Amazon FSx for NetApp ONTAPを使用した Oracle HA/DR の導入
+      url: "/automation/automation-ora-hadr-fsx.html"
+    - title: Amazon FSx for NetApp ONTAP のプロビジョニング
+      url: "/automation/automation-fsx-ec2-provision.html"
+    - title: AWS に PostgreSQL をデプロイする
+      url: https://github.com/NetApp/na_postgresql_aws_deploy_hadr
+  - title: ソリューションのリクエストとフィードバック
+    links:
+    - title: 新しい解決策を提案する
+      url: https://github.com/NetAppDocs/netapp-solutions/issues/new?body=[Request%20Solution]%0d%0a%0d%0aSolution%20Use%20Case:%20%0d%0aSolution%20Description:%20%0d%0aAdditional%20Comments:&title=Request%20Solution%20-%20%3Csolution%3E
+    - title: ソリューションのフィードバックを提供する
+      url: https://github.com/NetAppDocs/netapp-solutions/issues/new?body=[Solution%20Feedback]%0d%0a%0d%0aSolution%20Name:%20%0d%0aSolution%20Feedback:%20%0d%0aAdditional%20Comments:&title=Solution%20Feedback%20-%20%3Csolution%3E

@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: oracle/azure-ora-nfile-architecture.html 
+summary: このセクションでは、Azure 仮想マシンとAzure NetApp Filesストレージを使用した Oracle データベースのデプロイとデータ保護ソリューション アーキテクチャについて説明します。 
+keywords: architecture, database, Oracle, Azure, Azure NetApp Files 
+---
+= ソリューション アーキテクチャ
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+次のアーキテクチャ図は、Azure VM インスタンスとAzure NetApp Filesストレージ上の高可用性 Oracle データベースのデプロイを示しています。
+
+環境内では、Oracle コンピューティング インスタンスは、Azure サービス VM コンソールを介してデプロイされます。コンソールから利用できる Azure インスタンス タイプは複数あります。  NetApp、予想されるワークロードを満たすデータベース指向の Azure VM インスタンスを展開することをお勧めします。
+
+一方、Oracle データベース ストレージは、Azure コンソールから利用できるAzure NetApp Filesサービスを使用してデプロイされます。その後、Oracle バイナリ、データ、またはログ ボリュームが Azure VM インスタンスの Linux ホストに提示され、マウントされます。
+
+image:db-ora-azure-anf-architecture.png["この画像は、プライマリ サイト、スタンバイ サイト、および各サイトの vNet ピアリング間の関係を示しています。これにより、4 つの個別の仮想ネットワークが形成されます。"]
+
+多くの点で、Azure クラウドでのAzure NetApp Filesの実装は、RAID やデュアル コントローラーなどの多くの冗長性が組み込まれたオンプレミスのONTAPデータ ストレージ アーキテクチャと非常によく似ています。災害復旧の場合、スタンバイ サイトを異なるリージョンに設定し、アプリケーション レベルのレプリケーション (Oracle Data Guard など) を使用してデータベースをプライマリ サイトと同期できます。
+
+Oracle データベースのデプロイとデータ保護に関するテスト検証では、次の図に示すように、Oracle データベースが単一の Azure VM にデプロイされます。
+
+image:db-ora-azure-anf-architecture2.png["この画像は、vNet ピアリングを使用して 2 つの個別の仮想ネットワークを作成する単一の Azure VM の構成を示しています。"]
+
+Azure Oracle 環境は、データベースの展開、バックアップ、リカバリ、データベースの移行用にNetAppが提供するツールキットを使用して自動化するための Ansible コントローラー ノードで管理できます。 Oracle Azure VM インスタンスのオペレーティング システム カーネルの更新や Oracle パッチ適用は、プライマリとスタンバイの同期を維持するために並行して実行できます。実際、初期のツールキットは、必要に応じて日常的な Oracle タスクを実行できるように簡単に拡張できます。  CLI Ansibleコントローラーの設定についてヘルプが必要な場合は、link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]始めましょう。

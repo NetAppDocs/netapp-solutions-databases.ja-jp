@@ -1,0 +1,63 @@
+---
+sidebar: sidebar 
+permalink: mssql/customer-usecase-mssql-fsx1.html 
+keywords: SQL Server, WSFC, AWS, FSx ONTAP, EC2, SnapCenter 
+summary: この実際の顧客ユースケースの例は、コストを削減するために SQL Server ワークロードをオンプレミスからAmazon FSx ONTAPに移行する際の課題、解決策、および結果を示しています。 
+---
+= 医療製品会社がオンプレミスのSQLワークロードをAmazon FSx ONTAPに移行してコストを削減
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+NetAppソリューションエンジニアリングチーム
+
+[role="lead"]
+この実際の顧客ユースケースの例は、コストを削減するために SQL Server ワークロードをオンプレミスからAmazon FSx ONTAPに移行する際の課題、解決策、および結果を示しています。
+
+
+
+== 課題
+
+* 顧客は、サードパーティがホストするプライベート データ センターで SQL Server ワークロードを実行していました。ホスティングコストの増加が問題となっていました。
+* アウトソーシングと従業員の離職により、アプリケーション アーキテクチャと既存のインフラストラクチャに関する専門知識が不足していました。
+* NetApp ONTAP の管理経験はほとんどありませんでした。
+* 既存のインフラの更新決定前に厳しいスケジュールで作業を進めています。
+* SQL Server 環境は大規模 (100 TB) かつ複雑で、SQL Always On を介して 2 つのデータ センター間の HA が構築されています。 AppSync を使用してセカンダリ データ コピーから 3 つの一時環境が作成され、データは毎日/毎週更新されます。運用データから更新されるたびに、SQL スクリプトを介して専用のデータ フラグの変更が必要になります。
+
+
+image:customer-usecase-mssql-fsx1-before.png["この画像は、移行前の顧客環境構成の詳細な図を示しています。"]
+
+
+
+== 主要なソリューション・コンポーネント
+
+* オンプレミスのホスト型 Dell Unity SAN および AppSync 環境から、 NetApp SnapCenterを使用した AWS Amazon FSx ONTAPへの移行。
+* Amazon FSx ONTAPシンクローン機能は、ストレージコストの削減に役立ち、完全に自動化されたSnapCenterクローンライフサイクル管理は、他のすべての一時的な環境要件を満たします。
+* プライマリ SQL Server DB は AWS EBS にデプロイされ、セカンダリ コピーは Single-AZ Amazon FSx ONTAPに複製されています。
+* PoC により、 SnapCenter がAppSync の適切な代替品であることが証明されました。
+* セットアップ、移行、継続的なサポートのための信頼できる経験豊富なパートナー。詳細なソリューション実装ガイドは、Amazon FSx ONTAPおよびSnapCenter を初めて使用するユーザーや経験の浅いユーザーに役立ちました。
+
+
+image:customer-usecase-mssql-fsx1-after.png["この画像は、移行後の顧客環境構成の詳細な図を示しています。"]
+
+
+
+== 結果
+
+* プライベート データ センターでホスティングを継続する場合と比較して 40% のコスト削減。
+* 300 社の顧客をサポートする、 SnapCenterを使用した完全マネージド型のAmazon FSx ONTAPサービス。
+* PreProd、UAT、QA 環境向けに、ほぼ瞬時にシン プロビジョニングされたクローンを自動化する機能を維持します。
+* 時間どおりの移行、更新コストの回避、不満なベンダー関係からパブリック クラウドでの有益な体験への移行。
+* Amazon FSx上の SQL Server は、パフォーマンスを維持しながら、データ冗長性の追加レイヤーを実現しました。
+* 将来、リージョン間 DR を簡単に有効にできるようになります。
+
+
+
+
+== 詳細情報の入手方法
+
+NetAppエンタープライズデータベースソリューションの詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions/databases/index.html["NetAppエンタープライズ データベース ソリューション"^]

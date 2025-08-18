@@ -1,0 +1,165 @@
+---
+sidebar: sidebar 
+permalink: oracle/azure-ora-nfile-migration.html 
+summary: このセクションでは、Oracle データベースをオンプレミスからAzure NetApp Filesに移行する方法、およびその逆の方法について詳しく説明します。 
+keywords: database, Oracle, Azure, ANF, Azure NetApp Files, migration 
+---
+= オンプレミスから Azure クラウドへのデータベース移行
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Oracle が単一インスタンス データベースを段階的に廃止することを決定した結果、多くの組織が単一インスタンス Oracle データベースをマルチテナント コンテナ データベースに変換しました。これにより、PDB と呼ばれるコンテナ データベースのサブセットを、最大可用性オプションを使用してクラウドに簡単に再配置できるようになり、移行中のダウンタイムが最小限に抑えられます。
+
+ただし、Oracle データベースのインスタンスがまだ 1 つだけある場合は、PDB の再配置を試みる前に、まずそれをマルチテナント コンテナ データベースに変換することができます。
+
+次のセクションでは、いずれかのシナリオでオンプレミスの Oracle データベースを Azure クラウドに移行する方法について詳しく説明します。
+
+
+
+== シングルインスタンスの非CDBをマルチテナントCDBのPDBに変換する
+
+まだ単一インスタンスの Oracle データベースをお持ちの場合は、クラウドに移行するかどうかに関係なく、マルチテナント コンテナ データベースに変換する必要があります。これは、Oracle が近いうちに単一インスタンス データベースのサポートを停止するためです。
+
+次の手順では、単一インスタンス データベースをプラガブル データベースまたは PDB としてコンテナ データベースに接続します。
+
+. 単一インスタンスデータベースと同じホストに別のシェルコンテナデータベースを構築します。 `ORACLE_HOME` 。
+. 単一インスタンス データベースをシャットダウンし、読み取り専用モードで再起動します。
+. 実行 `DBMS_PDB.DESCRIBE`データベースのメタデータを生成する手順。
++
+[source, cli]
+----
+BEGIN
+  DBMS_PDB.DESCRIBE(
+    pdb_descr_file => '/home/oracle/ncdb.xml');
+END;
+/
+----
+. 単一インスタンス データベースをシャットダウンします。
+. コンテナ データベースを起動します。
+. 実行 `DBMS_PDB.CHECK_PLUG_COMPATIBILITY`非 CDB が CDB と互換性があるかどうかを判断する機能。
++
+[source, cli]
+----
+SET SERVEROUTPUT ON
+DECLARE
+  compatible CONSTANT VARCHAR2(3) :=
+    CASE DBMS_PDB.CHECK_PLUG_COMPATIBILITY(
+           pdb_descr_file => '/disk1/oracle/ncdb.xml',
+           pdb_name       => 'NCDB')
+    WHEN TRUE THEN 'YES'
+    ELSE 'NO'
+END;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(compatible);
+END;
+/
+----
++
+出力が YES の場合、非 CDB は互換性があるため、次の手順に進むことができます。
+
++
+出力がNOの場合、非CDBは互換性がないため、 `PDB_PLUG_IN_VIOLATIONS`互換性がない理由を確認してください。続行する前にすべての違反を修正する必要があります。たとえば、バージョンまたはパッチの不一致は、アップグレードまたは opatch ユーティリティを実行して解決する必要があります。違反を修正した後、実行します `DBMS_PDB.CHECK_PLUG_COMPATIBILITY`再度実行して、非 CDB が CDB と互換性があることを確認します。
+
+. 単一インスタンスの非 CDB を接続します。
++
+[source, cli]
+----
+CREATE PLUGGABLE DATABASE ncdb USING '/home/oracle/ncdb.xml'
+  COPY
+  FILE_NAME_CONVERT = ('/disk1/oracle/dbs/', '/disk2/oracle/ncdb/')
+;
+----
++
+
+NOTE: ホストに十分なスペースがない場合、 `NOCOPY`オプションを使用して PDB を作成できます。その場合、元のデータ ファイルが PDB に使用されているため、単一インスタンスの非 CDB は PDB としてプラグインした後に使用できなくなります。何か問題が発生した場合に備えて、変換前に必ずバックアップを作成してください。
+
+. ソースの単一インスタンスの非 CDB とターゲット CDB のバージョンが異なる場合は、変換後に PDB のアップグレードを開始します。同じバージョンの変換の場合、この手順はスキップできます。
++
+[source, cli]
+----
+sqlplus / as sysdba;
+alter session set container=ncdb
+alter pluggable database open upgrade;
+exit;
+dbupgrade -c ncdb -l /home/oracle
+----
++
+アップグレードログファイルを確認するには、 `/home/oracle`ディレクトリ。
+
+. プラガブル データベースを開き、pdb プラグイン違反がないか確認し、無効なオブジェクトを再コンパイルします。
++
+[source, cli]
+----
+alter pluggable database ncdb open;
+alter session set container=ncdb;
+select message from pdb_plug_in_violations where type like '%ERR%' and status <> 'RESOLVED';
+$ORACLE_HOME/perl/bin/perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -c 'ncdb' -e -b utlrp -d $ORACLE_HOME/rdbms/admin utlrp.sql
+----
+. 実行する `noncdb_to_pdb.sql`データ辞書を更新します。
++
+[source, cli]
+----
+sqlplus / as sysdba
+alter session set container=ncdb;
+@$ORACLE_HOME/rdbms/admin/noncdb_to_pdb.sql;
+----
++
+コンテナ DB をシャットダウンして再起動します。  ncdb は制限モードから解除されます。
+
+
+
+
+
+== PDB の再配置を使用してオンプレミスの Oracle データベースを Azure に移行する
+
+最大可用性オプションを使用した Oracle PDB の再配置では、PDB がターゲットにコピーされている間にソース PDB の可用性を確保する PDB ホットクローン テクノロジが採用されています。スイッチオーバー時に、ユーザー接続はターゲット PDB に自動的にリダイレクトされます。したがって、PDB のサイズに関係なく、ダウンタイムは最小限に抑えられます。  NetApp は、移行手順を自動化する Ansible ベースのツールキットを提供しています。
+
+. 同じバージョンとパッチ レベルの Azure VM 上の Azure パブリック クラウドに CDB を作成します。
+. Ansible コントローラーから、自動化ツールキットのコピーを複製します。
++
+[source, cli]
+----
+git clone https://github.com/NetApp-Automation/na_ora_aws_migration.git
+----
+. README ファイルの説明をお読みください。
+. ソースとターゲットの両方の Oracle サーバーの Ansible ホスト変数ファイルと、名前解決用の DB サーバー ホストの構成ファイルを構成します。
+. Ansible コントローラーに Ansible コントローラーの前提条件をインストールします。
++
+[source, cli]
+----
+ansible-playbook -i hosts requirements.yml
+ansible-galaxy collection install -r collections/requirements.yml --force
+----
+. オンプレミス サーバーに対して移行前のタスクを実行します。
++
+[source, cli]
+----
+ansible-playbook -i hosts ora_pdb_relocate.yml -u admin -k -K -t ora_pdb_relo_onprem
+----
++
+
+NOTE: admin ユーザーは、sudo 権限を持つオンプレミスの Oracle サーバー ホスト上の管理ユーザーです。管理者ユーザーはパスワードで認証されます。
+
+. オンプレミスからターゲットの Azure Oracle ホストへの Oracle PDB の再配置を実行します。
++
+[source, cli]
+----
+ansible-playbook -i hosts ora_pdb_relocate.yml -u azureuser --private-key db1.pem -t ora_pdb_relo_primary
+----
++
+
+NOTE: Ansible コントローラーは、オンプレミスまたは Azure クラウドに配置できます。コントローラーは、オンプレミスの Oracle サーバー ホストと Azure Oracle VM ホストに接続する必要があります。  Oracle データベース ポート (1521 など) が、オンプレミスの Oracle サーバー ホストと Azure Oracle VM ホスト間で開いています。
+
+
+
+
+
+== 追加のOracleデータベース移行オプション
+
+追加の移行オプションについては、Microsoft のドキュメントを参照してください。link:https://learn.microsoft.com/en-us/azure/architecture/example-scenario/oracle-migrate/oracle-migration-overview["Oracle データベース移行の意思決定プロセス"^] 。

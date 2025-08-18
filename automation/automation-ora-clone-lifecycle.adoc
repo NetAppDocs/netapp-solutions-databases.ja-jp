@@ -1,0 +1,218 @@
+---
+sidebar: sidebar 
+permalink: automation/automation-ora-clone-lifecycle.html 
+keywords: Database, Oracle, DataGuard, AWS, FSx ONTAP, Azure, ANF, 
+summary: このソリューションは、プライマリ データベースから Oracle クローン データベースを設定、クローン作成、および更新するための Ansible ベースの自動化ツールキットを提供します。プライマリ データベースは、Oracle Data Guard 構成のフィジカル スタンバイ DB にすることができます。このソリューションは、プライベート データ センター、または NFS または ASM 構成の FSx ONTAPストレージを備えた AWS クラウド、あるいは NFS 構成のAzure NetApp Filesストレージを備えた Azure クラウドに適用できます。 
+---
+= SnapCenter Oracle クローンライフサイクル自動化
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、ニヤズ・モハメド、NetApp
+
+[role="lead"]
+このソリューションは、プライマリ データベースから Oracle クローン データベースを設定、クローン作成、および更新するための Ansible ベースの自動化ツールキットを提供します。プライマリ データベースは、Oracle Data Guard 構成のフィジカル スタンバイ DB にすることができます。このソリューションは、プライベート データ センター、または NFS または ASM 構成の FSx ONTAPストレージを備えた AWS クラウド、あるいは NFS 構成のAzure NetApp Filesストレージを備えた Azure クラウドに適用できます。
+
+
+
+== 目的
+
+プライベート データ センターまたはパブリック クラウドの特定のストレージ サービスでシン クローン機能が有効になっている場合、お客様はNetApp ONTAPストレージのFlexClone機能を使用して、数分で大規模なデータベース クローンを迅速に作成し、追加のストレージを節約できます。この Ansible ベースのツールキットは、 NetApp SnapCenterコマンドライン ユーティリティを使用して、スケジュールに従ってクローン Oracle データベースのセットアップ、クローン作成、更新を自動化し、ライフサイクル管理を合理化します。このツールキットは、オンプレミスまたはパブリック クラウド (AWS または Azure) のONTAPストレージに展開され、 NetApp SnapCenter UI ツールによって管理される Oracle データベースに適用されます。
+
+このソリューションは、次のユースケースに対応します。
+
+* Oracle データベース クローン仕様構成ファイルを設定します。
+* ユーザー定義のスケジュールに従ってクローン Oracle データベースを作成および更新します。
+
+
+
+
+== 観客
+
+このソリューションは次の人々を対象としています。
+
+* SnapCenterを使用して Oracle データベースを管理する DBA。
+* SnapCenterを使用してONTAPストレージを管理するストレージ管理者。
+* SnapCenter UI にアクセスできるアプリケーション所有者。
+
+
+
+
+== ライセンス
+
+このGitHubリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://github.com/NetApp/na_ora_hadr_failover_resync/blob/master/LICENSE.TXT["ライセンスファイル"^] 。
+
+
+NOTE: この GitHub リポジトリのコンテンツを使用した派生作品の作成および/または共有には一定の制限があります。コンテンツを使用する前に、必ずライセンスの条件をお読みください。すべての条件に同意しない場合は、このリポジトリのコンテンツにアクセスしたり、ダウンロードしたり、使用したりしないでください。
+
+
+
+== ソリューションの展開
+
+
+
+=== 展開の前提条件
+
+[%collapsible%open]
+====
+展開には次の前提条件が必要です。
+
+....
+Ansible controller:
+  Ansible v.2.10 and higher
+  ONTAP collection 21.19.1
+  Python 3
+  Python libraries:
+    netapp-lib
+    xmltodict
+    jmespath
+....
+....
+SnapCenter server:
+  version 5.0 and up, 6.1 for Azure NetApp Files
+  backup policy configured
+  Source database protected with a backup policy
+....
+....
+Oracle servers:
+  Source server managed by SnapCenter (In Data Guard, this would be the physical standby serer)
+  Target server managed by SnapCenter (clone DB host)
+....
+
+NOTE: 簡素化のため、クローン先の Oracle サーバーは、Oracle ソフトウェア スタックや Oracle ホームのディレクトリ レイアウトなど、スタンバイ Oracle サーバーと同じように構成する必要があります。
+
+====
+
+
+=== ツールキットをダウンロードする
+
+[%collapsible%open]
+====
+[source, cli]
+----
+git clone https://bitbucket.ngage.netapp.com/scm/ns-bb/na_oracle_clone_lifecycle.git
+----
+
+NOTE: 現時点では、このツールキットにアクセスできるのは、Bitbucket アクセス権を持つNetApp内部ユーザーのみです。関心のある外部ユーザーの場合は、アカウント チームにアクセスをリクエストするか、 NetAppソリューション エンジニアリング チームに問い合わせてください。
+
+====
+
+
+=== Ansibleターゲットホストファイルの設定
+
+[%collapsible%open]
+====
+ツールキットには、Ansible プレイブックが実行されるターゲットを定義する hosts ファイルが含まれています。通常、これはターゲットの Oracle クローン ホストです。以下はサンプルファイルです。ホスト エントリには、ターゲット ホストの IP アドレスと、管理者ユーザーがホストにアクセスして clone または refresh コマンドを実行するための ssh キーが含まれます。
+
+#Oracle クローンホスト
+
+....
+[clone_1]
+ora_04.cie.netapp.com ansible_host=10.61.180.29 ansible_ssh_private_key_file=ora_04.pem
+....
+ [clone_2]
+ [clone_3]
+====
+
+
+=== グローバル変数の設定
+
+[%collapsible%open]
+====
+Ansible プレイブックは、複数の変数ファイルから変数入力を受け取ります。以下はグローバル変数ファイル vars.yml の例です。
+
+ # ONTAP specific config variables
+ # SnapCtr specific config variables
+....
+snapctr_usr: xxxxxxxx
+snapctr_pwd: 'xxxxxxxx'
+....
+ backup_policy: 'Oracle Full offline Backup'
+ # Linux specific config variables
+ # Oracle specific config variables
+====
+
+
+=== ホスト変数の設定
+
+[%collapsible%open]
+====
+ホスト変数は、{{ host_name }}.yml という名前の host_vars ディレクトリに定義されます。以下は、一般的な構成を示すターゲット Oracle ホスト変数ファイル ora_04.cie.netapp.com.yml の例です。
+
+ # User configurable Oracle clone db host specific parameters
+....
+# Source database to clone from
+source_db_sid: NTAP1
+source_db_host: ora_03.cie.netapp.com
+....
+....
+# Clone database
+clone_db_sid: NTAP1DEV
+....
+ snapctr_obj_id: '{{ source_db_host }}\{{ source_db_sid }}'
+====
+
+
+=== 追加のクローンターゲットOracleサーバー構成
+
+[%collapsible%open]
+====
+クローン先の Oracle サーバーには、ソース Oracle サーバーと同一の Oracle ソフトウェア スタックがインストールされ、パッチが適用されている必要があります。 Oracle ユーザー .bash_profile には $ORACLE_BASE と $ORACLE_HOME が設定されています。また、$ORACLE_HOME 変数はソース Oracle サーバー設定と一致する必要があります。以下は例です。
+
+ # .bash_profile
+....
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+....
+....
+# User specific environment and startup programs
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/NTAP1
+....
+====
+
+
+=== プレイブックの実行
+
+[%collapsible%open]
+====
+SnapCenter CLI ユーティリティを使用して Oracle データベース クローン ライフサイクルを実行するためのプレイブックは合計 3 つあります。
+
+. Ansible コントローラーの前提条件をインストールします (1 回のみ)。
++
+[source, cli]
+----
+ansible-playbook -i hosts ansible_requirements.yml
+----
+. クローン仕様ファイルのセットアップ - 1 回のみ。
++
+[source, cli]
+----
+ansible-playbook -i hosts clone_1_setup.yml -u admin -e @vars/vars.yml
+----
+. シェル スクリプトを使用して crontab から定期的にクローン データベースを作成し、更新し、更新プレイブックを呼び出します。
++
+[source, cli]
+----
+0 */4 * * * /home/admin/na_oracle_clone_lifecycle/clone_1_refresh.sh
+----
+
+
+
+NOTE: SnapCenter構成のために、ユーザー名を sudo ユーザーに変更します。
+
+追加のクローン データベースの場合は、個別の clone_n_setup.yml、clone_n_refresh.yml、および clone_n_refresh.sh を作成します。それに応じて、Ansible ターゲット ホストと host_vars ディレクトリ内の hostname.yml ファイルを構成します。
+
+====
+
+
+== 詳細情報の入手方法
+
+NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]

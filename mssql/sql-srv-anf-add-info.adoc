@@ -1,0 +1,27 @@
+---
+sidebar: sidebar 
+permalink: mssql/sql-srv-anf-add-info.html 
+keywords:  
+summary:  
+---
+= 詳細情報の入手方法
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+このドキュメントに記載されている情報の詳細については、次の Web サイト リンクを参照してください。
+
+* Azure NetApp Filesを使用したソリューション アーキテクチャ
++
+https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-solution-architectures["https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-solution-architectures"^]
+
+* SQL Server の展開にAzure NetApp Filesを使用する利点
++
+https://docs.microsoft.com/en-us/azure/azure-netapp-files/solutions-benefits-azure-netapp-files-sql-server["https://docs.microsoft.com/en-us/azure/azure-netapp-files/solutions-benefits-azure-netapp-files-sql-server"^]
+
+

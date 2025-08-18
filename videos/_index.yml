@@ -1,0 +1,22 @@
+---
+indexpage:
+  title: NetAppデータベース ソリューションのビデオ
+  summary: Oracle、SQL Server、オープンソース、およびNetAppのハイブリッド データベース ソリューションに関するビデオをご覧ください。
+  lead: Oracle、SQL Server、オープンソース データベースにわたるデータベース ソリューションを紹介する NetApp の包括的なビデオ ライブラリをご覧ください。各コレクションは、特定のユースケースと統合シナリオに重点を置いています。
+  tiles:
+  - title: Oracleデータベースのビデオ
+    links:
+    - title: 展開と自動化
+      url: videos-oracle-videos.html#deployment-and-automation
+    - title: バックアップ、リカバリ、クローン作成
+      url: videos-oracle-videos.html#backup-recovery-and-cloning
+    - title: 近代化と移住
+      url: videos-oracle-videos.html#modernization-and-migration
+    - title: 高可用性、災害復旧、レプリケーション
+      url: videos-oracle-videos.html#high-availability-disaster-recovery-and-replication
+  - title: SQL Server とオープンソース データベースのビデオ
+    links:
+    - title: SQL Server ビデオ
+      url: videos-sqlserver-videos.html
+    - title: オープンソースデータベースのビデオ
+      url: videos-open-source-videos.html

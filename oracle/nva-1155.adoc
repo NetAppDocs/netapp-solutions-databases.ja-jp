@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: oracle/nva-1155.html 
+keywords:  
+summary:  
+---
+= NVA-1155: Cisco UCS とNetApp AFF A800 over FC を搭載したFlexPod Datacenter 上の Oracle 19c RAC データベース - 設計および導入ガイド
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、NetApp
+
+[role="lead"]
+このFlexPod Datacenter 上の Oracle 19c RAC データベースの設計および導入ガイド ( Cisco UCS およびNetApp AFF A800 over FC) では、Oracle Linux 8.2 オペレーティング システムと Red Hat 互換カーネルを搭載した最新のFlexPod Datacenter インフラストラクチャで Oracle RAC データベースをホストするためのソリューション設計の詳細と段階的な導入プロセスについて説明します。
+
+link:https://www.netapp.com/pdf.html?item=/media/25782-nva-1155.pdf["NVA-1155: FlexPod Datacenter 上の Oracle 19c RAC データベース ( Cisco UCS およびNetApp AFF A800 over FC を使用)"^]

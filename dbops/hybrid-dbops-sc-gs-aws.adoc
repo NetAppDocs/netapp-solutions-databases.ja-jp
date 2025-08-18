@@ -1,0 +1,330 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-gs-aws.html 
+summary: このセクションでは、AWS に Cloud Manager とCloud Volumes ONTAP をデプロイするプロセスについて説明します。 
+keywords: AWS, cloud volumes ontap, cloud manager, deploy 
+---
+= AWSパブリッククラウドを使い始める
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+このセクションでは、AWS に Cloud Manager とCloud Volumes ONTAP をデプロイするプロセスについて説明します。
+
+
+
+== AWSパブリッククラウド
+
+
+NOTE: 理解しやすくするために、AWS でのデプロイメントに基づいてこのドキュメントを作成しました。ただし、Azure と GCP のプロセスは非常に似ています。
+
+
+
+=== 1.飛行前点検
+
+展開前に、次の段階での展開を可能にするインフラストラクチャが整っていることを確認してください。これには次のものが含まれます。
+
+* AWSアカウント
+* 選択したリージョンのVPC
+* パブリックインターネットにアクセスできるサブネット
+* AWS アカウントに IAM ロールを追加するための権限
+* AWSユーザーの秘密鍵とアクセスキー
+
+
+
+
+=== 2.AWS に Cloud Manager とCloud Volumes ONTAPを導入する手順
+
+
+NOTE: Cloud Manager とCloud Volumes ONTAP をデプロイする方法は多数ありますが、この方法は最も簡単ですが、最も多くの権限が必要です。この方法がAWS環境に適していない場合は、 https://docs.netapp.com/us-en/occm/task_creating_connectors_aws.html["NetAppクラウド ドキュメント"^] 。
+
+
+
+==== Cloud Managerコネクタをデプロイする
+
+. 移動先 https://www.netapp.com/bluexp/?utm_campaign=b2d-port-all-na-amer-digi-wepp-brand-amer-1745924643379&utm_source=google&utm_medium=paidsearch&utm_content=nativead&gad_source=1&gad_campaignid=21281798861&gclid=EAIaIQobChMIv_GU0KDJjQMVEXRHAR2A2hJzEAAYASAAEgKAZ_D_BwE["NetAppBlueXP"^]ログインまたはサインアップしてください。
++
+image:cloud-central-login-page.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ログインすると、Canvas に移動します。
++
+image:cloud-central-canvas-page.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 「作業環境の追加」をクリックし、AWS でCloud Volumes ONTAP を選択します。ここでは、単一ノード システムを展開するか、高可用性ペアを展開するかも選択します。高可用性ペアを展開することを選択しました。
++
+image:cloud-central-add-we-026.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. コネクタが作成されていない場合は、コネクタの作成を求めるポップアップが表示されます。
++
+image:cloud-central-add-conn-001.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 「始めましょう」をクリックし、AWS を選択します。
++
+image:cloud-central-add-conn-003.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 秘密キーとアクセスキーを入力します。ユーザーが適切な権限を持っていることを確認してください。 https://mysupport.netapp.com/site/info/cloud-manager-policies["NetAppポリシーページ"^] 。
++
+image:cloud-central-add-conn-004.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. コネクタに名前を付け、 https://mysupport.netapp.com/site/info/cloud-manager-policies["NetAppポリシーページ"^]または、Cloud Manager にロールの作成を依頼します。
++
+image:cloud-central-add-conn-005.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. コネクタを展開するために必要なネットワーク情報を提供します。次の方法で、送信インターネット アクセスが有効になっていることを確認します。
++
+.. コネクタにパブリックIPアドレスを付与する
+.. コネクタにプロキシを与える
+.. コネクタにインターネットゲートウェイ経由でパブリックインターネットへのルートを与える
++
+image:cloud-central-add-conn-006.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+
+. セキュリティ グループを提供するか、新しいセキュリティ グループを作成して、SSH、HTTP、および HTTPs 経由でコネクタとの通信を提供します。自分の IP アドレスからのみコネクタへのアクセスを有効にしました。
++
+image:cloud-central-add-conn-007.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 概要ページの情報を確認し、「追加」をクリックしてコネクタをデプロイします。
++
+image:cloud-central-add-conn-008.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. コネクタはクラウド フォーメーション スタックを使用してデプロイされるようになりました。  Cloud Manager または AWS から進行状況を監視できます。
++
+image:cloud-central-add-conn-009.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. デプロイが完了すると、成功ページが表示されます。
++
+image:cloud-central-add-conn-010.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+
+
+
+==== Cloud Volumes ONTAPを導入する
+
+. 要件に応じて AWS とデプロイメントのタイプを選択します。
++
+image:cloud-central-add-we-001.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. サブスクリプションが割り当てられておらず、PAYGO で購入する場合は、「資格情報の編集」を選択します。
++
+image:cloud-central-add-we-002.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. [サブスクリプションの追加]を選択します。
++
+image:cloud-central-add-we-003.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 加入したい契約の種類を選択してください。私は従量課金制を選択しました。
++
+image:cloud-central-add-we-004.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. AWS にリダイレクトされます。[サブスクライブを続行] を選択します。
++
+image:cloud-central-add-we-005.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. サブスクライブすると、 NetApp Cloud Central にリダイレクトされます。すでに登録していてリダイレクトされない場合は、「ここをクリック」リンクを選択してください。
++
+image:cloud-central-add-we-006.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. Cloud Central にリダイレクトされ、サブスクリプションに名前を付けて、Cloud Central アカウントに割り当てる必要があります。
++
+image:cloud-central-add-we-007.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 成功すると、チェックマーク ページが表示されます。  Cloud Manager タブに戻ります。
++
+image:cloud-central-add-we-008.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. サブスクリプションが Cloud Central に表示されます。続行するには、「適用」をクリックします。
++
+image:cloud-central-add-we-009.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 次のような作業環境の詳細を入力します。
++
+.. クラスタ名
+.. クラスターパスワード
+.. AWS タグ (オプション)
++
+image:cloud-central-add-we-010.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+
+. 展開する追加サービスを選択します。これらのサービスの詳細については、 https://bluexp.netapp.com/["BlueXP: 最新のデータ資産運用をシンプルに"^] 。
++
+image:cloud-central-add-we-011.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 複数のアベイラビリティゾーンにデプロイするか (それぞれ異なる AZ にある 3 つのサブネットが必要)、単一のアベイラビリティゾーンにデプロイするかを選択します。複数のAZを選択しました。
++
+image:cloud-central-add-we-012.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. クラスターをデプロイするリージョン、VPC、セキュリティ グループを選択します。このセクションでは、ノード (およびメディエーター) ごとに可用性ゾーンと、それらが占有するサブネットも割り当てます。
++
+image:cloud-central-add-we-013.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ノードとメディエーターの接続方法を選択します。
++
+image:cloud-central-add-we-014.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+
+
+TIP: メディエーターは AWS API との通信を必要とします。メディエーター EC2 インスタンスがデプロイされた後、API にアクセスできる限り、パブリック IP アドレスは必要ありません。
+
+. フローティング IP アドレスは、クラスタ管理やデータ サービス IP など、 Cloud Volumes ONTAPが使用するさまざまな IP アドレスへのアクセスを許可するために使用されます。これらは、ネットワーク内でまだルーティング可能ではなく、AWS 環境のルートテーブルに追加されるアドレスである必要があります。これらは、フェイルオーバー中に HA ペアの一貫した IP アドレスを有効にするために必要です。フローティングIPアドレスの詳細については、 https://docs.netapp.com/us-en/occm/reference_networking_aws.html#requirements-for-ha-pairs-in-multiple-azs["NetAppクラウド ドキュメント"^] 。
++
+image:cloud-central-add-we-015.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. フローティング IP アドレスを追加するルート テーブルを選択します。これらのルート テーブルは、クライアントがCloud Volumes ONTAPと通信するために使用されます。
++
+image:cloud-central-add-we-016.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ONTAPルート、ブート、およびデータ ディスクを暗号化するために、AWS 管理暗号化または AWS KMS を有効にするかどうかを選択します。
++
+image:cloud-central-add-we-017.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ライセンス モデルを選択します。どちらを選択すればよいかわからない場合は、 NetApp の担当者にお問い合わせください。
++
+image:cloud-central-add-we-018.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ユースケースに最適な構成を選択してください。これは、前提条件のページで説明されているサイズに関する考慮事項に関連しています。
++
+image:cloud-central-add-we-019.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 必要に応じてボリュームを作成します。次の手順ではボリュームを作成するSnapMirrorが使用されるため、これは必要ありません。
++
+image:cloud-central-add-we-020.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 選択内容を確認し、ボックスにチェックを入れて、Cloud Manager が AWS 環境にリソースをデプロイすることを理解していることを確認します。準備ができたら、「Go」をクリックします。
++
+image:cloud-central-add-we-021.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. Cloud Volumes ONTAPが展開プロセスを開始します。 Cloud Manager は、AWS API とクラウド フォーメーション スタックを使用してCloud Volumes ONTAP をデプロイします。次に、システムをお客様の仕様に合わせて構成し、すぐに使用できるシステムを提供します。このプロセスのタイミングは、選択した内容によって異なります。
++
+image:cloud-central-add-we-022.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. タイムラインに移動すると、進行状況を監視できます。
++
+image:cloud-central-add-we-023.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. タイムラインは、Cloud Manager で実行されたすべてのアクションの監査として機能します。セットアップ中に Cloud Manager によって AWS とONTAPクラスターの両方に対して行われたすべての API 呼び出しを表示できます。これは、直面する問題のトラブルシューティングにも効果的に使用できます。
++
+image:cloud-central-add-we-024.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. デプロイメントが完了すると、現在の容量を示す CVO クラスターがキャンバスに表示されます。現在の状態のONTAPクラスタは、すぐに使用できるように完全に構成されています。
++
+image:cloud-central-add-we-025.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+
+
+
+==== オンプレミスからクラウドへのSnapMirrorの設定
+
+ソースONTAPシステムと宛先ONTAPシステムがデプロイされたので、データベース データを含むボリュームをクラウドにレプリケートできます。
+
+SnapMirrorと互換性のあるONTAPバージョンに関するガイドについては、 https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.pow-dap%2FGUID-0810D764-4CEA-4683-8280-032433B1886B.html["SnapMirror互換性マトリックス"^] 。
+
+. ソースONTAPシステム (オンプレミス) をクリックし、それを宛先にドラッグ アンド ドロップするか、[レプリケーション] > [有効化] を選択するか、[レプリケーション] > [メニュー] > [レプリケート] を選択します。
++
+image:cloud-central-replication-001.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
++
+[有効にする]を選択します。
+
++
+image:cloud-central-replication-002.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
++
+またはオプション。
+
++
+image:cloud-central-replication-003.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
++
+複製します。
+
++
+image:cloud-central-replication-004.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. ドラッグ アンド ドロップしなかった場合は、複製先の宛先クラスターを選択します。
++
+image:cloud-central-replication-005.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 複製するボリュームを選択します。データとすべてのログ ボリュームを複製しました。
++
+image:cloud-central-replication-006.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 宛先ディスクの種類と階層化ポリシーを選択します。災害復旧のために、ディスク タイプとして SSD を使用し、データ階層化を維持することをお勧めします。データ階層化により、ミラーリングされたデータが低コストのオブジェクト ストレージに階層化され、ローカル ディスクにかかるコストが節約されます。関係を解除するかボリュームのクローンを作成すると、データは高速なローカル ストレージを使用します。
++
+image:cloud-central-replication-007.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 宛先ボリューム名を選択します。 `[source_volume_name]_dr` 。
++
+image:cloud-central-replication-008.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. レプリケーションの最大転送速度を選択します。これにより、VPN などのクラウドへの低帯域幅接続がある場合に帯域幅を節約できます。
++
+image:cloud-central-replication-009.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. レプリケーション ポリシーを定義します。最新のデータセットを取得して、それを宛先ボリュームに複製するミラーを選択しました。要件に応じて異なるポリシーを選択することもできます。
++
+image:cloud-central-replication-010.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. レプリケーションをトリガーするスケジュールを選択します。  NetApp、データ ボリュームについては「毎日」のスケジュールを設定し、ログ ボリュームについては「時間ごと」のスケジュールを設定することを推奨していますが、これは要件に応じて変更できます。
++
+image:cloud-central-replication-011.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. 入力した情報を確認し、[Go] をクリックしてクラスタ ピアと SVM ピアをトリガーし (2 つのクラスタ間で初めてレプリケートする場合)、 SnapMirror関係を実装して初期化します。
++
+image:cloud-central-replication-012.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. データ ボリュームとログ ボリュームに対してこのプロセスを続行します。
+. すべての関係を確認するには、Cloud Manager 内の [レプリケーション] タブに移動します。ここで関係を管理し、そのステータスを確認できます。
++
+image:cloud-central-replication-013.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+. すべてのボリュームが複製されると、安定した状態になり、災害復旧と開発/テストのワークフローに進む準備が整います。
+
+
+
+
+=== 3.データベースワークロード用の EC2 コンピューティングインスタンスをデプロイする
+
+AWS には、さまざまなワークロード向けに事前構成された EC2 コンピューティングインスタンスがあります。インスタンス タイプの選択によって、CPU コアの数、メモリ容量、ストレージのタイプと容量、ネットワーク パフォーマンスが決まります。これらのユースケースでは、OS パーティションを除いて、データベース ワークロードを実行するためのメイン ストレージは、CVO または FSx ONTAPストレージ エンジンから割り当てられます。したがって、考慮すべき主な要素は、CPU コア、メモリ、およびネットワーク パフォーマンス レベルの選択です。一般的な AWS EC2 インスタンスタイプについては、以下を参照してください。 https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#InstanceTypes:["EC2インスタンスタイプ"] 。
+
+
+
+==== コンピューティングインスタンスのサイズ設定
+
+. 必要なワークロードに基づいて適切なインスタンス タイプを選択します。考慮すべき要素には、サポートされるビジネス トランザクションの数、同時ユーザー数、データ セットのサイズなどがあります。
+. EC2 インスタンスのデプロイメントは、EC2 ダッシュボードから開始できます。正確な展開手順はこのソリューションの範囲外です。見る https://aws.amazon.com/pm/ec2/?trk=ps_a134p000004f2ZGAAY&trkCampaign=acq_paid_search_brand&sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=Google&sc_category=Cloud%20Computing&sc_country=US&sc_geo=NAMER&sc_outcome=acq&sc_detail=%2Bec2%20%2Bcloud&sc_content=EC2%20Cloud%20Compute_bmm&sc_matchtype=b&sc_segment=536455698896&sc_medium=ACQ-P|PS-GO|Brand|Desktop|SU|Cloud%20Computing|EC2|US|EN|Text&s_kwcid=AL!4422!3!536455698896!b!!g!!%2Bec2%20%2Bcloud&ef_id=EAIaIQobChMIua378M-p8wIVToFQBh0wfQhsEAMYASAAEgKTzvD_BwE:G:s&s_kwcid=AL!4422!3!536455698896!b!!g!!%2Bec2%20%2Bcloud["Amazon EC2"]詳細については。
+
+
+
+
+==== Oracle ワークロード用の Linux インスタンス構成
+
+このセクションでは、EC2 Linux インスタンスをデプロイした後の追加の設定手順について説明します。
+
+. SnapCenter管理ドメイン内の名前解決のために、DNS サーバーに Oracle スタンバイ インスタンスを追加します。
+. パスワードなしの sudo 権限を持つ Linux 管理ユーザー ID をSnapCenter OS 資格情報として追加します。  EC2 インスタンスで SSH パスワード認証を使用して ID を有効にします。  (デフォルトでは、EC2 インスタンスでは SSH パスワード認証とパスワードなしの sudo はオフになっています。)
+. OS パッチ、Oracle バージョンとパッチなど、オンプレミスの Oracle インストールと一致するように Oracle インストールを構成します。
+. NetApp Ansible DB 自動化ロールを活用して、データベースの開発/テストや災害復旧のユースケース向けに EC2 インスタンスを構成できます。自動化コードは、 NetAppの公開 GitHub サイトからダウンロードできます。 https://github.com/NetApp-Automation/na_oracle19c_deploy["Oracle 19c 自動デプロイメント"^] 。目標は、オンプレミスの OS とデータベース構成に合わせて、EC2 インスタンスにデータベース ソフトウェア スタックをインストールして構成することです。
+
+
+
+
+==== SQL Server ワークロードの Windows インスタンス構成
+
+このセクションでは、EC2 Windows インスタンスが最初にデプロイされた後の追加の構成手順を示します。
+
+. RDP 経由でインスタンスにログインするための Windows 管理者パスワードを取得します。
+. Windows ファイアウォールを無効にし、ホストを Windows SnapCenterドメインに参加させ、名前解決のためにインスタンスを DNS サーバーに追加します。
+. SQL Server ログ ファイルを保存するためのSnapCenterログ ボリュームをプロビジョニングします。
+. Windows ホストで iSCSI を構成してボリュームをマウントし、ディスク ドライブをフォーマットします。
+. 繰り返しになりますが、前述のタスクの多くは、SQL Server 向けのNetApp自動化ソリューションを使用して自動化できます。新しく公開されたロールとソリューションについては、 NetApp自動化の公開 GitHub サイトを確認してください。 https://github.com/NetApp-Automation["NetApp自動化"^] 。
+

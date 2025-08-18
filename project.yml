@@ -1,0 +1,270 @@
+---
+settings:
+  name: NetApp database solutions
+  internal:
+    pdf_enabled: true
+    lipi_enabled: true
+  prod:
+    pdf_enabled: true
+    harmony_enabled: false
+    lipi_enabled: true
+  pdf:
+    gen-type: named-only
+    zip-level: 1
+    zip-filename: netapp-solutions-databases.zip
+  langs: ja-jp,us-en,de-de,es-es,fr-fr,it-it,pt-br,ko-kr,zh-cn,zh-tw
+sidebar:
+  entries:
+  - title: データベースソリューション
+    url: "/index.html"
+  - title: 新機能
+    url: "/whats-new.html"
+  - title: Oracle Database
+    entries:
+    - title: AWS Cloud
+      entries:
+      - title: Pacemaker クラスタリングと FSx ONTAPを使用した AWS EC2 での Oracle HA
+        pdf-filename: Pacemaker クラスタリングと FSx ONTAPを使用した AWS EC2 での Oracle HA
+        url: "/oracle/aws-ora-ha-pacemaker.html"
+      - title: iSCSI を使用したAmazon FSx ONTAPでの簡素化された自動化された Oracle 導入
+        pdf-filename: iSCSI を使用したAmazon FSx ONTAPでの簡素化された自動化された Oracle 導入
+        url: "/automation/automation-ora-aws-fsx-iscsi.html"
+      - title: VMware Cloud on AWS 上の Oracle とゲストマウントされた FSx ONTAP
+        pdf-filename: VMware Cloud on AWS 上の Oracle とゲストマウントされた FSx ONTAP
+        url: "/oracle/aws-ora-fsx-vmc-guestmount.html"
+      - title: Amazon FSx ONTAPによる Oracle Active Data Guard のコスト削減
+        pdf-filename: Amazon FSx ONTAPによる Oracle Active Data Guard のコスト削減
+        url: "/oracle/aws-ora-fsx-ec2-data-guard.html"
+      - title: Amazon FSx ONTAPを使用した Oracle VLDB の迅速なリカバリとクローン作成
+        pdf-filename: Amazon FSx ONTAPを使用した Oracle VLDB の迅速なリカバリとクローン作成
+        url: "/oracle/aws-ora-fsx-ec2-inc-merge.html"
+      - title: NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動
+        pdf-filename: AWS FSx/EC2 で NFS/ASM を使用して Oracle 19c をスタンドアロンで再起動する
+        url: "/oracle/aws-ora-fsx-ec2-nfs-asm.html"
+      - title: iSCSI/ASM を使用した AWS FSx/EC2 での Oracle データベースの導入と保護
+        pdf-filename: AWS FSx/EC2 における iSCSI/ASM を使用した Oracle データベースの導入と保護
+        url: "/oracle/aws-ora-fsx-ec2-iscsi-asm.html"
+      - title: AWS EC2 および FSx での Oracle データベースのデプロイメントのベストプラクティス
+        pdf-filename: AWS EC2 および FSx における Oracle データベースのデプロイメントのベストプラクティス
+        entries:
+        - title: ユースケース
+          url: "/oracle/aws-ora-fsx-ec2-deploy-intro.html"
+        - title: ソリューションアーキテクチャ
+          url: "/oracle/aws-ora-fsx-ec2-architecture.html"
+        - title: 考慮すべき要素
+          url: "/oracle/aws-ora-fsx-ec2-factors.html"
+        - title: 展開手順
+          url: "/oracle/aws-ora-fsx-ec2-procedures.html"
+        - title: データベース管理
+          url: "/oracle/aws-ora-fsx-ec2-mgmt.html"
+        - title: データベースの移行
+          url: "/oracle/aws-ora-fsx-ec2-migration.html"
+    - title: Azureクラウド
+      entries:
+      - title: ANF 上の高スループット Oracle VLDB 実装
+        pdf-filename: ANF 上の高スループット Oracle VLDB 実装
+        url: "/oracle/azure-ora-anf-vldb-dg.html"
+      - title: Azure NetApp Filesによる Oracle Active Data Guard のコスト削減
+        pdf-filename: Azure NetApp Filesによる Oracle Active Data Guard のコスト削減
+        url: "/oracle/azure-ora-anf-data-guard.html"
+      - title: ANF での増分マージによる Oracle VLDB の迅速なリカバリ
+        pdf-filename: ANF での増分マージによる Oracle VLDB の迅速なリカバリ
+        url: "/oracle/azure-ora-anf-inc-merge.html"
+      - title: NFS を使用したAzure NetApp Filesへの簡素化された自動化された Oracle の導入
+        pdf-filename: NFS を使用したAzure NetApp Filesへの簡素化された自動 Oracle デプロイメント
+        url: "/automation/automation-ora-anf-nfs.html"
+      - title: ANF 向け Oracle データベースの導入と移行のベスト プラクティス
+        pdf-filename: ANF 向け Oracle データベースの導入と移行のベスト プラクティス
+        entries:
+        - title: ユースケース
+          url: "/oracle/azure-ora-nfile-usecase.html"
+        - title: ソリューションアーキテクチャ
+          url: "/oracle/azure-ora-nfile-architecture.html"
+        - title: 考慮すべき要素
+          url: "/oracle/azure-ora-nfile-factors.html"
+        - title: 展開手順
+          url: "/oracle/azure-ora-nfile-procedures.html"
+        - title: データベースの移行
+          url: "/oracle/azure-ora-nfile-migration.html"
+    - title: Google Cloud
+      entries:
+      - title: Google Cloud NetApp Volumesのサーバー内増分マージにより Oracle VLDB のバックアップとリカバリを最適化
+        pdf-filename: Google Cloud NetApp Volumesのサーバー内増分マージによる Oracle VLDB バックアップとリカバリの最適化
+        url: "/oracle/gcp-ora-gcnv-inc-merge.html"
+      - title: Data Guard を使用したGoogle Cloud NetApp Volumesでの高スループット Oracle VLDB 実装
+        pdf-filename: Data Guardを使用したGCNVでの高スループットOracle VLDB実装
+        url: "/oracle/gcp-ora-gcnv-vldb-dg.html"
+      - title: '概要: Google Cloud NetApp Volumesを使用した Oracle データベース'
+        pdf-filename: '概要: Oracle Database とGoogle Cloud NetApp Volumes'
+        url: "/oracle/gcp-oracle-gcnv-overview.html"
+    - title: オンプレミスとハイブリッドクラウド
+      entries:
+      - title: vVolsを使用したVCFでのOracle RACの導入と保護
+        pdf-filename: vVolsを使用したVCFでのOracle RACの導入と保護
+        url: "/oracle/vcf-ora-rac-vvol.html"
+      - title: vVolsを使用したVCFでのOracle SIの導入と保護
+        pdf-filename: vVolsを使用したVCFでのOracle SIの導入と保護
+        url: "/oracle/vcf-ora-si-vvol.html"
+      - title: NFS を使用したNetApp C シリーズへの Oracle の導入を簡素化し、自動化
+        pdf-filename: NetApp CシリーズとNFSを使用した簡素化された自動化されたOracle導入
+        url: "/automation/automation-ora-c-series-nfs.html"
+      - title: iSCSI を使用したNetApp ASAへの Oracle の導入を簡素化、自動化
+        pdf-filename: iSCSI を使用したNetApp ASAへの簡素化された自動化された Oracle 導入
+        url: "/automation/automation-ora-asa-iscsi.html"
+      - title: FlexPod DataCenter 上の Oracle 19c RAC データベース、 Cisco UCS、 NetApp AFF
+          A800 over FC
+        pdf-filename: FlexPod DataCenter 上の Oracle 19c RAC データベース、 Cisco UCS、 NetApp
+          AFF A800 over FC
+        url: "/oracle/nva-1155.html"
+      - title: UNIX 上の Oracle とNetApp Clustered Data ONTAPを使用した NFS による SAP
+        pdf-filename: UNIX 上の Oracle とNetApp Clustered Data ONTAPを使用した NFS による SAP
+        url: "/oracle/tr-4250.html"
+      - title: NFS上のONTAP向けOracle 19cの自動導入
+        pdf-filename: NFS上のONTAP向けOracle 19cの自動導入
+        entries:
+        - title: 概要
+          url: "/automation/marketing-overview.html"
+        - title: 開始方法と要件
+          url: "/automation/getting-started-requirements.html"
+        - title: Oracle 19c AWX/Tower の自動導入
+          url: "/automation/awx-automation.html"
+        - title: Oracle 19c CLIの自動デプロイメント
+          url: "/automation/cli-automation.html"
+      - title: 自動化されたOracleデータ保護
+        pdf-filename: 自動化されたOracleデータ保護
+        entries:
+        - title: 概要
+          url: "/automation/db-protection-overview.html"
+        - title: 開始方法と要件
+          url: "/automation/db-protection-getting-started.html"
+        - title: AWX/Tower 向け Oracle データ保護の自動化
+          url: "/automation/db-protection-awx-automation.html"
+      - title: NetApp EFシリーズ上のOracleデータベース
+        url: "/oracle/tr-4794.html"
+  - title: Microsoft SQL Server
+    entries:
+    - title: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
+      pdf-filename: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
+      url: "/mssql/sqlsb-backup-restore-aws-fsxn.html"
+    - title: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
+      pdf-filename: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
+      url: "/mssql/sql-aws-ec2.html"
+    - title: Azure NetApp Files上の SQL Server
+      pdf-filename: Azure NetApp Files上の SQL Server
+      entries:
+      - title: 概要
+        url: "/mssql/sql-srv-anf-overview.html"
+      - title: 考慮すべき要素
+        url: "/mssql/sql-srv-anf-factors-to-consider.html"
+      - title: リファレンスデザイン（リアルタイム高レベル設計）
+        url: "/mssql/sql-srv-anf-ref-design-overview.html"
+      - title: まとめ
+        url: "/mssql/sql-srv-anf-conclusion.html"
+      - title: 詳細情報の入手方法
+        url: "/mssql/sql-srv-anf-add-info.html"
+    - title: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
+      pdf-filename: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
+      url: "/mssql/tr-4467.html"
+    - title: Microsoft SQL Server の近代化
+      pdf-filename: Microsoft SQL Server の近代化
+      url: "/mssql/na-446.html"
+    - title: ONTAPを使用した Microsoft SQL Server のベスト プラクティス ガイド
+      pdf-filename: ONTAPを使用した Microsoft SQL Server のベスト プラクティス ガイド
+      url: "/mssql/tr-4590.html"
+    - title: NetApp EFシリーズを使用したMicrosoft SQL Serverのベストプラクティスガイド
+      pdf-filename: NetApp EFシリーズでのMicrosoft SQL Serverのベスト プラクティス ガイド
+      url: "/mssql/tr-4764.html"
+  - title: オープンソースデータベース
+    entries:
+    - title: AWS FSx/EC2 での PostgreSQL HA デプロイメントと DR の自動化
+      pdf-filename: AWS FSx/EC2 における PostgreSQL HA デプロイメントと DR の自動化
+      url: "/postgres/aws-postgres-fsx-ec2-hadr.html"
+    - title: NetApp ONTAP上の MySQL データベース
+      pdf-filename: NetApp ONTAP上の MySQL データベース
+      url: "/mysql/tr-4722.html"
+  - title: データベース向けSnapCenter
+    entries:
+    - title: ONTAPでの PostgreSQL のバックアップ、リカバリ、クローン
+      pdf-filename: ONTAPでの PostgreSQL のバックアップ、リカバリ、クローン
+      url: "/postgres/snapctr-psql-ontap.html"
+    - title: SnapCenter Oracle クローンライフサイクル
+      pdf-filename: SnapCenter Oracle クローンライフサイクル
+      url: "/automation/automation-ora-clone-lifecycle.html"
+    - title: ANF 上の Oracle データベースのバックアップ、リカバリ、およびクローン
+      pdf-filename: ANF 上の Oracle データベースのバックアップ、リカバリ、およびクローン
+      url: "/oracle/snapctr-ora-azure-anf.html"
+    - title: Oracle向けBlueXP SaaS - Azure
+      pdf-filename: Oracle向けBlueXP SaaS - Azure
+      url: "/oracle/snapctr-svcs-ora-azure.html"
+    - title: Oracle向けBlueXP SaaS - AWS
+      pdf-filename: Oracle向けBlueXP SaaS - AWS
+      url: "/oracle/snapctr-svcs-ora.html"
+    - title: SnapCenterを使用したハイブリッド クラウド データベース ソリューション
+      pdf-filename: SnapCenterを使用したハイブリッド クラウド データベース ソリューション
+      entries:
+      - title: はじめに
+        url: "/dbops/hybrid-dbops-snapcenter-usecases.html"
+      - title: ソリューションアーキテクチャ
+        url: "/dbops/hybrid-dbops-sc-arch.html"
+      - title: ソリューション要件
+        url: "/dbops/hybrid-dbops-sc-requirements.html"
+      - title: 前提条件の構成
+        entries:
+        - title: 概要
+          url: "/dbops/hybrid-dbops-sc-prereq.html"
+        - title: オンプレミスの前提条件
+          url: "/dbops/hybrid-dbops-sc-prereq-onprem.html"
+        - title: パブリッククラウドの前提条件
+          url: "/dbops/hybrid-dbops-sc-prereq-cloud.html"
+      - title: はじめにの概要
+        entries:
+        - title: 概要
+          url: "/dbops/hybrid-dbops-sc-gs.html"
+        - title: オンプレミスで始める
+          url: "/dbops/hybrid-dbops-sc-gs-onprem.html"
+        - title: AWSパブリッククラウドを使い始める
+          url: "/dbops/hybrid-dbops-sc-gs-aws.html"
+      - title: クラウドへの開発/テストのバーストのワークフロー
+        url: "/dbops/hybrid-dbops-snapcenter-devtest.html"
+      - title: 災害復旧ワークフロー
+        url: "/dbops/hybrid-dbops-snapcenter-dr.html"
+  - title: 実際の顧客事例
+    entries:
+    - title: 医療製品会社がオンプレミスのSQLワークロードをAmazon FSx ONTAPに移行してコストを削減
+      url: "/mssql/customer-usecase-mssql-fsx1.html"
+  - title: DB自動化ツールキット
+    entries:
+    - title: サーバー内イメージバックアップによる Oracle VLDB クローンライフサイクルの自動化
+      url: "/oracle/automation-ora-bkup-clone.html"
+    - title: ASMを使用したGCNVでのOracleクローンライフサイクルの自動化
+      url: "/automation/automation-ora-clone-gcnv-asm.html"
+    - title: ASMを使用したANFでのOracleクローンライフサイクルの自動化
+      url: "/automation/automation-ora-clone-anf-asm.html"
+    - title: SnapCenter Oracle クローンのライフサイクル
+      url: "/automation/automation-ora-clone-lifecycle.html"
+    - title: Oracle移行
+      url: "/automation/automation-ora-migration.html"
+    - title: AWS FSx ONTAPを使用した Oracle HA/DR
+      url: "/automation/automation-ora-hadr-fsx.html"
+    - title: AWS FSx ONTAPとEC2のプロビジョニング
+      url: "/automation/automation-fsx-ec2-provision.html"
+  - title: DBサイジングツールキット
+    entries:
+    - title: ANF の Oracle サイズ設定ガイダンス
+      url: "/oracle/db-sizing-ora-anf.html"
+  - title: ビデオ
+    url: "/videos/index.html"
+    entries:
+    - title: Oracleデータベース
+      url: "/videos/videos-oracle-videos.html"
+    - title: オープンソースデータベース
+      url: "/videos/videos-open-source-videos.html"
+    - title: SQL Server データベース
+      url: "/videos/videos-sqlserver-videos.html"
+  - title: ブログ
+    url: "/blogs.html"
+  - title: 法律上の表示
+    url: "/legal-notices.html"
+product-family:
+  name: NetApp solutions
+  repo: netapp-solutions-family

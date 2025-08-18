@@ -1,0 +1,171 @@
+---
+sidebar: sidebar 
+permalink: dbops/hybrid-dbops-sc-prereq-onprem.html 
+summary: SnapCenterハイブリッド クラウド データベース ワークロード環境を準備するには、このセクションで説明するタスクをオンプレミスで完了する必要があります。 
+keywords: prerequisites, on prem, on premises, installation, security, automation 
+---
+= オンプレミスの前提条件
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+SnapCenterハイブリッド クラウド データベース ワークロード環境を準備するには、次のタスクをオンプレミスで完了する必要があります。
+
+
+
+== SnapCenterのインストールと構成
+
+NetApp SnapCenterツールは Windows ベースのアプリケーションであり、通常は Windows ドメイン環境で実行されますが、ワークグループ展開も可能です。これは、集中管理サーバー ( SnapCenterサーバー) と、データベース ワークロード用のデータベース サーバー ホスト上のSnapCenterプラグインを含む多層アーキテクチャに基づいています。ハイブリッド クラウドの展開に関する重要な考慮事項をいくつか紹介します。
+
+* *単一インスタンスまたは HA 展開。*  HA 展開により、単一のSnapCenterインスタンス サーバーに障害が発生した場合でも冗長性が確保されます。
+* *名前解決。*すべてのデータベース ホストを解決するには、 SnapCenterサーバー上で DNS を構成する必要があります。また、前方参照と逆参照のためにストレージ SVM 上で DNS を構成する必要があります。前方参照と逆参照の両方でSnapCenterサーバーとストレージ SVM を解決するには、データベース サーバー上で DNS を構成する必要もあります。
+* *ロールベース アクセス制御 (RBAC) の構成。*混合データベース ワークロードの場合、RBAC を使用して、Oracle データベースの管理者や SQL Server の管理者など、異なる DB プラットフォームの管理責任を分離する必要がある場合があります。  DB 管理者ユーザーに必要な権限を付与する必要があります。
+* *ポリシーベースのバックアップ戦略を有効にします。*バックアップの一貫性と信頼性を強化します。
+* *ファイアウォールで必要なネットワーク ポートを開きます。*オンプレミスのSnapCenterサーバーがクラウド DB ホストにインストールされたエージェントと通信するため。
+* *オンプレミスとパブリック クラウド間のSnapMirrorトラフィックを許可するには、ポートを開く必要があります。*  SnapCenterサーバーは、オンサイトのスナップショット バックアップをクラウド CVO ストレージ SVM に複製するためにONTAP SnapMirrorを使用します。
+
+
+インストール前の計画と検討を慎重に行った後、これをクリックしますlink:https://docs.netapp.com/us-en/snapcenter/install/requirements-to-install-snapcenter-server.html["SnapCenterインストールの前提条件"^]SnapCenter のインストールと構成の詳細については、こちらをご覧ください。
+
+
+
+== オンプレミスのデータベースサーバーのストレージ構成
+
+ストレージ パフォーマンスは、データベースとアプリケーションの全体的なパフォーマンスにおいて重要な役割を果たします。適切に設計されたストレージ レイアウトは、DB のパフォーマンスを向上させるだけでなく、データベースのバックアップとリカバリの管理も容易にします。ストレージ レイアウトを定義するときは、データベースのサイズ、データベースの予想されるデータ変更率、バックアップを実行する頻度など、いくつかの要素を考慮する必要があります。
+
+仮想化データベース ワークロード用に NFS または iSCSI のいずれかを使用してストレージ LUN をゲスト VM に直接接続すると、通常、VMDK 経由で割り当てられたストレージよりも優れたパフォーマンスが得られます。  NetApp、次の図に示す LUN 上の大規模 SQL Server データベースのストレージ レイアウトを推奨しています。
+
+image:storage-layout-sqlsvr-large.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+次の図は、LUN 上の小規模または中規模の SQL Server データベースに対してNetAppが推奨するストレージ レイアウトを示しています。
+
+image:storage-layout-sqlsvr-smallmedium.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+
+NOTE: ログ ディレクトリは、データベース回復のためのトランザクション ログ ロールアップを実行するSnapCenter専用です。非常に大規模なデータベースの場合、パフォーマンスを向上させるために、複数の LUN をボリュームに割り当てることができます。
+
+Oracle データベース ワークロードの場合、 SnapCenter は、物理デバイスまたは仮想デバイスとしてホストにマウントされるONTAPストレージによってサポートされるデータベース環境をサポートします。環境の重要度に応じて、データベース全体を 1 つまたは複数のストレージ デバイスでホストできます。通常、顧客は専用ストレージ上のデータ ファイルを、制御ファイル、REDO ファイル、アーカイブ ログ ファイルなどの他のすべてのファイルから分離します。これにより、管理者は、スナップショット テクノロジーを使用して、数秒から数分以内に大規模な重要なデータベース (ペタバイト規模) を迅速に復元 (ONTAP単一ファイルSnapRestore) したり、クローンを作成したりできるようになります。
+
+image:storage-layout-oracle-typical.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+レイテンシの影響を受けやすいミッション クリティカルなワークロードの場合、可能な限り最適なレイテンシを実現するために、さまざまな種類の Oracle ファイルに専用のストレージ ボリュームを展開する必要があります。大規模なデータベースの場合、ボリュームごとに複数の LUN (NetApp最大 8 個を推奨) をデータ ファイルに割り当てる必要があります。
+
+image:storage-layout-oracle-dedicated.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+小規模な Oracle データベースの場合、 SnapCenter は、同じストレージ ボリュームまたは LUN 上で複数のデータベースまたはデータベースの一部をホストできる共有ストレージ レイアウトをサポートします。このレイアウトの例として、すべてのデータベースのデータ ファイルを +DATA ASM ディスク グループまたはボリューム グループ上にホストできます。残りのファイル (REDO、アーカイブ ログ、制御ファイル) は、別の専用ディスク グループまたはボリューム グループ (LVM) でホストできます。このような展開シナリオを以下に示します。
+
+image:storage-layout-oracle-shared.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
+
+Oracle データベースの再配置を容易にするには、通常のバックアップ ポリシーに含まれる別の LUN に Oracle バイナリをインストールする必要があります。これにより、データベースを新しいサーバー ホストに再配置する場合でも、同期していない Oracle バイナリによる潜在的な問題が発生することなく、Oracle スタックをリカバリのために起動できるようになります。
+
+
+
+== ライセンス要件
+
+SnapCenterはNetAppからライセンス供与されたソフトウェアです。通常、オンプレミスのONTAPライセンスに含まれています。ただし、ハイブリッド クラウド展開の場合、ターゲット データ レプリケーションの宛先として CVO をSnapCenterに追加するために、 SnapCenterのクラウド ライセンスも必要です。詳細については、 SnapCenter標準容量ベース ライセンスの次のリンクを確認してください。
+
+link:https://docs.netapp.com/us-en/snapcenter/install/concept_snapcenter_standard_controller_based_licenses.html["SnapCenter標準容量ベースライセンス"^]
+
+
+
+== ネットワークとセキュリティ
+
+開発/テストや災害復旧のためにクラウドにバースト可能なオンプレミスの運用データベースを必要とするハイブリッド データベース運用では、環境をセットアップしてオンプレミスのデータ センターからパブリック クラウドに接続する際に、ネットワークとセキュリティが考慮すべき重要な要素となります。
+
+パブリック クラウドでは通常、仮想プライベート クラウド (VPC) を使用して、パブリック クラウド プラットフォーム内のさまざまなユーザーを分離します。個々の VPC 内では、VPC のロックダウンに対するユーザーのニーズに基づいて構成可能なセキュリティ グループなどの手段を使用してセキュリティが制御されます。
+
+オンプレミスのデータセンターから VPC への接続は、VPN トンネルを通じて保護できます。  VPN ゲートウェイでは、インターネット上のホストから企業データセンター内のホストへのネットワーク接続を確立しようとする試みをブロックする NAT およびファイアウォール ルールを使用して、セキュリティを強化できます。
+
+ネットワークとセキュリティに関する考慮事項については、選択したパブリック クラウドの関連する受信および送信 CVO ルールを確認してください。
+
+* link:https://docs.netapp.com/us-en/occm/reference_security_groups.html#inbound-rules["CVO のセキュリティグループルール - AWS"]
+* link:https://docs.netapp.com/us-en/occm/reference_networking_azure.html#outbound-internet-access["CVO のセキュリティ グループ ルール - Azure"]
+* link:https://docs.netapp.com/us-en/occm/reference_networking_gcp.html#outbound-internet-access["CVO のファイアウォール ルール - GCP"]
+
+
+
+
+== Ansible 自動化を使用してオンプレミスとクラウド間で DB インスタンスを同期する (オプション)
+
+ハイブリッド クラウド データベース環境の管理を簡素化するために、 NetApp、オンプレミスとクラウドのコンピューティング インスタンスの同期を維持するなどの一部の管理タスクを自動化する Ansible コントローラの導入を強く推奨していますが、必須ではありません。これは、クラウド内の同期されていないコンピューティング インスタンスにより、カーネル パッケージの欠落やその他の問題により、クラウド内の回復されたデータベースにエラーが発生しやすくなる可能性があるため、特に重要です。
+
+Ansible コントローラの自動化機能を使用すると、 SnapMirrorインスタンスを分割して本番環境の DR データ コピーをアクティブ化するなど、特定のタスクに対してSnapCenter を拡張することもできます。
+
+RedHat または CentOS マシン用の Ansible コントロール ノードを設定するには、次の手順に従ってください。
+
+. Ansible コントロール ノードの要件:
++
+.. 次のパッケージがインストールされた RHEL/CentOS マシン:
++
+... Python3
+... ピップ3
+... Ansible (バージョン 2.10.0 以上)
+... ギット
+
+
+
+
+
+
+上記の要件がインストールされていない新しい RHEL/CentOS マシンがある場合は、以下の手順に従ってそのマシンを Ansible コントロール ノードとして設定します。
+
+. RHEL-8/RHEL-7 用の Ansible リポジトリを有効にする
++
+.. RHEL-8の場合（以下のコマンドをrootとして実行）
++
+[source, cli]
+----
+subscription-manager repos --enable ansible-2.9-for-rhel-8-x86_64-rpms
+----
+.. RHEL-7の場合（以下のコマンドをrootとして実行）
++
+[source, cli]
+----
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms
+----
+
+
+. 以下の内容をターミナルに貼り付けます
++
+[source, cli]
+----
+sudo yum -y install python3 >> install.log
+sudo yum -y install python3-pip >> install.log
+python3 -W ignore -m pip --disable-pip-version-check install ansible >> install.log
+sudo yum -y install git >> install.log
+----
+
+
+Ubuntu または Debian マシン用の Ansible コントロール ノードを設定するには、次の手順に従ってください。
+
+. Ansible コントロール ノードの要件:
++
+.. 次のパッケージがインストールされた Ubuntu/Debian マシン:
++
+... Python3
+... ピップ3
+... Ansible (バージョン 2.10.0 以上)
+... ギット
+
+
+
+
+
+
+上記の要件がインストールされていない新しい Ubuntu/Debian マシンがある場合は、以下の手順に従ってそのマシンを Ansible コントロール ノードとして設定してください。
+
+. 以下の内容をターミナルに貼り付けます
++
+[source, cli]
+----
+sudo apt-get -y install python3 >> outputlog.txt
+sudo apt-get -y install python3-pip >> outputlog.txt
+python3 -W ignore -m pip --disable-pip-version-check install ansible >> outputlog.txt
+sudo apt-get -y install git >> outputlog.txt
+----
+

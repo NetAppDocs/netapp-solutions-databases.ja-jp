@@ -1,0 +1,1914 @@
+---
+sidebar: sidebar 
+permalink: oracle/aws-ora-fsx-vmc-guestmount.html 
+keywords: Database, Oracle, AWS, FSx ONTAP, VMC, VMware 
+summary: このソリューションは、プライマリ データベース ストレージとして FSx ONTAPを使用し、ボリューム マネージャとして asm を使用してスタンドアロン ReStart で構成された Oracle データベースを使用した、AWS 内の VMware Cloud における Oracle の展開と保護の概要と詳細を提供します。 
+---
+= TR-4979: VMware Cloud on AWS における、ゲストマウントされた FSx ONTAPを使用した簡素化されたセルフマネージド Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、ニヤズ・モハメド、NetApp
+
+[role="lead"]
+このソリューションでは、プライマリ データベース ストレージとして FSx ONTAPを使用し、ボリューム マネージャとして asm を使用してスタンドアロン ReStart で構成された Oracle データベースを使用した、AWS 内の VMware Cloud での Oracle の展開と保護の概要と詳細を示します。
+
+
+
+== 目的
+
+企業は数十年にわたってプライベート データ センターで Oracle on VMware を実行してきました。  VMware Cloud (VMC) on AWS は、VMware のエンタープライズ クラスの Software-Defined Data Center (SDDC) ソフトウェアを AWS クラウドの専用の柔軟なベアメタル インフラストラクチャに導入するためのプッシュ ボタン ソリューションを提供します。 AWS FSx ONTAP は、VMC SDDC にプレミアムストレージとデータファブリックを提供し、AWS サービスへの最適化されたアクセスにより、vSphere ベースのプライベート、パブリック、ハイブリッド クラウド環境全体で Oracle などのビジネスクリティカルなアプリケーションを実行できるようにします。既存または新規の Oracle ワークロードのいずれであっても、VMC on AWS は、すべてのプラットフォーム管理と最適化を VMware に委ねながら、AWS クラウドのすべての利点を備えた、使い慣れた簡素化された自己管理型の Oracle 環境を VMware 上に提供します。
+
+このドキュメントでは、Amazon FSx ONTAP をプライマリデータベースストレージとして使用した VMC 環境での Oracle データベースのデプロイと保護について説明します。 Oracle データベースは、直接 VM ゲスト マウント LUN または NFS マウント VMware VMDK データストア ディスクとして FSx ストレージ上の VMC にデプロイできます。この技術レポートでは、iSCSI プロトコルと Oracle ASM を使用して VMC クラスター内の VM に直接ゲストマウントされた FSx ストレージとして Oracle データベースを展開することに焦点を当てています。また、 NetApp SnapCenter UI ツールを使用して、VMC on AWS でのストレージ効率の高いデータベース操作の開発/テストやその他のユースケースのために Oracle データベースをバックアップ、復元、およびクローン化する方法も示します。
+
+このソリューションは、次のユースケースに対応します。
+
+* Amazon FSx ONTAP をプライマリデータベースストレージとして使用した VMC on AWS での Oracle データベースのデプロイメント
+* NetApp SnapCenterツールを使用して VMC on AWS で Oracle データベースのバックアップとリストアを実行する
+* NetApp SnapCenterツールを使用して、VMC on AWS で開発/テストまたはその他のユースケース用の Oracle データベース クローンを作成する
+
+
+
+
+== 観客
+
+このソリューションは次の人々を対象としています。
+
+* Amazon FSx ONTAPを使用して VMC on AWS に Oracle を導入したい DBA
+* AWS クラウド上の VMC で Oracle ワークロードをテストしたいデータベース ソリューション アーキテクト
+* Amazon FSx ONTAPを使用して VMC on AWS にデプロイされた Oracle データベースをデプロイおよび管理したいストレージ管理者
+* AWSクラウド上のVMCでOracleデータベースを立ち上げたいアプリケーション所有者
+
+
+
+
+== ソリューションのテストおよび検証環境
+
+このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS 上の VMC を使用したラボ環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
+
+
+
+=== アーキテクチャ
+
+image:aws-ora-fsx-vmc-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
+
+
+
+=== ハードウェアおよびソフトウェアコンポーネント
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+| *ハードウェア* 
+
+
+| FSx ONTAPストレージ | AWSが提供する現在のバージョン | VMC と同じ VPC およびアベイラビリティゾーンにある 1 つの FSx ONTAP HA クラスター 
+
+
+| VMC SDDC クラスタ | Amazon EC2 i3.metal シングルノード/Intel Xeon E5-2686 CPU、36 コア/512G RAM | 10.37 TB vSANストレージ 
+
+
+3+| *ソフトウェア* 
+
+
+| レッドハットリナックス | RHEL-8.6、4.18.0-372.9.1.el8.x86_64 カーネル | テスト用にRedHatサブスクリプションを導入 
+
+
+| Windows Server | 2022 スタンダード、10.0.20348 ビルド 20348 | SnapCenterサーバーのホスティング 
+
+
+| Oracle グリッド・インフラストラクチャ | バージョン19.18 | RUパッチp34762026_190000_Linux-x86-64.zipを適用しました 
+
+
+| Oracle Database | バージョン19.18 | RUパッチp34765931_190000_Linux-x86-64.zipを適用しました 
+
+
+| Oracle OPatch | バージョン 12.2.0.1.36 | 最新パッチ p6880880_190000_Linux-x86-64.zip 
+
+
+| SnapCenter Server | バージョン4.9P1 | ワークグループ展開 
+
+
+| BlueXP backup and recovery | リリース 1.0 | ova vSphereプラグインVMとしてデプロイ 
+
+
+| VMware vSphere | バージョン8.0.1.00300 | VMware Tools、バージョン: 11365 - Linux、12352 - Windows 
+
+
+| Open JDK | バージョン java-1.8.0-openjdk.x86_64 | DB VM でのSnapCenterプラグインの要件 
+|===
+
+
+=== VMC on AWS での Oracle データベース構成
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+|  
+
+
+| *サーバ* | *データベース* | *DBストレージ* 
+
+
+| オラ_01 | cdb1(cdb1_pdb1,cdb1_pdb2,cdb1_pdb3) | FSx ONTAP上の VMDK データストア 
+
+
+| オラ_01 | cdb2(cdb2_pdb) | FSx ONTAP上の VMDK データストア 
+
+
+| オラ_02 | cdb3(cdb3_pdb1、cdb3_pdb2、cdb3_pdb3) | ゲストに直接マウントされた FSx ONTAP 
+
+
+| オラ_02 | cdb4(cdb4_pdb) | ゲストに直接マウントされた FSx ONTAP 
+|===
+
+
+=== 導入検討の重要な要素
+
+* *FSx から VMC への接続。* VMware Cloud on AWS に SDDC を展開すると、AWS アカウントと組織専用の VPC 内に SDDC が作成され、VMware によって管理されます。また、SDDC を、顧客 AWS アカウントと呼ばれる、自分に属する AWS アカウントに接続する必要があります。この接続により、SDDC は顧客アカウントに属する AWS サービスにアクセスできるようになります。  FSx ONTAPは、お客様のアカウントに導入される AWS サービスです。  VMC SDDC が顧客アカウントに接続されると、FSx ストレージは VMC SDDC 内の仮想マシンで直接ゲストマウントできるようになります。
+* *FSx ストレージ HA クラスターの単一またはマルチゾーン展開。*これらのテストと検証では、単一の AWS アベイラビリティーゾーンに FSx HA クラスターをデプロイしました。  NetAppでは、パフォーマンスを向上させ、アベイラビリティ ゾーン間のデータ転送料金を回避するために、FSx ONTAPと VMware Cloud on AWS を同じアベイラビリティ ゾーンに導入することを推奨しています。
+* *FSx ストレージ クラスターのサイズ設定。* Amazon FSx ONTAPストレージファイルシステムは、最大 160,000 の生の SSD IOPS、最大 4GBps のスループット、最大 192TiB の容量を提供します。ただし、デプロイ時の実際の要件に基づいて、プロビジョニングされた IOPS、スループット、およびストレージ制限 (最小 1,024 GiB) の観点からクラスターのサイズを決定できます。アプリケーションの可用性に影響を与えることなく、容量を動的に調整できます。
+* *Oracle データとログのレイアウト。*テストと検証では、データ用とログ用にそれぞれ 2 つの ASM ディスク グループを展開しました。  +DATA asm ディスク グループ内で、データ ボリュームに 4 つの LUN をプロビジョニングしました。 +LOGS asm ディスク グループ内で、ログ ボリュームに 2 つの LUN をプロビジョニングしました。一般的に、 Amazon FSx ONTAPボリューム内に複数の LUN を配置すると、パフォーマンスが向上します。
+* *iSCSI 構成* VMC SDDC 内のデータベース VM は、iSCSI プロトコルを使用して FSx ストレージに接続します。アプリケーションと iSCSI トラフィックのスループット要件を決定するには、Oracle AWR レポートを慎重に分析して、Oracle データベースのピーク I/O スループット要件を評価することが重要です。  NetApp、マルチパスが適切に構成された両方の FSx iSCSI エンドポイントに 4 つの iSCSI 接続を割り当てることも推奨しています。
+* *作成する各 Oracle ASM ディスク グループに使用する Oracle ASM 冗長性レベル。*  FSx ONTAP はすでに FSx クラスタ レベルでストレージをミラーリングしているため、外部冗長性を使用する必要があります。つまり、このオプションでは Oracle ASM がディスク グループの内容をミラーリングすることはできません。
+* *データベースのバックアップ。*  NetApp は、ユーザーフレンドリーな UI インターフェイスを備えたデータベースのバックアップ、リストア、クローン作成用のSnapCenter softwareスイートを提供しています。  NetApp、高速 (1 分未満) なスナップショット バックアップ、迅速な (数分) データベース リストア、およびデータベース クローンを実現するために、このような管理ツールを実装することを推奨しています。
+
+
+
+
+== ソリューションの展開
+
+次のセクションでは、Oracle ASM をデータベース ボリューム マネージャーとして使用し、単一ノードの再起動構成で DB VM に FSx ONTAPストレージを直接マウントして、VMC on AWS に Oracle 19c を展開するための手順を段階的に説明します。
+
+
+
+=== 展開の前提条件
+
+[%collapsible%open]
+====
+展開には次の前提条件が必要です。
+
+. VMware Cloud on AWS を使用したソフトウェア定義データセンター (SDDC) が作成されました。  VMCでSDDCを作成する方法の詳細については、VMwareのドキュメントを参照してください。link:https://docs.vmware.com/en/VMware-Cloud-on-AWS/services/com.vmware.vmc-aws.getting-started/GUID-3D741363-F66A-4CF9-80EA-AA2866D1834E.html["VMware Cloud on AWS を使い始める"^]
+. AWS アカウントが設定され、必要な VPC とネットワーク セグメントが AWS アカウント内に作成されています。  AWS アカウントは VMC SDDC にリンクされています。
+. AWS EC2 コンソールから、 Amazon FSx ONTAPストレージ HA クラスターをデプロイして、Oracle データベースボリュームをホストします。  FSxストレージの導入に慣れていない場合は、ドキュメントを参照してください。link:https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/creating-file-systems.html["FSx ONTAPファイルシステムの作成"^]ステップバイステップの手順については、こちらをご覧ください。
+. 上記の手順は、次の Terraform 自動化ツールキットを使用して実行できます。このツールキットは、SSH および FSx ファイル システム経由で VMC アクセス内の SDDC のジャンプ ホストとして EC2 インスタンスを作成します。実行する前に、手順をよく確認し、環境に合わせて変数を変更してください。
++
+....
+git clone https://github.com/NetApp-Automation/na_aws_fsx_ec2_deploy.git
+....
+. VMC に展開する Oracle 環境をホストするために、AWS 上の VMware SDDC で VM を構築します。このデモでは、Oracle DB サーバーとして 2 台の Linux VM、 SnapCenterサーバー用に 1 台の Windows サーバー、および必要に応じて Oracle のインストールまたは構成を自動化するための Ansible コントローラーとしてオプションの Linux サーバーを 1 台構築しました。以下は、ソリューション検証のためのラボ環境のスナップショットです。
++
+image:aws-ora-fsx-vmc-vm-008.png["VMC SDDC テスト環境を示すスクリーンショット。"]
+
+. オプションとして、 NetApp は、必要に応じて Oracle の導入と構成を実行するための自動化ツールキットもいくつか提供しています。
+
+
+
+NOTE: Oracle インストール ファイルをステージングするための十分なスペースを確保するため、Oracle VM ルート ボリュームに少なくとも 50G が割り当てられていることを確認します。
+
+====
+
+
+=== DB VMカーネル構成
+
+[%collapsible%open]
+====
+前提条件がプロビジョニングされたら、SSH 経由で管理者ユーザーとして Oracle VM にログインし、root ユーザーに sudo して、Oracle インストール用の Linux カーネルを構成します。  Oracle インストール ファイルは AWS S3 バケットにステージングされ、VM に転送できます。
+
+. ステージングディレクトリを作成する `/tmp/archive`フォルダを設定し、 `777`許可。
++
+[source, cli]
+----
+mkdir /tmp/archive
+----
++
+[source, cli]
+----
+chmod 777 /tmp/archive
+----
+. Oracleバイナリインストールファイルとその他の必要なrpmファイルをダウンロードしてステージングします。 `/tmp/archive`ディレクトリ。
++
+記載するインストールファイルのリストについては以下を参照してください。 `/tmp/archive` DB VM 上。
+
++
+....
+
+[admin@ora_02 ~]$ ls -l /tmp/archive/
+total 10539364
+-rw-rw-r--. 1 admin  admin         19112 Oct  4 17:04 compat-libcap1-1.10-7.el7.x86_64.rpm
+-rw-rw-r--. 1 admin  admin    3059705302 Oct  4 17:10 LINUX.X64_193000_db_home.zip
+-rw-rw-r--. 1 admin  admin    2889184573 Oct  4 17:11 LINUX.X64_193000_grid_home.zip
+-rw-rw-r--. 1 admin  admin        589145 Oct  4 17:04 netapp_linux_unified_host_utilities-7-1.x86_64.rpm
+-rw-rw-r--. 1 admin  admin         31828 Oct  4 17:04 oracle-database-preinstall-19c-1.0-2.el8.x86_64.rpm
+-rw-rw-r--. 1 admin  admin    2872741741 Oct  4 17:12 p34762026_190000_Linux-x86-64.zip
+-rw-rw-r--. 1 admin  admin    1843577895 Oct  4 17:13 p34765931_190000_Linux-x86-64.zip
+-rw-rw-r--. 1 admin  admin     124347218 Oct  4 17:13 p6880880_190000_Linux-x86-64.zip
+-rw-rw-r--. 1 admin  admin        257136 Oct  4 17:04 policycoreutils-python-utils-2.9-9.el8.noarch.rpm
+[admin@ora_02 ~]$
+
+....
+. ほとんどのカーネル構成要件を満たす Oracle 19c プレインストール RPM をインストールします。
++
+[source, cli]
+----
+yum install /tmp/archive/oracle-database-preinstall-19c-1.0-2.el8.x86_64.rpm
+----
+. 不足しているものをダウンロードしてインストールする `compat-libcap1`Linux 8 では。
++
+[source, cli]
+----
+yum install /tmp/archive/compat-libcap1-1.10-7.el7.x86_64.rpm
+----
+. NetAppから、 NetAppホスト ユーティリティをダウンロードしてインストールします。
++
+[source, cli]
+----
+yum install /tmp/archive/netapp_linux_unified_host_utilities-7-1.x86_64.rpm
+----
+. インストール `policycoreutils-python-utils`。
++
+[source, cli]
+----
+yum install /tmp/archive/policycoreutils-python-utils-2.9-9.el8.noarch.rpm
+----
+. オープン JDK バージョン 1.8 をインストールします。
++
+[source, cli]
+----
+yum install java-1.8.0-openjdk.x86_64
+----
+. iSCSI イニシエーター ユーティリティをインストールします。
++
+[source, cli]
+----
+yum install iscsi-initiator-utils
+----
+. sg3_utils をインストールします。
++
+[source, cli]
+----
+yum install sg3_utils
+----
+. device-mapper-multipath をインストールします。
++
+[source, cli]
+----
+yum install device-mapper-multipath
+----
+. 現在のシステムで透過的な巨大ページを無効にします。
++
+[source, cli]
+----
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+----
++
+[source, cli]
+----
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+----
+. 次の行を追加します `/etc/rc.local`無効にする `transparent_hugepage`再起動後。
++
+[source, cli]
+----
+vi /etc/rc.local
+----
++
+....
+  # Disable transparent hugepages
+          if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+            echo never > /sys/kernel/mm/transparent_hugepage/enabled
+          fi
+          if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+            echo never > /sys/kernel/mm/transparent_hugepage/defrag
+          fi
+....
+. selinuxを無効にするには `SELINUX=enforcing`に `SELINUX=disabled`。変更を有効にするには、ホストを再起動する必要があります。
++
+[source, cli]
+----
+vi /etc/sysconfig/selinux
+----
+. 次の行を追加します `limit.conf`ファイル記述子の制限とスタック サイズを設定します。
++
+[source, cli]
+----
+vi /etc/security/limits.conf
+----
++
+....
+
+*               hard    nofile          65536
+*               soft    stack           10240
+....
+. 次の手順でスワップ スペースが設定されていない場合は、DB VM にスワップ スペースを追加します。link:https://aws.amazon.com/premiumsupport/knowledge-center/ec2-memory-swap-file/["スワップファイルを使用して、Amazon EC2 インスタンスでスワップ領域として機能するメモリを割り当てるにはどうすればよいですか?"^]追加するスペースの正確な量は、最大 16G の RAM のサイズによって異なります。
+. 変化 `node.session.timeo.replacement_timeout`の中で `iscsi.conf`設定ファイルを 120 秒から 5 秒に変更します。
++
+[source, cli]
+----
+vi /etc/iscsi/iscsid.conf
+----
+. EC2 インスタンスで iSCSI サービスを有効にして開始します。
++
+[source, cli]
+----
+systemctl enable iscsid
+----
++
+[source, cli]
+----
+systemctl start iscsid
+----
+. データベース LUN マッピングに使用する iSCSI イニシエーター アドレスを取得します。
++
+[source, cli]
+----
+cat /etc/iscsi/initiatorname.iscsi
+----
+. asm 管理ユーザー (oracle) の asm グループを追加します。
++
+[source, cli]
+----
+groupadd asmadmin
+----
++
+[source, cli]
+----
+groupadd asmdba
+----
++
+[source, cli]
+----
+groupadd asmoper
+----
+. oracle ユーザーを変更して、asm グループをセカンダリ グループとして追加します (oracle ユーザーは、Oracle プレインストール RPM のインストール後に作成されている必要があります)。
++
+[source, cli]
+----
+usermod -a -G asmadmin oracle
+----
++
+[source, cli]
+----
+usermod -a -G asmdba oracle
+----
++
+[source, cli]
+----
+usermod -a -G asmoper oracle
+----
+. Linux ファイアウォールがアクティブになっている場合は停止して無効にします。
++
+[source, cli]
+----
+systemctl stop firewalld
+----
++
+[source, cli]
+----
+systemctl disable firewalld
+----
+. コメントを解除して、管理者ユーザーに対してパスワードなしのsudoを有効にする `# %wheel  ALL=(ALL)       NOPASSWD: ALL`/etc/sudoers ファイルの行。編集するにはファイルの権限を変更します。
++
+[source, cli]
+----
+chmod 640 /etc/sudoers
+----
++
+[source, cli]
+----
+vi /etc/sudoers
+----
++
+[source, cli]
+----
+chmod 440 /etc/sudoers
+----
+. EC2 インスタンスを再起動します。
+
+
+====
+
+
+=== FSx ONTAP LUN を DB VM にプロビジョニングしてマッピングする
+
+[%collapsible%open]
+====
+ssh および FSx クラスター管理 IP 経由で fsxadmin ユーザーとして FSx クラスターにログインし、コマンド ラインから 3 つのボリュームをプロビジョニングします。ボリューム内に LUN を作成し、Oracle データベースのバイナリ、データ、およびログ ファイルをホストします。
+
+. fsxadmin ユーザーとして SSH 経由で FSx クラスターにログインします。
++
+[source, cli]
+----
+ssh fsxadmin@10.49.0.74
+----
+. 次のコマンドを実行して、Oracle バイナリのボリュームを作成します。
++
+[source, cli]
+----
+vol create -volume ora_02_biny -aggregate aggr1 -size 50G -state online  -type RW -snapshot-policy none -tiering-policy snapshot-only
+----
+. 次のコマンドを実行して、Oracle データ用のボリュームを作成します。
++
+[source, cli]
+----
+vol create -volume ora_02_data -aggregate aggr1 -size 100G -state online  -type RW -snapshot-policy none -tiering-policy snapshot-only
+----
+. 次のコマンドを実行して、Oracle ログ用のボリュームを作成します。
++
+[source, cli]
+----
+vol create -volume ora_02_logs -aggregate aggr1 -size 100G -state online  -type RW -snapshot-policy none -tiering-policy snapshot-only
+----
+. 作成されたボリュームを検証します。
++
+[source, cli]
+----
+vol show ora*
+----
++
+コマンドからの出力:
+
++
+....
+FsxId0c00cec8dad373fd1::> vol show ora*
+Vserver   Volume       Aggregate    State      Type       Size  Available Used%
+--------- ------------ ------------ ---------- ---- ---------- ---------- -----
+nim       ora_02_biny  aggr1        online     RW         50GB    22.98GB   51%
+nim       ora_02_data  aggr1        online     RW        100GB    18.53GB   80%
+nim       ora_02_logs  aggr1        online     RW         50GB     7.98GB   83%
+....
+. データベース バイナリ ボリューム内にバイナリ LUN を作成します。
++
+[source, cli]
+----
+lun create -path /vol/ora_02_biny/ora_02_biny_01 -size 40G -ostype linux
+----
+. データベース データ ボリューム内にデータ LUN を作成します。
++
+[source, cli]
+----
+lun create -path /vol/ora_02_data/ora_02_data_01 -size 20G -ostype linux
+----
++
+[source, cli]
+----
+lun create -path /vol/ora_02_data/ora_02_data_02 -size 20G -ostype linux
+----
++
+[source, cli]
+----
+lun create -path /vol/ora_02_data/ora_02_data_03 -size 20G -ostype linux
+----
++
+[source, cli]
+----
+lun create -path /vol/ora_02_data/ora_02_data_04 -size 20G -ostype linux
+----
+. データベース ログ ボリューム内にログ LUN を作成します。
++
+[source, cli]
+----
+lun create -path /vol/ora_02_logs/ora_02_logs_01 -size 40G -ostype linux
+----
++
+[source, cli]
+----
+lun create -path /vol/ora_02_logs/ora_02_logs_02 -size 40G -ostype linux
+----
+. 上記の EC2 カーネル構成のステップ 14 から取得したイニシエーターを使用して、EC2 インスタンスの igroup を作成します。
++
+[source, cli]
+----
+igroup create -igroup ora_02 -protocol iscsi -ostype linux -initiator iqn.1994-05.com.redhat:f65fed7641c2
+----
+. 上記で作成した igroup に LUN をマップします。追加の LUN ごとに LUN ID を順番に増やします。
++
+[source, cli]
+----
+lun map -path /vol/ora_02_biny/ora_02_biny_01 -igroup ora_02 -vserver svm_ora -lun-id 0
+lun map -path /vol/ora_02_data/ora_02_data_01 -igroup ora_02 -vserver svm_ora -lun-id 1
+lun map -path /vol/ora_02_data/ora_02_data_02 -igroup ora_02 -vserver svm_ora -lun-id 2
+lun map -path /vol/ora_02_data/ora_02_data_03 -igroup ora_02 -vserver svm_ora -lun-id 3
+lun map -path /vol/ora_02_data/ora_02_data_04 -igroup ora_02 -vserver svm_ora -lun-id 4
+lun map -path /vol/ora_02_logs/ora_02_logs_01 -igroup ora_02 -vserver svm_ora -lun-id 5
+lun map -path /vol/ora_02_logs/ora_02_logs_02 -igroup ora_02 -vserver svm_ora -lun-id 6
+----
+. LUN マッピングを検証します。
++
+[source, cli]
+----
+mapping show
+----
++
+次のような結果が返されると予想されます。
+
++
+....
+FsxId0c00cec8dad373fd1::> mapping show
+  (lun mapping show)
+Vserver    Path                                      Igroup   LUN ID  Protocol
+---------- ----------------------------------------  -------  ------  --------
+nim        /vol/ora_02_biny/ora_02_u01_01            ora_02        0  iscsi
+nim        /vol/ora_02_data/ora_02_u02_01            ora_02        1  iscsi
+nim        /vol/ora_02_data/ora_02_u02_02            ora_02        2  iscsi
+nim        /vol/ora_02_data/ora_02_u02_03            ora_02        3  iscsi
+nim        /vol/ora_02_data/ora_02_u02_04            ora_02        4  iscsi
+nim        /vol/ora_02_logs/ora_02_u03_01            ora_02        5  iscsi
+nim        /vol/ora_02_logs/ora_02_u03_02            ora_02        6  iscsi
+....
+
+
+====
+
+
+=== DB VM ストレージ構成
+
+[%collapsible%open]
+====
+次に、Oracle グリッド インフラストラクチャとデータベースのインストール用に FSx ONTAPストレージを VMC データベース VM にインポートしてセットアップします。
+
+. Windows ジャンプ サーバーから Putty を使用して、管理者ユーザーとして SSH 経由で DB VM にログインします。
+. いずれかの SVM iSCSI IP アドレスを使用して FSx iSCSI エンドポイントを検出します。環境固有のポータル アドレスに変更します。
++
+[source, cli]
+----
+sudo iscsiadm iscsiadm --mode discovery --op update --type sendtargets --portal 10.49.0.12
+----
+. 各ターゲットにログインして iSCSI セッションを確立します。
++
+[source, cli]
+----
+sudo iscsiadm --mode node -l all
+----
++
+コマンドからの予想される出力は次のとおりです。
+
++
+....
+[ec2-user@ip-172-30-15-58 ~]$ sudo iscsiadm --mode node -l all
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:sn.1f795e65c74911edb785affbf0a2b26e:vs.3, portal: 10.49.0.12,3260]
+Logging in to [iface: default, target: iqn.1992-08.com.netapp:sn.1f795e65c74911edb785affbf0a2b26e:vs.3, portal: 10.49.0.186,3260]
+Login to [iface: default, target: iqn.1992-08.com.netapp:sn.1f795e65c74911edb785affbf0a2b26e:vs.3, portal: 10.49.0.12,3260] successful.
+Login to [iface: default, target: iqn.1992-08.com.netapp:sn.1f795e65c74911edb785affbf0a2b26e:vs.3, portal: 10.49.0.186,3260] successful.
+....
+. アクティブな iSCSI セッションのリストを表示および検証します。
++
+[source, cli]
+----
+sudo iscsiadm --mode session
+----
++
+iSCSI セッションを返します。
+
++
+....
+[ec2-user@ip-172-30-15-58 ~]$ sudo iscsiadm --mode session
+tcp: [1] 10.49.0.186:3260,1028 iqn.1992-08.com.netapp:sn.545a38bf06ac11ee8503e395ab90d704:vs.3 (non-flash)
+tcp: [2] 10.49.0.12:3260,1029 iqn.1992-08.com.netapp:sn.545a38bf06ac11ee8503e395ab90d704:vs.3 (non-flash)
+....
+. LUN がホストにインポートされたことを確認します。
++
+[source, cli]
+----
+sudo sanlun lun show
+----
++
+これにより、FSx から Oracle LUN のリストが返されます。
+
++
+....
+
+[admin@ora_02 ~]$ sudo sanlun lun show
+controller(7mode/E-Series)/                                                  device          host                  lun
+vserver(cDOT/FlashRay)        lun-pathname                                   filename        adapter    protocol   size    product
+-------------------------------------------------------------------------------------------------------------------------------
+nim                           /vol/ora_02_logs/ora_02_u03_02                 /dev/sdo        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_logs/ora_02_u03_01                 /dev/sdn        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_04                 /dev/sdm        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_03                 /dev/sdl        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_02                 /dev/sdk        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_01                 /dev/sdj        host34     iSCSI      20g     cDOT
+nim                           /vol/ora_02_biny/ora_02_u01_01                 /dev/sdi        host34     iSCSI      40g     cDOT
+nim                           /vol/ora_02_logs/ora_02_u03_02                 /dev/sdh        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_logs/ora_02_u03_01                 /dev/sdg        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_04                 /dev/sdf        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_03                 /dev/sde        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_02                 /dev/sdd        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_data/ora_02_u02_01                 /dev/sdc        host33     iSCSI      20g     cDOT
+nim                           /vol/ora_02_biny/ora_02_u01_01                 /dev/sdb        host33     iSCSI      40g     cDOT
+
+....
+. 設定する `multipath.conf`次のデフォルトおよびブラックリスト エントリを含むファイル。
++
+[source, cli]
+----
+sudo vi /etc/multipath.conf
+----
++
+次のエントリを追加します。
+
++
+....
+defaults {
+    find_multipaths yes
+    user_friendly_names yes
+}
+
+blacklist {
+    devnode "^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*"
+    devnode "^hd[a-z]"
+    devnode "^cciss.*"
+}
+....
+. マルチパス サービスを開始します。
++
+[source, cli]
+----
+sudo systemctl start multipathd
+----
++
+マルチパスデバイスが `/dev/mapper`ディレクトリ。
+
++
+....
+[ec2-user@ip-172-30-15-58 ~]$ ls -l /dev/mapper
+total 0
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e68512d -> ../dm-0
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685141 -> ../dm-1
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685142 -> ../dm-2
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685143 -> ../dm-3
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685144 -> ../dm-4
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685145 -> ../dm-5
+lrwxrwxrwx 1 root root       7 Mar 21 20:13 3600a09806c574235472455534e685146 -> ../dm-6
+crw------- 1 root root 10, 236 Mar 21 18:19 control
+....
+. SSH 経由で fsxadmin ユーザーとして FSx ONTAPクラスターにログインし、6c574xxx... で始まる各 LUN のシリアル 16 進数を取得します。16 進数は 3600a0980 で始まり、これが AWS ベンダー ID です。
++
+[source, cli]
+----
+lun show -fields serial-hex
+----
++
+次のように返されます。
+
++
+....
+FsxId02ad7bf3476b741df::> lun show -fields serial-hex
+vserver path                            serial-hex
+------- ------------------------------- ------------------------
+svm_ora /vol/ora_02_biny/ora_02_biny_01 6c574235472455534e68512d
+svm_ora /vol/ora_02_data/ora_02_data_01 6c574235472455534e685141
+svm_ora /vol/ora_02_data/ora_02_data_02 6c574235472455534e685142
+svm_ora /vol/ora_02_data/ora_02_data_03 6c574235472455534e685143
+svm_ora /vol/ora_02_data/ora_02_data_04 6c574235472455534e685144
+svm_ora /vol/ora_02_logs/ora_02_logs_01 6c574235472455534e685145
+svm_ora /vol/ora_02_logs/ora_02_logs_02 6c574235472455534e685146
+7 entries were displayed.
+....
+. 更新する `/dev/multipath.conf`マルチパスデバイスにユーザーフレンドリな名前を追加するファイルです。
++
+[source, cli]
+----
+sudo vi /etc/multipath.conf
+----
++
+次のエントリが含まれます:
+
++
+....
+multipaths {
+        multipath {
+                wwid            3600a09806c574235472455534e68512d
+                alias           ora_02_biny_01
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685141
+                alias           ora_02_data_01
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685142
+                alias           ora_02_data_02
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685143
+                alias           ora_02_data_03
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685144
+                alias           ora_02_data_04
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685145
+                alias           ora_02_logs_01
+        }
+        multipath {
+                wwid            3600a09806c574235472455534e685146
+                alias           ora_02_logs_02
+        }
+}
+....
+. マルチパスサービスを再起動して、以下のデバイスが `/dev/mapper`シリアル16進IDではなくLUN名に変更されました。
++
+[source, cli]
+----
+sudo systemctl restart multipathd
+----
++
+チェック `/dev/mapper`次のように返されます。
+
++
+....
+[ec2-user@ip-172-30-15-58 ~]$ ls -l /dev/mapper
+total 0
+crw------- 1 root root 10, 236 Mar 21 18:19 control
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_biny_01 -> ../dm-0
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_data_01 -> ../dm-1
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_data_02 -> ../dm-2
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_data_03 -> ../dm-3
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_data_04 -> ../dm-4
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_logs_01 -> ../dm-5
+lrwxrwxrwx 1 root root       7 Mar 21 20:41 ora_02_logs_02 -> ../dm-6
+....
+. バイナリ LUN を単一のプライマリ パーティションに分割します。
++
+[source, cli]
+----
+sudo fdisk /dev/mapper/ora_02_biny_01
+----
+. パーティション化されたバイナリ LUN を XFS ファイル システムでフォーマットします。
++
+[source, cli]
+----
+sudo mkfs.xfs /dev/mapper/ora_02_biny_01p1
+----
+. バイナリLUNをマウントする `/u01`。
++
+[source, cli]
+----
+sudo mkdir /u01
+----
++
+[source, cli]
+----
+sudo mount -t xfs /dev/mapper/ora_02_biny_01p1 /u01
+----
+. 変化 `/u01`マウント ポイントの所有権を Oracle ユーザーとそれに関連付けられたプライマリ グループに付与します。
++
+[source, cli]
+----
+sudo chown oracle:oinstall /u01
+----
+. バイナリ LUN の UUI を見つけます。
++
+[source, cli]
+----
+sudo blkid /dev/mapper/ora_02_biny_01p1
+----
+. マウントポイントを追加する `/etc/fstab`。
++
+[source, cli]
+----
+sudo vi /etc/fstab
+----
++
+次の行を追加します。
+
++
+....
+UUID=d89fb1c9-4f89-4de4-b4d9-17754036d11d       /u01    xfs     defaults,nofail 0       2
+....
+. root ユーザーとして、Oracle デバイスの udev ルールを追加します。
++
+[source, cli]
+----
+vi /etc/udev/rules.d/99-oracle-asmdevices.rules
+----
++
+次のエントリを含めます:
+
++
+....
+ENV{DM_NAME}=="ora*", GROUP:="oinstall", OWNER:="oracle", MODE:="660"
+....
+. root ユーザーとして、udev ルールを再ロードします。
++
+[source, cli]
+----
+udevadm control --reload-rules
+----
+. root ユーザーとして、udev ルールをトリガーします。
++
+[source, cli]
+----
+udevadm trigger
+----
+. root ユーザーとして、multipathd をリロードします。
++
+[source, cli]
+----
+systemctl restart multipathd
+----
+. EC2 インスタンス ホストを再起動します。
+
+
+====
+
+
+=== Oracle グリッド インフラストラクチャのインストール
+
+[%collapsible%open]
+====
+. SSH経由で管理者ユーザーとしてDB VMにログインし、コメントアウトを解除してパスワード認証を有効にします。 `PasswordAuthentication yes`そしてコメントアウトする `PasswordAuthentication no`。
++
+[source, cli]
+----
+sudo vi /etc/ssh/sshd_config
+----
+. sshd サービスを再起動します。
++
+[source, cli]
+----
+sudo systemctl restart sshd
+----
+. Oracle ユーザーのパスワードをリセットします。
++
+[source, cli]
+----
+sudo passwd oracle
+----
+. Oracle Restart ソフトウェア所有者ユーザー (oracle) としてログインします。次のように Oracle ディレクトリを作成します。
++
+[source, cli]
+----
+mkdir -p /u01/app/oracle
+----
++
+[source, cli]
+----
+mkdir -p /u01/app/oraInventory
+----
+. ディレクトリの権限設定を変更します。
++
+[source, cli]
+----
+chmod -R 775 /u01/app
+----
+. グリッド ホーム ディレクトリを作成し、そこに移動します。
++
+[source, cli]
+----
+mkdir -p /u01/app/oracle/product/19.0.0/grid
+----
++
+[source, cli]
+----
+cd /u01/app/oracle/product/19.0.0/grid
+----
+. グリッドインストールファイルを解凍します。
++
+[source, cli]
+----
+unzip -q /tmp/archive/LINUX.X64_193000_grid_home.zip
+----
+. グリッドホームから、 `OPatch`ディレクトリ。
++
+[source, cli]
+----
+rm -rf OPatch
+----
+. グリッドホームから解凍 `p6880880_190000_Linux-x86-64.zip`。
++
+[source, cli]
+----
+unzip -q /tmp/archive/p6880880_190000_Linux-x86-64.zip
+----
+. グリッドホームから修正 `cv/admin/cvu_config`コメントを外して置き換えます `CV_ASSUME_DISTID=OEL5`と `CV_ASSUME_DISTID=OL7`。
++
+[source, cli]
+----
+vi cv/admin/cvu_config
+----
+. 準備する `gridsetup.rsp`サイレントインストール用のファイルを作成し、rspファイルを `/tmp/archive`ディレクトリ。  rsp ファイルは、セクション A、B、および G に次の情報を含める必要があります。
++
+....
+INVENTORY_LOCATION=/u01/app/oraInventory
+oracle.install.option=HA_CONFIG
+ORACLE_BASE=/u01/app/oracle
+oracle.install.asm.OSDBA=asmdba
+oracle.install.asm.OSOPER=asmoper
+oracle.install.asm.OSASM=asmadmin
+oracle.install.asm.SYSASMPassword="SetPWD"
+oracle.install.asm.diskGroup.name=DATA
+oracle.install.asm.diskGroup.redundancy=EXTERNAL
+oracle.install.asm.diskGroup.AUSize=4
+oracle.install.asm.diskGroup.disks=/dev/mapper/ora_02_data_01,/dev/mapper/ora_02_data_02,/dev/mapper/ora_02_data_03,/dev/mapper/ora_02_data_04
+oracle.install.asm.diskGroup.diskDiscoveryString=/dev/mapper/*
+oracle.install.asm.monitorPassword="SetPWD"
+oracle.install.asm.configureAFD=true
+....
+. EC2インスタンスにルートユーザーとしてログインし、 `ORACLE_HOME`そして `ORACLE_BASE`。
++
+[source, cli]
+----
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/
+----
++
+[source, cli]
+----
+export ORACLE_BASE=/tmp
+----
++
+[source, cli]
+----
+cd /u01/app/oracle/product/19.0.0/grid/bin
+----
+. Oracle ASM フィルタ ドライバで使用するためにディスク デバイスを初期化します。
++
+[source, cli]
+----
+ ./asmcmd afd_label DATA01 /dev/mapper/ora_02_data_01 --init
+----
++
+[source, cli]
+----
+ ./asmcmd afd_label DATA02 /dev/mapper/ora_02_data_02 --init
+----
++
+[source, cli]
+----
+ ./asmcmd afd_label DATA03 /dev/mapper/ora_02_data_03 --init
+----
++
+[source, cli]
+----
+ ./asmcmd afd_label DATA04 /dev/mapper/ora_02_data_04 --init
+----
++
+[source, cli]
+----
+ ./asmcmd afd_label LOGS01 /dev/mapper/ora_02_logs_01 --init
+----
++
+[source, cli]
+----
+ ./asmcmd afd_label LOGS02 /dev/mapper/ora_02_logs_02 --init
+----
+. インストール `cvuqdisk-1.0.10-1.rpm`。
++
+[source, cli]
+----
+rpm -ivh /u01/app/oracle/product/19.0.0/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
+----
+. 設定解除 `$ORACLE_BASE`。
++
+[source, cli]
+----
+unset ORACLE_BASE
+----
+. OracleユーザーとしてEC2インスタンスにログインし、 `/tmp/archive`フォルダ。
++
+[source, cli]
+----
+unzip -q /tmp/archive/p34762026_190000_Linux-x86-64.zip -d /tmp/archive
+----
+. グリッドホーム/u01/app/oracle/product/19.0.0/gridからoracleユーザーとして起動します。 `gridSetup.sh`グリッド インフラストラクチャのインストール用。
++
+[source, cli]
+----
+ ./gridSetup.sh -applyRU /tmp/archive/34762026/ -silent -responseFile /tmp/archive/gridsetup.rsp
+----
+. root ユーザーとして、次のスクリプトを実行します。
++
+[source, cli]
+----
+/u01/app/oraInventory/orainstRoot.sh
+----
++
+[source, cli]
+----
+/u01/app/oracle/product/19.0.0/grid/root.sh
+----
+. root ユーザーとして、multipathd をリロードします。
++
+[source, cli]
+----
+systemctl restart multipathd
+----
+. Oracle ユーザーとして、次のコマンドを実行して構成を完了します。
++
+[source, cli]
+----
+/u01/app/oracle/product/19.0.0/grid/gridSetup.sh -executeConfigTools -responseFile /tmp/archive/gridsetup.rsp -silent
+----
+. Oracle ユーザーとして、LOGS ディスク グループを作成します。
++
+[source, cli]
+----
+bin/asmca -silent -sysAsmPassword 'yourPWD' -asmsnmpPassword 'yourPWD' -createDiskGroup -diskGroupName LOGS -disk 'AFD:LOGS*' -redundancy EXTERNAL -au_size 4
+----
+. Oracle ユーザーとして、インストール構成後にグリッド サービスを検証します。
++
+[source, cli]
+----
+bin/crsctl stat res -t
+----
++
+....
+[oracle@ora_02 grid]$ bin/crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.LISTENER.lsnr
+               ONLINE  INTERMEDIATE ora_02                   Not All Endpoints Re
+                                                             gistered,STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.asm
+               ONLINE  ONLINE       ora_02                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      ora_02                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+--------------------------------------------------------------------------------
+....
+. ASM フィルター ドライバーのステータスを検証します。
++
+....
+
+[oracle@ora_02 grid]$ export ORACLE_HOME=/u01/app/oracle/product/19.0.0/grid
+[oracle@ora_02 grid]$ export ORACLE_SID=+ASM
+[oracle@ora_02 grid]$ export PATH=$PATH:$ORACLE_HOME/bin
+[oracle@ora_02 grid]$ asmcmd
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304     81920    81780                0           81780              0             N  DATA/
+MOUNTED  EXTERN  N         512             512   4096  4194304     40960    40852                0           40852              0             N  LOGS/
+ASMCMD> afd_state
+ASMCMD-9526: The AFD state is 'LOADED' and filtering is 'ENABLED' on host 'ora_02'
+ASMCMD> exit
+[oracle@ora_02 grid]$
+
+....
+. HA サービスのステータスを検証します。
++
+....
+
+[oracle@ora_02 bin]$ ./crsctl check has
+CRS-4638: Oracle High Availability Services is online
+
+....
+
+
+====
+
+
+=== Oracleデータベースのインストール
+
+[%collapsible%open]
+====
+. Oracleユーザーとしてログインし、 `$ORACLE_HOME`そして `$ORACLE_SID`設定されている場合。
++
+[source, cli]
+----
+unset ORACLE_HOME
+----
++
+[source, cli]
+----
+unset ORACLE_SID
+----
+. Oracle DB ホーム ディレクトリを作成し、そのディレクトリに変更します。
++
+[source, cli]
+----
+mkdir /u01/app/oracle/product/19.0.0/cdb3
+----
++
+[source, cli]
+----
+cd /u01/app/oracle/product/19.0.0/cdb3
+----
+. Oracle DB インストール ファイルを解凍します。
++
+[source, cli]
+----
+unzip -q /tmp/archive/LINUX.X64_193000_db_home.zip
+----
+. DBホームから、 `OPatch`ディレクトリ。
++
+[source, cli]
+----
+rm -rf OPatch
+----
+. DBホームから解凍 `p6880880_190000_Linux-x86-64.zip`。
++
+[source, cli]
+----
+unzip -q /tmp/archive/p6880880_190000_Linux-x86-64.zip
+----
+. DBホームから修正 `cv/admin/cvu_config`コメントを外して置き換えます `CV_ASSUME_DISTID=OEL5`と `CV_ASSUME_DISTID=OL7`。
++
+[source, cli]
+----
+vi cv/admin/cvu_config
+----
+. から `/tmp/archive`ディレクトリで、DB 19.18 RU パッチを解凍します。
++
+[source, cli]
+----
+unzip -q /tmp/archive/p34765931_190000_Linux-x86-64.zip -d /tmp/archive
+----
+. DBサイレントインストールrspファイルを準備します `/tmp/archive/dbinstall.rsp`次の値を持つディレクトリ:
++
+....
+oracle.install.option=INSTALL_DB_SWONLY
+UNIX_GROUP_NAME=oinstall
+INVENTORY_LOCATION=/u01/app/oraInventory
+ORACLE_HOME=/u01/app/oracle/product/19.0.0/cdb3
+ORACLE_BASE=/u01/app/oracle
+oracle.install.db.InstallEdition=EE
+oracle.install.db.OSDBA_GROUP=dba
+oracle.install.db.OSOPER_GROUP=oper
+oracle.install.db.OSBACKUPDBA_GROUP=oper
+oracle.install.db.OSDGDBA_GROUP=dba
+oracle.install.db.OSKMDBA_GROUP=dba
+oracle.install.db.OSRACDBA_GROUP=dba
+oracle.install.db.rootconfig.executeRootScript=false
+....
+. cdb3 ホーム /u01/app/oracle/product/19.0.0/cdb3 から、サイレント ソフトウェアのみの DB インストールを実行します。
++
+[source, cli]
+----
+ ./runInstaller -applyRU /tmp/archive/34765931/ -silent -ignorePrereqFailure -responseFile /tmp/archive/dbinstall.rsp
+----
+. ルートユーザーとして、 `root.sh`ソフトウェアのみのインストール後のスクリプト。
++
+[source, cli]
+----
+/u01/app/oracle/product/19.0.0/db1/root.sh
+----
+. Oracleユーザーとして、 `dbca.rsp`次のエントリを含むファイル:
++
+....
+gdbName=cdb3.demo.netapp.com
+sid=cdb3
+createAsContainerDatabase=true
+numberOfPDBs=3
+pdbName=cdb3_pdb
+useLocalUndoForPDBs=true
+pdbAdminPassword="yourPWD"
+templateName=General_Purpose.dbc
+sysPassword="yourPWD"
+systemPassword="yourPWD"
+dbsnmpPassword="yourPWD"
+datafileDestination=+DATA
+recoveryAreaDestination=+LOGS
+storageType=ASM
+diskGroupName=DATA
+characterSet=AL32UTF8
+nationalCharacterSet=AL16UTF16
+listeners=LISTENER
+databaseType=MULTIPURPOSE
+automaticMemoryManagement=false
+totalMemory=8192
+....
+. Oracle ユーザーとして、dbca を使用して DB 作成を開始します。
++
+[source, cli]
+----
+bin/dbca -silent -createDatabase -responseFile /tmp/archive/dbca.rsp
+----
++
+出力：
+
+
+
+....
+
+Prepare for db operation
+7% complete
+Registering database with Oracle Restart
+11% complete
+Copying database files
+33% complete
+Creating and starting Oracle instance
+35% complete
+38% complete
+42% complete
+45% complete
+48% complete
+Completing Database Creation
+53% complete
+55% complete
+56% complete
+Creating Pluggable Databases
+60% complete
+64% complete
+69% complete
+78% complete
+Executing Post Configuration Actions
+100% complete
+Database creation complete. For details check the logfiles at:
+ /u01/app/oracle/cfgtoollogs/dbca/cdb3.
+Database Information:
+Global Database Name:cdb3.vmc.netapp.com
+System Identifier(SID):cdb3
+Look at the log file "/u01/app/oracle/cfgtoollogs/dbca/cdb3/cdb3.log" for further details.
+
+....
+. 手順 2 から同じ手順を繰り返して、単一の PDB を持つ別の ORACLE_HOME /u01/app/oracle/product/19.0.0/cdb4 にコンテナ データベース cdb4 を作成します。
+. Oracle ユーザーとして、DB 作成後に Oracle Restart HA サービスを確認し、すべてのデータベース (cdb3、cdb4) が HA サービスに登録されていることを確認します。
++
+[source, cli]
+----
+/u01/app/oracle/product/19.0.0/grid/crsctl stat res -t
+----
++
+出力：
+
++
+....
+
+[oracle@ora_02 bin]$ ./crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.LISTENER.lsnr
+               ONLINE  INTERMEDIATE ora_02                   Not All Endpoints Re
+                                                             gistered,STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.asm
+               ONLINE  ONLINE       ora_02                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      ora_02                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cdb3.db
+      1        ONLINE  ONLINE       ora_02                   Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /cdb3,STABLE
+ora.cdb4.db
+      1        ONLINE  ONLINE       ora_02                   Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /cdb4,STABLE
+ora.cssd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+--------------------------------------------------------------------------------
+....
+. Oracleユーザーを設定する `.bash_profile`。
++
+[source, cli]
+----
+vi ~/.bash_profile
+----
++
+次のエントリを追加します。
+
++
+....
+
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/db3
+export ORACLE_SID=db3
+export PATH=$PATH:$ORACLE_HOME/bin
+alias asm='export ORACLE_HOME=/u01/app/oracle/product/19.0.0/grid;export ORACLE_SID=+ASM;export PATH=$PATH:$ORACLE_HOME/bin'
+alias cdb3='export ORACLE_HOME=/u01/app/oracle/product/19.0.0/cdb3;export ORACLE_SID=cdb3;export PATH=$PATH:$ORACLE_HOME/bin'
+alias cdb4='export ORACLE_HOME=/u01/app/oracle/product/19.0.0/cdb4;export ORACLE_SID=cdb4;export PATH=$PATH:$ORACLE_HOME/bin'
+
+....
+. cdb3 用に作成された CDB/PDB を検証します。
++
+[source, cli]
+----
+cdb3
+----
++
+....
+
+[oracle@ora_02 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Oct 9 08:19:20 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+CDB3      READ WRITE
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB3_PDB1                      READ WRITE NO
+         4 CDB3_PDB2                      READ WRITE NO
+         5 CDB3_PDB3                      READ WRITE NO
+SQL>
+
+SQL> select name from v$datafile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/CDB3/DATAFILE/system.257.1149420273
++DATA/CDB3/DATAFILE/sysaux.258.1149420317
++DATA/CDB3/DATAFILE/undotbs1.259.1149420343
++DATA/CDB3/86B637B62FE07A65E053F706E80A27CA/DATAFILE/system.266.1149421085
++DATA/CDB3/86B637B62FE07A65E053F706E80A27CA/DATAFILE/sysaux.267.1149421085
++DATA/CDB3/DATAFILE/users.260.1149420343
++DATA/CDB3/86B637B62FE07A65E053F706E80A27CA/DATAFILE/undotbs1.268.1149421085
++DATA/CDB3/06FB206DF15ADEE8E065025056B66295/DATAFILE/system.272.1149422017
++DATA/CDB3/06FB206DF15ADEE8E065025056B66295/DATAFILE/sysaux.273.1149422017
++DATA/CDB3/06FB206DF15ADEE8E065025056B66295/DATAFILE/undotbs1.271.1149422017
++DATA/CDB3/06FB206DF15ADEE8E065025056B66295/DATAFILE/users.275.1149422033
+
+NAME
+--------------------------------------------------------------------------------
++DATA/CDB3/06FB21766256DF9AE065025056B66295/DATAFILE/system.277.1149422033
++DATA/CDB3/06FB21766256DF9AE065025056B66295/DATAFILE/sysaux.278.1149422033
++DATA/CDB3/06FB21766256DF9AE065025056B66295/DATAFILE/undotbs1.276.1149422033
++DATA/CDB3/06FB21766256DF9AE065025056B66295/DATAFILE/users.280.1149422049
++DATA/CDB3/06FB22629AC1DFD7E065025056B66295/DATAFILE/system.282.1149422049
++DATA/CDB3/06FB22629AC1DFD7E065025056B66295/DATAFILE/sysaux.283.1149422049
++DATA/CDB3/06FB22629AC1DFD7E065025056B66295/DATAFILE/undotbs1.281.1149422049
++DATA/CDB3/06FB22629AC1DFD7E065025056B66295/DATAFILE/users.285.1149422063
+
+19 rows selected.
+
+SQL>
+
+....
+. cdb4 用に作成された CDB/PDB を検証します。
++
+[source, cli]
+----
+cdb4
+----
++
+....
+
+[oracle@ora_02 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Oct 9 08:20:26 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+CDB4      READ WRITE
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB4_PDB                       READ WRITE NO
+SQL>
+
+SQL> select name from v$datafile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/CDB4/DATAFILE/system.286.1149424943
++DATA/CDB4/DATAFILE/sysaux.287.1149424989
++DATA/CDB4/DATAFILE/undotbs1.288.1149425015
++DATA/CDB4/86B637B62FE07A65E053F706E80A27CA/DATAFILE/system.295.1149425765
++DATA/CDB4/86B637B62FE07A65E053F706E80A27CA/DATAFILE/sysaux.296.1149425765
++DATA/CDB4/DATAFILE/users.289.1149425015
++DATA/CDB4/86B637B62FE07A65E053F706E80A27CA/DATAFILE/undotbs1.297.1149425765
++DATA/CDB4/06FC3070D5E12C23E065025056B66295/DATAFILE/system.301.1149426581
++DATA/CDB4/06FC3070D5E12C23E065025056B66295/DATAFILE/sysaux.302.1149426581
++DATA/CDB4/06FC3070D5E12C23E065025056B66295/DATAFILE/undotbs1.300.1149426581
++DATA/CDB4/06FC3070D5E12C23E065025056B66295/DATAFILE/users.304.1149426597
+
+11 rows selected.
+
+....
+. sqlplus を使用して各 CDB に sysdba としてログインし、両方の CDB の DB リカバリ先サイズを +LOGS ディスク グループ サイズに設定します。
++
+[source, cli]
+----
+alter system set db_recovery_file_dest_size = 40G scope=both;
+----
+. sqlplus を使用して sysdba として各 cdb にログインし、次のコマンド セットを順番に使用してアーカイブ ログ モードを有効にします。
++
+[source, cli]
+----
+sqlplus /as sysdba
+----
++
+[source, cli]
+----
+shutdown immediate;
+----
++
+[source, cli]
+----
+startup mount;
+----
++
+[source, cli]
+----
+alter database archivelog;
+----
++
+[source, cli]
+----
+alter database open;
+----
+
+
+これにより、Amazon FSx ONTAPストレージと VMC DB VM への Oracle 19c バージョン 19.18 の再起動のデプロイが完了します。必要に応じて、 NetAppOracle 制御ファイルとオンライン ログ ファイルを +LOGS ディスク グループに再配置することを推奨します。
+
+====
+
+
+=== SnapCenterによる Oracle のバックアップ、リストア、クローン作成
+
+
+
+==== SnapCenterのセットアップ
+
+[%collapsible%open]
+====
+SnapCenter は、データベース VM 上のホスト側プラグインを利用して、アプリケーション対応のデータ保護管理アクティビティを実行します。 Oracle向けNetApp SnapCenterプラグインの詳細については、このドキュメントを参照してください。link:https://docs.netapp.com/us-en/snapcenter/protect-sco/concept_what_you_can_do_with_the_snapcenter_plug_in_for_oracle_database.html["Plug-in for Oracle Databaseの機能"^] 。以下は、Oracle データベースのバックアップ、リカバリ、およびクローン作成のためにSnapCenterを設定するための大まかな手順を示しています。
+
+. NetAppサポート サイトからSnapCenter softwareの最新バージョンをダウンロードします。link:https://mysupport.netapp.com/site/downloads["NetAppサポート ダウンロード"^] 。
+. 管理者として、最新のJava JDKをインストールします。link:https://www.java.com/en/["デスクトップアプリケーション用のJavaを入手する"^] SnapCenterサーバーの Windows ホスト上。
++
+
+NOTE: Windows サーバーがドメイン環境に展開されている場合は、ドメイン ユーザーをSnapCenterサーバーのローカル管理者グループに追加し、ドメイン ユーザーを使用してSnapCenter のインストールを実行します。
+
+. インストール ユーザーとして HTTPS ポート 8846 経由でSnapCenter UI にログインし、 SnapCenter for Oracle を構成します。
+. アップデート `Hypervisor Settings`グローバル設定で。
++
+image:aws-ora-fsx-vmc-snapctr-001.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. Oracle データベースのバックアップ ポリシーを作成します。理想的には、障害発生時のデータ損失を最小限に抑えるために、より頻繁なバックアップ間隔を可能にする個別のアーカイブ ログ バックアップ ポリシーを作成します。
++
+image:aws-ora-fsx-vmc-snapctr-002.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. データベースサーバーの追加 `Credential`SnapCenterから DB VM へのアクセス用。資格情報には、Linux VM の場合は sudo 権限、Windows VM の場合は管理者権限が必要です。
++
+image:aws-ora-fsx-vmc-snapctr-003.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. FSx ONTAPストレージクラスタを追加する `Storage Systems`クラスター管理 IP を持ち、fsxadmin ユーザー ID で認証されます。
++
+image:aws-ora-fsx-vmc-snapctr-004.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. VMCにOracleデータベースVMを追加する `Hosts`前の手順 6 で作成したサーバー資格情報を使用します。
++
+image:aws-ora-fsx-vmc-snapctr-005.png["SnapCenter の構成を示すスクリーンショット。"]
+
+
+
+
+NOTE: SnapCenterサーバー名が DB VM からの IP アドレスに解決できること、および DB VM 名がSnapCenterサーバーからの IP アドレスに解決できることを確認します。
+
+====
+
+
+==== データベース バックアップ
+
+[%collapsible%open]
+====
+SnapCenter は、FSx ONTAPボリューム スナップショットを活用して、従来の RMAN ベースの方法に比べてデータベースのバックアップ、復元、クローン作成を大幅に高速化します。スナップショットの前にデータベースが Oracle バックアップ モードに設定されるので、スナップショットはアプリケーションの一貫性を保ちます。
+
+. から `Resources`タブでは、VM がSnapCenterに追加された後に VM 上のすべてのデータベースが自動的に検出されます。最初は、データベースのステータスは次のように表示されます。 `Not protected` 。
++
+image:aws-ora-fsx-vmc-snapctr-006.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. DB VM などの論理グループ別にデータベースをバックアップするためのリソース グループを作成します。この例では、VM ora_02 上のすべてのデータベースの完全なオンライン データベース バックアップを実行するために、ora_02_data グループを作成しました。リソース グループ ora_02_log は、VM 上でのみアーカイブ ログのバックアップを実行します。リソース グループを作成すると、バックアップを実行するスケジュールも定義されます。
++
+image:aws-ora-fsx-vmc-snapctr-007.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. リソースグループのバックアップは、クリックすることで手動で実行することもできます。 `Back up Now`リソース グループに定義されたポリシーを使用してバックアップを実行します。
++
+image:aws-ora-fsx-vmc-snapctr-008.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. バックアップジョブは、 `Monitor`実行中のジョブをクリックしてタブを開きます。
++
+image:aws-ora-fsx-vmc-snapctr-009.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. バックアップが成功すると、データベース ステータスにジョブのステータスと最新のバックアップ時刻が表示されます。
++
+image:aws-ora-fsx-vmc-snapctr-010.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. データベースをクリックして、各データベースのバックアップ セットを確認します。
++
+image:aws-ora-fsx-vmc-snapctr-011.png["SnapCenter の構成を示すスクリーンショット。"]
+
+
+
+====
+
+
+==== データベースの復旧
+
+[%collapsible%open]
+====
+SnapCenter は、スナップショット バックアップから Oracle データベースを復元および回復するためのさまざまなオプションを提供します。この例では、誤って削除されたテーブルを回復するためのポイントインタイム復元を示します。  VM ora_02 では、2 つのデータベース cdb3 と cdb4 が同じ +DATA および +LOGS ディスク グループを共有しています。  1 つのデータベースのデータベース復元は、他のデータベースの可用性に影響を与えません。
+
+. まず、テスト テーブルを作成し、テーブルに行を挿入して、ポイント イン タイム リカバリを検証します。
++
+....
+
+[oracle@ora_02 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Fri Oct 6 14:15:21 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+CDB3      READ WRITE
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB3_PDB1                      READ WRITE NO
+         4 CDB3_PDB2                      READ WRITE NO
+         5 CDB3_PDB3                      READ WRITE NO
+SQL>
+
+
+SQL> alter session set container=cdb3_pdb1;
+
+Session altered.
+
+SQL> create table test (id integer, dt timestamp, event varchar(100));
+
+Table created.
+
+SQL> insert into test values(1, sysdate, 'test oracle recovery on guest mounted fsx storage to VMC guest vm ora_02');
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from test;
+
+        ID
+----------
+DT
+---------------------------------------------------------------------------
+EVENT
+--------------------------------------------------------------------------------
+         1
+06-OCT-23 03.18.24.000000 PM
+test oracle recovery on guest mounted fsx storage to VMC guest vm ora_02
+
+
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+06-OCT-23 03.18.53.996678 PM -07:00
+
+....
+. SnapCenterから手動でスナップショット バックアップを実行します。それからテーブルを落とします。
++
+....
+
+SQL> drop table test;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+06-OCT-23 03.26.30.169456 PM -07:00
+
+SQL> select * from test;
+select * from test
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+....
+. 最後の手順で作成されたバックアップ セットから、ログ バックアップの SCN 番号をメモします。クリック `Restore`復元回復ワークフローを起動します。
++
+image:aws-ora-fsx-vmc-snapctr-012.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 復元範囲を選択します。
++
+image:aws-ora-fsx-vmc-snapctr-013.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 最後の完全なデータベース バックアップからのログ SCN までのリカバリ範囲を選択します。
++
+image:aws-ora-fsx-vmc-snapctr-014.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 実行するオプションの事前スクリプトを指定します。
++
+image:aws-ora-fsx-vmc-snapctr-015.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 実行するオプションの after スクリプトを指定します。
++
+image:aws-ora-fsx-vmc-snapctr-016.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 必要に応じてジョブレポートを送信します。
++
+image:aws-ora-fsx-vmc-snapctr-017.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 概要を確認してクリックします `Finish`復旧と復興を開始します。
++
+image:aws-ora-fsx-vmc-snapctr-018.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. Oracle Restart グリッド コントロールから、cdb3 が復元およびリカバリ中である一方で、cdb4 はオンラインで使用可能であることがわかります。
++
+image:aws-ora-fsx-vmc-snapctr-019.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. から `Monitor`タブでジョブを開いて詳細を確認します。
++
+image:aws-ora-fsx-vmc-snapctr-020.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. DB VM ora_02 から、正常なリカバリ後に削除されたテーブルがリカバリされたことを確認します。
++
+....
+
+[oracle@ora_02 bin]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Fri Oct 6 17:01:28 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+CDB3      READ WRITE
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB3_PDB1                      READ WRITE NO
+         4 CDB3_PDB2                      READ WRITE NO
+         5 CDB3_PDB3                      READ WRITE NO
+SQL> alter session set container=CDB3_PDB1;
+
+Session altered.
+
+SQL> select * from test;
+
+        ID
+----------
+DT
+---------------------------------------------------------------------------
+EVENT
+--------------------------------------------------------------------------------
+         1
+06-OCT-23 03.18.24.000000 PM
+test oracle recovery on guest mounted fsx storage to VMC guest vm ora_02
+
+
+SQL> select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+06-OCT-23 05.02.20.382702 PM -07:00
+
+SQL>
+
+....
+
+
+====
+
+
+==== データベース クローン
+
+[%collapsible%open]
+====
+この例では、同じバックアップ セットを使用して、異なる ORACLE_HOME 内の同じ VM 上のデータベースを複製します。これらの手順は、必要に応じて、バックアップからデータベースを VMC 内の別の VM に複製する場合にも同様に適用できます。
+
+. データベース cdb3 バックアップ リストを開きます。選択したデータバックアップから、 `Clone`データベースクローンワークフローを起動するボタン。
++
+image:aws-ora-fsx-vmc-snapctr-021.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. クローン データベースに SID という名前を付けます。
++
+image:aws-ora-fsx-vmc-snapctr-022.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. VMC でターゲット データベース ホストとして VM を選択します。同一の Oracle バージョンがホストにインストールされ、構成されている必要があります。
++
+image:aws-ora-fsx-vmc-snapctr-023.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. ターゲット ホスト上で適切な ORACLE_HOME、ユーザー、およびグループを選択します。資格情報はデフォルトのままにしておきます。
++
+image:aws-ora-fsx-vmc-snapctr-024.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. クローン データベースの構成またはリソース要件を満たすようにクローン データベース パラメータを変更します。
++
+image:aws-ora-fsx-vmc-snapctr-025.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 回復範囲を選択します。 `Until Cancel`バックアップ セット内の最後の利用可能なログ ファイルまでクローンを復元します。
++
+image:aws-ora-fsx-vmc-snapctr-026.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. 概要を確認し、クローンジョブを起動します。
++
+image:aws-ora-fsx-vmc-snapctr-027.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. クローンジョブの実行を監視する `Monitor`タブ。
++
+image:aws-ora-fsx-vmc-snapctr-028.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. クローンされたデータベースはすぐにSnapCenterに登録されます。
++
+image:aws-ora-fsx-vmc-snapctr-029.png["SnapCenter の構成を示すスクリーンショット。"]
+
+. DB VM ora_02 からは、クローン データベースも Oracle Restart グリッド コントロールに登録され、削除されたテスト テーブルは、以下に示すように、クローン データベース cdb3tst に復元されます。
++
+....
+
+[oracle@ora_02 ~]$ /u01/app/oracle/product/19.0.0/grid/bin/crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.LISTENER.lsnr
+               ONLINE  INTERMEDIATE ora_02                   Not All Endpoints Re
+                                                             gistered,STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.SC_2090922_CDB3TST.dg
+               ONLINE  ONLINE       ora_02                   STABLE
+ora.asm
+               ONLINE  ONLINE       ora_02                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      ora_02                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cdb3.db
+      1        ONLINE  ONLINE       ora_02                   Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /cdb3,STABLE
+ora.cdb3tst.db
+      1        ONLINE  ONLINE       ora_02                   Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /cdb4,STABLE
+ora.cdb4.db
+      1        ONLINE  ONLINE       ora_02                   Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /cdb4,STABLE
+ora.cssd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       ora_02                   STABLE
+--------------------------------------------------------------------------------
+
+[oracle@ora_02 ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.0.0/cdb4
+[oracle@ora_02 ~]$ export ORACLE_SID=cdb3tst
+[oracle@ora_02 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Oct 7 08:04:51 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+--------- --------------------
+CDB3TST   READ WRITE
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB3_PDB1                      READ WRITE NO
+         4 CDB3_PDB2                      READ WRITE NO
+         5 CDB3_PDB3                      READ WRITE NO
+SQL> alter session set container=CDB3_PDB1;
+
+Session altered.
+
+SQL> select * from test;
+
+        ID
+----------
+DT
+---------------------------------------------------------------------------
+EVENT
+--------------------------------------------------------------------------------
+         1
+06-OCT-23 03.18.24.000000 PM
+test oracle recovery on guest mounted fsx storage to VMC guest vm ora_02
+
+
+SQL>
+
+....
+
+
+これで、AWS 上の VMC SDDC での Oracle データベースのSnapCenterバックアップ、リストア、クローンのデモンストレーションが完了します。
+
+====
+
+
+== 詳細情報の入手方法
+
+このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。
+
+* VMware Cloud on AWS ドキュメント
++
+link:https://docs.vmware.com/en/VMware-Cloud-on-AWS/index.html["https://docs.vmware.com/en/VMware-Cloud-on-AWS/index.html"^]
+
+* 新しいデータベースのインストールによるスタンドアロン・サーバーへのOracle Grid Infrastructureのインストール
++
+link:https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-oracle-grid-infrastructure-for-a-standalone-server-with-a-new-database-installation.html#GUID-0B1CEE8C-C893-46AA-8A6A-7B5FAAEC72B3["https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-oracle-grid-infrastructure-for-a-standalone-server-with-a-new-database-installation.html#GUID-0B1CEE8C-C893-46AA-8A6A-7B5FAAEC72B3"^]
+
+* レスポンスファイルを使用したOracle Databaseのインストールと構成
++
+link:https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-and-configuring-oracle-database-using-response-files.html#GUID-D53355E9-E901-4224-9A2A-B882070EDDF7["https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-and-configuring-oracle-database-using-response-files.html#GUID-D53355E9-E901-4224-9A2A-B882070EDDF7"^]
+
+* Amazon FSx ONTAP
++
+link:https://aws.amazon.com/fsx/netapp-ontap/["https://aws.amazon.com/fsx/netapp-ontap/"^]
+
+

@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: videos/videos-open-source-videos.html 
+summary: NetAppの多くのソリューションの機能を説明するビデオとデモのシリーズ 
+keywords: netapp, solutions, videos, demos 
+---
+= NetAppによるオープンソース データベース向けデータベース ソリューションに関するビデオとデモをご覧ください
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+NetAppによるオープンソース データベース向けのデータベース ソリューションをご覧ください。
+
+.PostgreSQLの自動デプロイメント、HA/DRレプリケーションのセットアップ、フェイルオーバー、再同期
+video::c381b887-8c8b-4d7d-8b0f-b0c0010c5c04[panopto,width=360]

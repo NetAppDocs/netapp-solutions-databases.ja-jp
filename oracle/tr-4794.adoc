@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: oracle/tr-4794.html 
+keywords:  
+summary:  
+---
+= TR-4794: NetApp EFシリーズ上のOracleデータベース
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+ミッチ・ブラックバーン、エビン・カダヴィ、 NetApp
+
+[role="lead"]
+TR-4794 は、ストレージ管理者とデータベース管理者がNetApp EF シリーズ ストレージに Oracle を正常に導入できるようにすることを目的としています。
+
+link:https://www.netapp.com/pdf.html?item=/media/17248-tr4794pdf.pdf["TR-4794: NetApp EFシリーズ上のOracleデータベース"^]

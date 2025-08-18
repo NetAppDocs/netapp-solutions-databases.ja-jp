@@ -1,0 +1,281 @@
+---
+sidebar: sidebar 
+permalink: automation/db-protection-getting-started.html 
+keywords: Linux, RHEL Oracle19c, NFS, ONTAP 
+summary: このページでは、 NetApp ONTAPストレージに Oracle Data Protection を自動化して導入する方法について説明します。 
+---
+= 開始
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+このソリューションは、AWX/Tower 環境で実行されるように設計されています。
+
+
+
+== AWX/タワー
+
+AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホスト名) のインベントリの作成、資格情報の作成、 NetApp Automation Github から Ansible コードを取得するプロジェクトの構成、自動化を起動するジョブ テンプレートの設定についてガイドされます。
+
+. このソリューションは、プライベートクラウドシナリオ（オンプレミスからオンプレミス）とハイブリッドクラウド（オンプレミスからパブリッククラウドのCloud Volumes ONTAP [CVO]）で実行できるように設計されています。
+. 環境に固有の変数を入力し、それをコピーしてジョブ テンプレートの「Extra Vars」フィールドに貼り付けます。
+. 追加の変数がジョブ テンプレートに追加されたら、自動化を起動できます。
+. 自動化は、3 つのフェーズ (セットアップ、Oracle バイナリ、データベース、ログのレプリケーション スケジュール、ログのみのレプリケーション スケジュール) と、DR サイトでのデータベースの回復の 4 番目のフェーズで実行されるように設定されています。
+. CVOデータ保護に必要なキーとトークンを取得するための詳細な手順については、link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/authentication-tokens.html["CVO およびコネクタの展開の前提条件を収集する"^]
+
+
+
+
+== 要件
+
+[role="tabbed-block"]
+====
+.<strong class="big">オンプレミス</strong>
+--
+[cols="3, 9"]
+|===
+| 環境 | 要件 
+
+
+.4+| *Ansible環境* | AWX/タワー 
+
+
+| Ansible v.2.10以降 
+
+
+| Python 3 
+
+
+| Python ライブラリ - netapp-lib - xmltodict - jmespath 
+
+
+.3+| *ONTAP* | ONTAPバージョン 9.8 以降 
+
+
+| 2つのデータ集約 
+
+
+| NFS VLANとifgrpが作成されました 
+
+
+.5+| *Oracle サーバー* | RHEL 7/8 
+
+
+| Oracle Linux 7/8 
+
+
+| NFS、パブリック、およびオプションの管理用のネットワーク インターフェース 
+
+
+| ソース上の既存の Oracle 環境と、宛先 (DR サイトまたはパブリック クラウド) の同等の Linux オペレーティング システム 
+|===
+--
+.<strong class="big">CVO</strong>
+--
+[cols="3, 9"]
+|===
+| 環境 | 要件 
+
+
+.4+| *Ansible環境* | AWX/タワー 
+
+
+| Ansible v.2.10以降 
+
+
+| Python 3 
+
+
+| Python ライブラリ - netapp-lib - xmltodict - jmespath 
+
+
+.3+| *ONTAP* | ONTAPバージョン 9.8 以降 
+
+
+| 2つのデータ集約 
+
+
+| NFS VLANとifgrpが作成されました 
+
+
+.5+| *Oracle サーバー* | RHEL 7/8 
+
+
+| Oracle Linux 7/8 
+
+
+| NFS、パブリック、およびオプションの管理用のネットワーク インターフェース 
+
+
+| ソース上の既存の Oracle 環境と、宛先 (DR サイトまたはパブリック クラウド) の同等の Linux オペレーティング システム 
+
+
+| Oracle EC2インスタンスに適切なスワップ領域を設定します。デフォルトでは、一部のEC2インスタンスは0スワップでデプロイされます。 
+
+
+.4+| *クラウドマネージャー/AWS* | AWS アクセス/シークレットキー 
+
+
+| NetApp Cloud Managerアカウント 
+
+
+| NetApp Cloud Manager リフレッシュトークン 
+
+
+| AWS セキュリティグループにソースのクラスタ間 LIF を追加する 
+|===
+--
+====
+
+
+== 自動化の詳細
+
+[role="tabbed-block"]
+====
+.<strong class="big">オンプレミス</strong>
+--
+この自動デプロイメントは、3 つの個別のロールで構成される単一の Ansible プレイブックを使用して設計されています。ロールは、 ONTAP、Linux、および Oracle 構成用です。次の表は、自動化されるタスクを示しています。
+
+[cols="3, 9"]
+|===
+| Playbook | タスク 
+
+
+.5+| *オンタップセットアップ* | ONTAP環境の事前チェック 
+
+
+| ソースクラスタ上のクラスタ間LIFの作成（オプション） 
+
+
+| 宛先クラスタでのクラスタ間LIFの作成（オプション） 
+
+
+| クラスタとSVMピアリングの作成 
+
+
+| 宛先SnapMirrorの作成と指定されたOracleボリュームの初期化 
+
+
+.4+| *ora_replication_cg* | /etc/oratab で各データベースのバックアップモードを有効にする 
+
+
+| Oracleバイナリおよびデータベースボリュームのスナップショット 
+
+
+| Snapmirror 更新 
+
+
+| /etc/oratab で各データベースのバックアップモードをオフにします。 
+
+
+.3+| *ora_replication_log* | /etc/oratab で各データベースの現在のログを切り替える 
+
+
+| Oracleログボリュームのスナップショット 
+
+
+| Snapmirror 更新 
+
+
+.5+| *ora_recovery* | SnapMirrorを破棄する 
+
+
+| NFSを有効にし、宛先のOracleボリュームのジャンクションパスを作成します 
+
+
+| DR Oracleホストを構成する 
+
+
+| Oracleボリュームをマウントして検証する 
+
+
+| Oracleデータベースの回復と起動 
+|===
+--
+.<strong class="big">CVO</strong>
+--
+この自動デプロイメントは、3 つの個別のロールで構成される単一の Ansible プレイブックを使用して設計されています。ロールは、 ONTAP、Linux、および Oracle 構成用です。次の表は、自動化されるタスクを示しています。
+
+[cols="4, 9"]
+|===
+| Playbook | タスク 
+
+
+.7+| *cvo_セットアップ* | 環境の事前チェック 
+
+
+| AWS 設定/AWS アクセスキー ID/シークレットキー/デフォルトリージョン 
+
+
+| AWSロールの作成 
+
+
+| AWS でのNetApp Cloud Manager Connector インスタンスの作成 
+
+
+| AWS でのCloud Volumes ONTAP (CVO) インスタンスの作成 
+
+
+| オンプレミスのソースONTAPクラスタをNetApp Cloud Manager に追加する 
+
+
+| 宛先SnapMirrorの作成と指定されたOracleボリュームの初期化 
+
+
+.4+| *ora_replication_cg* | /etc/oratab で各データベースのバックアップモードを有効にする 
+
+
+| Oracleバイナリおよびデータベースボリュームのスナップショット 
+
+
+| Snapmirror 更新 
+
+
+| /etc/oratab で各データベースのバックアップモードをオフにします。 
+
+
+.3+| *ora_replication_log* | /etc/oratab で各データベースの現在のログを切り替える 
+
+
+| Oracleログボリュームのスナップショット 
+
+
+| Snapmirror 更新 
+
+
+.5+| *ora_recovery* | SnapMirrorを破棄する 
+
+
+| NFSを有効にし、宛先CVO上のOracleボリュームのジャンクションパスを作成します。 
+
+
+| DR Oracleホストを構成する 
+
+
+| Oracleボリュームをマウントして検証する 
+
+
+| Oracleデータベースの回復と起動 
+|===
+--
+====
+
+
+== デフォルトパラメータ
+
+自動化を簡素化するために、多くの必須 Oracle パラメータをデフォルト値で事前に設定してあります。通常、ほとんどの展開ではデフォルトのパラメータを変更する必要はありません。より上級のユーザーは、注意しながらデフォルトのパラメータを変更できます。デフォルトのパラメータは、defaults ディレクトリの下の各ロール フォルダにあります。
+
+
+
+== ライセンス
+
+Github リポジトリに記載されているライセンス情報を読む必要があります。このリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたはここに記載されたライセンスの条件に同意したことになります。link:https://github.com/NetApp-Automation/na_oracle19c_deploy/blob/master/LICENSE.TXT["ここをクリックしてください。"^] 。
+
+このリポジトリのコンテンツを使用した派生作品の作成および/または共有には一定の制限があることに注意してください。利用規約を必ずお読みくださいlink:https://github.com/NetApp-Automation/na_oracle19c_deploy/blob/master/LICENSE.TXT["ライセンス"^]コンテンツを使用する前に。すべての条件に同意しない場合は、このリポジトリのコンテンツにアクセスしたり、ダウンロードしたり、使用したりしないでください。
+
+準備ができたらクリックしますlink:db-protection-awx-automation.html["AWX/タワーの詳細な手順については、こちらをご覧ください"]。

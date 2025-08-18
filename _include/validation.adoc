@@ -1,0 +1,96 @@
+= どこに助けを求めたらいいですか?
+:allow-uri-read: 
+
+
+. Oracle ユーザーとして Oracle サーバーにログインし、次のコマンドを実行します。
++
+[source, cli]
+----
+ps -ef | grep ora
+----
++
+
+NOTE: インストールが期待通りに完了し、Oracle DBが起動した場合、Oracleプロセスが一覧表示されます。
+
+. データベースにログインして、db 構成設定と次のコマンド セットで作成された PDB を確認します。
++
+[source, cli]
+----
+[oracle@localhost ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Thu May 6 12:52:51 2021
+Version 19.8.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.8.0.0.0
+
+SQL>
+
+SQL> select name, log_mode from v$database;
+NAME      LOG_MODE
+--------- ------------
+CDB2      ARCHIVELOG
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 CDB2_PDB1                      READ WRITE NO
+         4 CDB2_PDB2                      READ WRITE NO
+         5 CDB2_PDB3                      READ WRITE NO
+
+col svrname form a30
+col dirname form a30
+select svrname, dirname, nfsversion from v$dnfs_servers;
+
+SQL> col svrname form a30
+SQL> col dirname form a30
+SQL> select svrname, dirname, nfsversion from v$dnfs_servers;
+
+SVRNAME                        DIRNAME                        NFSVERSION
+------------------------------ ------------------------------ ----------------
+172.21.126.200                 /rhelora03_u02                 NFSv3.0
+172.21.126.200                 /rhelora03_u03                 NFSv3.0
+172.21.126.200                 /rhelora03_u01                 NFSv3.0
+----
++
+これにより、dNFS が正常に動作していることが確認されます。
+
+. 次のコマンドを使用して、リスナー経由でデータベースに接続し、Oracle リスナーの構成を確認します。適切なリスナー ポートとデータベース サービス名に変更します。
++
+[source, cli]
+----
+[oracle@localhost ~]$ sqlplus system@//localhost:1523/cdb2_pdb1.cie.netapp.com
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Thu May 6 13:19:57 2021
+Version 19.8.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Enter password:
+Last Successful login time: Wed May 05 2021 17:11:11 -04:00
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.8.0.0.0
+
+SQL> show user
+USER is "SYSTEM"
+SQL> show con_name
+CON_NAME
+CDB2_PDB1
+----
++
+これにより、Oracle リスナーが正常に動作していることが確認されます。
+
+
+
+
+
+=== どこに助けを求めたらいいですか?
+
+ツールキットに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

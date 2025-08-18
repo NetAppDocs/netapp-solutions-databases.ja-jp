@@ -1,0 +1,930 @@
+---
+sidebar: sidebar 
+permalink: oracle/aws-ora-fsx-ec2-nfs-asm.html 
+keywords: Oracle, AWS, FSx ONTAP, Database, Oracle ASM, Oracle Restart, Oracle 19c, NFS, dNFS 
+summary: このソリューションは、NFS プロトコルを使用した AWS FSx ONTAPストレージおよび EC2 コンピューティングインスタンスでの Oracle データベースのデプロイメントと保護、および asm をボリューム マネージャーとして使用してスタンドアロン ReStart で構成された Oracle データベースの概要と詳細を提供します。 
+---
+= TR-4974: NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、ニヤズ・モハメド、NetApp
+
+[role="lead"]
+このソリューションでは、NFS プロトコルと、ボリューム マネージャーとして asm を使用してスタンドアロン ReStart で構成された Oracle データベースを使用した、AWS FSx ONTAPストレージおよび EC2 コンピューティング インスタンスでの Oracle データベースのデプロイメントと保護の概要と詳細を示します。
+
+
+
+== 目的
+
+ASM (Automatic Storage Management) は、多くの Oracle インストールで採用されている一般的な Oracle ストレージ ボリューム マネージャです。これは、Oracle が推奨するストレージ管理ソリューションでもあります。従来のボリューム マネージャーおよびファイル システムに代わる手段を提供します。 Oracle バージョン 11g 以降、ASM はデータベースではなくグリッド インフラストラクチャにパッケージ化されています。そのため、RAC を使用せずに Oracle ASM をストレージ管理に利用するには、Oracle Restart とも呼ばれるスタンドアロン サーバーに Oracle Grid Infrastructure をインストールする必要があります。そうすることで、本来は単純な Oracle データベースの導入がさらに複雑になります。ただし、名前が示すように、Oracle が再起動モードでデプロイされている場合、失敗した Oracle サービスは、ユーザーの介入なしにホストの再起動後に再起動され、ある程度の高可用性または HA 機能が提供されます。
+
+Oracle ASM は通常、FC、iSCSI ストレージ プロトコル、および LUN に RAW ストレージ デバイスとして導入されます。ただし、NFS プロトコルおよび NFS ファイル システム上の ASM も Oracle によってサポートされている構成です。このドキュメントでは、EC2 コンピューティングインスタンスを備えたAmazon FSx ONTAPストレージ環境に、NFS プロトコルと Oracle ASM を使用して Oracle 19c データベースをデプロイする方法を説明します。また、 NetApp BlueXPコンソールを介してNetApp SnapCenterサービスを使用し、AWS パブリック クラウドでのストレージ効率の高いデータベース操作の開発/テストやその他のユースケースのために Oracle データベースをバックアップ、復元、およびクローン化する方法も説明します。
+
+このソリューションは、次のユースケースに対応します。
+
+* NFS/ASM を使用したAmazon FSx ONTAPストレージと EC2 コンピューティングインスタンスでの Oracle データベースのデプロイメント
+* NFS/ASM を使用してパブリック AWS クラウドで Oracle ワークロードをテストおよび検証する
+* AWS にデプロイされた Oracle データベースの再起動機能のテストと検証
+
+
+
+
+== 観客
+
+このソリューションは次の人々を対象としています。
+
+* NFS/ASM を使用して AWS パブリッククラウドに Oracle を導入したい DBA。
+* AWS パブリッククラウドで Oracle ワークロードをテストしたいデータベース ソリューション アーキテクト。
+* AWS FSx ストレージにデプロイされた Oracle データベースをデプロイおよび管理したいストレージ管理者。
+* AWS FSx/EC2 で Oracle データベースを立ち上げたいアプリケーション所有者。
+
+
+
+
+== ソリューションのテストおよび検証環境
+
+このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx および EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
+
+
+
+=== アーキテクチャ
+
+image:aws-ora-fsx-ec2-nfs-asm-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
+
+
+
+=== ハードウェアおよびソフトウェアコンポーネント
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+| *ハードウェア* 
+
+
+| FSx ONTAPストレージ | AWSが提供する現在のバージョン | 同じ VPC およびアベイラビリティゾーン内の 1 つの FSx HA クラスター 
+
+
+| コンピューティング用のEC2インスタンス | t2.xlarge/4vCPU/16G | 2 つの EC2 T2 xlarge EC2 インスタンス (1 つはプライマリ DB サーバー、もう 1 つはクローン DB サーバー) 
+
+
+3+| *ソフトウェア* 
+
+
+| レッドハットリナックス | RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 | テスト用にRedHatサブスクリプションを導入 
+
+
+| Oracle グリッド・インフラストラクチャ | バージョン19.18 | RUパッチp34762026_190000_Linux-x86-64.zipを適用しました 
+
+
+| Oracle Database | バージョン19.18 | RUパッチp34765931_190000_Linux-x86-64.zipを適用しました 
+
+
+| Oracle OPatch | バージョン 12.2.0.1.36 | 最新パッチ p6880880_190000_Linux-x86-64.zip 
+
+
+| SnapCenterサービス | version | v2.3.1.2324 
+|===
+
+
+=== 導入検討の重要な要素
+
+* *EC2 コンピューティングインスタンス。*これらのテストと検証では、Oracle データベース コンピューティング インスタンスに AWS EC2 t2.xlarge インスタンス タイプを使用しました。 NetApp、データベース ワークロードに最適化されているため、本番環境での Oracle のコンピューティング インスタンスとして M5 タイプの EC2 インスタンスを使用することを推奨しています。実際のワークロード要件に基づいて、vCPU の数と RAM の量に応じて EC2 インスタンスのサイズを適切に設定する必要があります。
+* *FSx ストレージ HA クラスターの単一ゾーンまたはマルチゾーン展開。*これらのテストと検証では、単一の AWS アベイラビリティーゾーンに FSx HA クラスターをデプロイしました。本番環境での導入では、 NetApp は2 つの異なるアベイラビリティ ゾーンに FSx HA ペアを導入することを推奨しています。 FSx HA クラスターは常に、アクティブ/パッシブ ファイル システムのペアで同期ミラーリングされた HA ペアでプロビジョニングされ、ストレージ レベルの冗長性を提供します。マルチゾーン展開により、単一の AWS ゾーンで障害が発生した場合でも高可用性がさらに強化されます。
+* *FSx ストレージ クラスターのサイズ設定。* Amazon FSx ONTAPストレージファイルシステムは、最大 160,000 の生の SSD IOPS、最大 4GBps のスループット、最大 192TiB の容量を提供します。ただし、デプロイ時の実際の要件に基づいて、プロビジョニングされた IOPS、スループット、およびストレージ制限 (最小 1,024 GiB) の観点からクラスターのサイズを決定できます。アプリケーションの可用性に影響を与えることなく、容量を動的に調整できます。
+* *Oracle データとログのレイアウト。*テストと検証では、データ用とログ用にそれぞれ 2 つの ASM ディスク グループを展開しました。  +DATA asm ディスク グループ内で、データ NFS ファイル システム マウント ポイントに 4 つのディスクをプロビジョニングしました。 +LOGS asm ディスク グループ内で、logs NFS ファイル システム マウント ポイントに 2 つのディスクをプロビジョニングしました。大規模なデータベースの導入では、FSx ファイル システムにアンカーされた複数の NFS マウント ポイントを通じて分散された ASM NFS ディスクを使用して、複数の FSx ファイル システムにまたがる ASM ディスク グループを構築できます。この特定のセットアップは、4GBps を超えるデータベース スループットと 160,000 の生の SSD IOPS 要件を満たすように設計されています。
+* *dNFS 構成。* dNFS は Oracle カーネルに組み込まれており、Oracle を NFS ストレージに導入すると Oracle データベースのパフォーマンスが劇的に向上することが知られています。dNFS は Oracle バイナリにパッケージ化されていますが、デフォルトではオンになっていません。 NFS 上のすべての Oracle データベース デプロイメントでは、これをオンにする必要があります。大規模データベース用の複数の FSx ファイル システムを展開する場合は、dNFS マルチパスを適切に構成する必要があります。
+* *作成する各 Oracle ASM ディスク グループに使用する Oracle ASM 冗長性レベル。* FSxはすでにFSxクラスタレベルでストレージをミラーリングしているので、 `ONLY`外部冗長性を使用します。つまり、このオプションでは、Oracle ASM がディスク グループの内容をミラーリングすることはできません。これは、Oracle データベース データ ストレージ用の NFS では、Oracle レベルで ASM コンテンツをミラーリングするのには望ましくない HARD NFS マウント オプションが必要であるため、特に重要です。
+* *データベースのバックアップ。*  NetApp は、 NetApp BlueXPコンソール UI を通じて利用できるクラウドでのデータベースのバックアップ、リストア、クローン作成用のSnapCenter softwareサービスの SaaS バージョンを提供しています。  NetApp、高速 (1 分未満) なスナップショット バックアップ、迅速な (数分) データベース リストア、およびデータベースのクローン作成を実現するために、このようなサービスを実装することを推奨しています。
+
+
+
+
+== ソリューションの展開
+
+次のセクションでは、段階的な展開手順について説明します。
+
+
+
+=== 展開の前提条件
+
+[%collapsible%open]
+====
+展開には次の前提条件が必要です。
+
+. AWS アカウントが設定され、必要な VPC とネットワークセグメントが AWS アカウント内に作成されています。
+. AWS EC2 コンソールから、プライマリ Oracle DB サーバーとして 1 つ、オプションの代替クローン ターゲット DB サーバーとして 1 つの EC2 Linux インスタンスをデプロイする必要があります。環境設定の詳細については、前のセクションのアーキテクチャ図を参照してください。また、link:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html["Linuxインスタンスのユーザーガイド"^]詳細についてはこちらをご覧ください。
+. AWS EC2 コンソールから、 Amazon FSx ONTAPストレージ HA クラスターをデプロイして、Oracle データベースボリュームをホストします。  FSxストレージの導入に慣れていない場合は、ドキュメントを参照してください。link:https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/creating-file-systems.html["FSx ONTAPファイルシステムの作成"^]ステップバイステップの手順については、こちらをご覧ください。
+. ステップ2と3は、次のTerraform自動化ツールキットを使用して実行できます。このツールキットは、次の名前のEC2インスタンスを作成します。 `ora_01` FSxファイルシステムは `fsx_01`。実行する前に、手順を注意深く確認し、環境に合わせて変数を変更してください。
++
+....
+git clone https://github.com/NetApp-Automation/na_aws_fsx_ec2_deploy.git
+....
+
+
+
+NOTE: Oracle インストール ファイルをステージングするための十分なスペースを確保するために、EC2 インスタンスのルート ボリュームに少なくとも 50G が割り当てられていることを確認します。
+
+====
+
+
+=== EC2インスタンスのカーネル構成
+
+[%collapsible%open]
+====
+前提条件がプロビジョニングされたら、ec2-user として EC2 インスタンスにログインし、root ユーザーに sudo して、Oracle インストール用の Linux カーネルを構成します。
+
+. ステージングディレクトリを作成する `/tmp/archive`フォルダを設定し、 `777`許可。
++
+....
+mkdir /tmp/archive
+
+chmod 777 /tmp/archive
+....
+. Oracleバイナリインストールファイルとその他の必要なrpmファイルをダウンロードしてステージングします。 `/tmp/archive`ディレクトリ。
++
+記載するインストールファイルのリストについては以下を参照してください。 `/tmp/archive` EC2 インスタンス上。
+
++
+....
+[ec2-user@ip-172-30-15-58 ~]$ ls -l /tmp/archive
+total 10537316
+-rw-rw-r--. 1 ec2-user ec2-user      19112 Mar 21 15:57 compat-libcap1-1.10-7.el7.x86_64.rpm
+-rw-rw-r--  1 ec2-user ec2-user 3059705302 Mar 21 22:01 LINUX.X64_193000_db_home.zip
+-rw-rw-r--  1 ec2-user ec2-user 2889184573 Mar 21 21:09 LINUX.X64_193000_grid_home.zip
+-rw-rw-r--. 1 ec2-user ec2-user     589145 Mar 21 15:56 netapp_linux_unified_host_utilities-7-1.x86_64.rpm
+-rw-rw-r--. 1 ec2-user ec2-user      31828 Mar 21 15:55 oracle-database-preinstall-19c-1.0-2.el8.x86_64.rpm
+-rw-rw-r--  1 ec2-user ec2-user 2872741741 Mar 21 22:31 p34762026_190000_Linux-x86-64.zip
+-rw-rw-r--  1 ec2-user ec2-user 1843577895 Mar 21 22:32 p34765931_190000_Linux-x86-64.zip
+-rw-rw-r--  1 ec2-user ec2-user  124347218 Mar 21 22:33 p6880880_190000_Linux-x86-64.zip
+-rw-r--r--  1 ec2-user ec2-user     257136 Mar 22 16:25 policycoreutils-python-utils-2.9-9.el8.noarch.rpm
+....
+. ほとんどのカーネル構成要件を満たす Oracle 19c プレインストール RPM をインストールします。
++
+....
+yum install /tmp/archive/oracle-database-preinstall-19c-1.0-2.el8.x86_64.rpm
+....
+. 不足しているものをダウンロードしてインストールする `compat-libcap1`Linux 8 では。
++
+....
+yum install /tmp/archive/compat-libcap1-1.10-7.el7.x86_64.rpm
+....
+. NetAppから、 NetAppホスト ユーティリティをダウンロードしてインストールします。
++
+....
+yum install /tmp/archive/netapp_linux_unified_host_utilities-7-1.x86_64.rpm
+....
+. インストール `policycoreutils-python-utils`EC2 インスタンスでは使用できません。
++
+....
+yum install /tmp/archive/policycoreutils-python-utils-2.9-9.el8.noarch.rpm
+....
+. オープン JDK バージョン 1.8 をインストールします。
++
+....
+yum install java-1.8.0-openjdk.x86_64
+....
+. nfs-utils をインストールします。
++
+....
+yum install nfs-utils
+....
+. 現在のシステムで透過的な巨大ページを無効にします。
++
+....
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+....
++
+次の行を追加します `/etc/rc.local`無効にする `transparent_hugepage`再起動後:
+
++
+....
+  # Disable transparent hugepages
+          if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+            echo never > /sys/kernel/mm/transparent_hugepage/enabled
+          fi
+          if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+            echo never > /sys/kernel/mm/transparent_hugepage/defrag
+          fi
+....
+. selinuxを無効にするには `SELINUX=enforcing`に `SELINUX=disabled`。変更を有効にするには、ホストを再起動する必要があります。
++
+....
+vi /etc/sysconfig/selinux
+....
+. 次の行を追加します `limit.conf`ファイル記述子の制限とスタックサイズを引用符なしで設定する `" "`。
++
+....
+vi /etc/security/limits.conf
+  "*               hard    nofile          65536"
+  "*               soft    stack           10240"
+....
+. 次の手順に従って、EC2 インスタンスにスワップ領域を追加します。link:https://aws.amazon.com/premiumsupport/knowledge-center/ec2-memory-swap-file/["スワップファイルを使用して、Amazon EC2 インスタンスでスワップ領域として機能するメモリを割り当てるにはどうすればよいですか?"^]追加するスペースの正確な量は、最大 16G の RAM のサイズによって異なります。
+. asm sysasm グループに使用する ASM グループを追加します
++
+....
+groupadd asm
+....
+. oracle ユーザーを変更して、ASM をセカンダリ グループとして追加します (oracle ユーザーは、Oracle プレインストール RPM のインストール後に作成されている必要があります)。
++
+....
+usermod -a -G asm oracle
+....
+. EC2 インスタンスを再起動します。
+
+
+====
+
+
+=== EC2 インスタンス ホストにマウントする NFS ボリュームをプロビジョニングしてエクスポートします。
+
+[%collapsible%open]
+====
+Oracle データベース バイナリ、データ、およびログ ファイルをホストするために、FSx クラスター管理 IP を持つ fsxadmin ユーザーとして ssh 経由で FSx クラスターにログインし、コマンド ラインから 3 つのボリュームをプロビジョニングします。
+
+. fsxadmin ユーザーとして SSH 経由で FSx クラスターにログインします。
++
+....
+ssh fsxadmin@172.30.15.53
+....
+. 次のコマンドを実行して、Oracle バイナリのボリュームを作成します。
++
+....
+vol create -volume ora_01_biny -aggregate aggr1 -size 50G -state online  -type RW -junction-path /ora_01_biny -snapshot-policy none -tiering-policy snapshot-only
+....
+. 次のコマンドを実行して、Oracle データ用のボリュームを作成します。
++
+....
+vol create -volume ora_01_data -aggregate aggr1 -size 100G -state online  -type RW -junction-path /ora_01_data -snapshot-policy none -tiering-policy snapshot-only
+....
+. 次のコマンドを実行して、Oracle ログ用のボリュームを作成します。
++
+....
+vol create -volume ora_01_logs -aggregate aggr1 -size 100G -state online  -type RW -junction-path /ora_01_logs -snapshot-policy none -tiering-policy snapshot-only
+....
+. 作成された DB ボリュームを検証します。
++
+....
+vol show
+....
++
+次のような結果が返されると予想されます。
+
++
+....
+FsxId02ad7bf3476b741df::> vol show
+  (vol show)
+FsxId06c3c8b2a7bd56458::> vol show
+Vserver   Volume       Aggregate    State      Type       Size  Available Used%
+--------- ------------ ------------ ---------- ---- ---------- ---------- -----
+svm_ora   ora_01_biny  aggr1        online     RW         50GB    47.50GB    0%
+svm_ora   ora_01_data  aggr1        online     RW        100GB    95.00GB    0%
+svm_ora   ora_01_logs  aggr1        online     RW        100GB    95.00GB    0%
+svm_ora   svm_ora_root aggr1        online     RW          1GB    972.1MB    0%
+4 entries were displayed.
+....
+
+
+====
+
+
+=== データベースストレージ構成
+
+[%collapsible%open]
+====
+次に、EC2 インスタンス ホストに Oracle グリッド インフラストラクチャとデータベース インストール用の FSx ストレージをインポートしてセットアップします。
+
+. SSH キーと EC2 インスタンスの IP アドレスを使用して、ec2-user として SSH 経由で EC2 インスタンスにログインします。
++
+....
+ssh -i ora_01.pem ec2-user@172.30.15.58
+....
+. Oracleバイナリファイルシステムをマウントするための/u01ディレクトリを作成する
++
+....
+sudo mkdir /u01
+....
+. バイナリボリュームをマウントする `/u01`、FSx NFS lif IP アドレスに変更されます。 NetApp自動化ツールキットを使用して FSx クラスターを展開した場合、リソース プロビジョニング実行の終了時に、FSx 仮想ストレージ サーバーの NFS lif IP アドレスが出力にリストされます。それ以外の場合は、AWS FSx コンソール UI から取得できます。
++
+....
+sudo mount -t nfs 172.30.15.19:/ora_01_biny /u01 -o rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536
+....
+. 変化 `/u01`マウント ポイントの所有権を Oracle ユーザーとそれに関連付けられたプライマリ グループに付与します。
++
+....
+sudo chown oracle:oinstall /u01
+....
+. Oracleデータファイルシステムをマウントするための/oradataディレクトリを作成する
++
+....
+sudo mkdir /oradata
+....
+. データボリュームをマウントする `/oradata`FSx NFS lif IPアドレスに変更されました
++
+....
+sudo mount -t nfs 172.30.15.19:/ora_01_data /oradata -o rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536
+....
+. 変化 `/oradata`マウント ポイントの所有権を Oracle ユーザーとそれに関連付けられたプライマリ グループに付与します。
++
+....
+sudo chown oracle:oinstall /oradata
+....
+. Oracle ログ ファイル システムをマウントするための /oralogs ディレクトリを作成します。
++
+....
+sudo mkdir /oralogs
+....
+. ログボリュームをマウントする `/oralogs`FSx NFS lif IPアドレスに変更されました
++
+....
+sudo mount -t nfs 172.30.15.19:/ora_01_logs /oralogs -o rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536
+....
+. 変化 `/oralogs`マウント ポイントの所有権を Oracle ユーザーとそれに関連付けられたプライマリ グループに付与します。
++
+....
+sudo chown oracle:oinstall /oralogs
+....
+. マウントポイントを追加する `/etc/fstab`。
++
+....
+sudo vi /etc/fstab
+....
++
+次の行を追加します。
+
++
+....
+172.30.15.19:/ora_01_biny       /u01            nfs     rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536   0       0
+172.30.15.19:/ora_01_data       /oradata        nfs     rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536   0       0
+172.30.15.19:/ora_01_logs       /oralogs        nfs     rw,bg,hard,vers=3,proto=tcp,timeo=600,rsize=65536,wsize=65536   0       0
+
+....
+. Oracleユーザーにsudoを実行し、ASMディスクファイルを保存するASMフォルダを作成します。
++
+....
+sudo su
+su - oracle
+mkdir /oradata/asm
+mkdir /oralogs/asm
+....
+. Oracle ユーザーとして、ASM データ ディスク ファイルを作成し、ブロック サイズを含むディスク サイズに合わせてカウントを変更します。
++
+....
+dd if=/dev/zero of=/oradata/asm/nfs_data_disk01 bs=1M count=20480 oflag=direct
+dd if=/dev/zero of=/oradata/asm/nfs_data_disk02 bs=1M count=20480 oflag=direct
+dd if=/dev/zero of=/oradata/asm/nfs_data_disk03 bs=1M count=20480 oflag=direct
+dd if=/dev/zero of=/oradata/asm/nfs_data_disk04 bs=1M count=20480 oflag=direct
+....
+. データディスクファイルの権限を640に変更する
++
+....
+chmod 640 /oradata/asm/*
+....
+. Oracle ユーザーとして、asm ログ ディスク ファイルを作成し、ブロック サイズとディスク サイズが一致するように count を変更します。
++
+....
+dd if=/dev/zero of=/oralogs/asm/nfs_logs_disk01 bs=1M count=40960 oflag=direct
+dd if=/dev/zero of=/oralogs/asm/nfs_logs_disk02 bs=1M count=40960 oflag=direct
+....
+. ログディスクファイルの権限を640に変更します
++
+....
+chmod 640 /oralogs/asm/*
+....
+. EC2 インスタンス ホストを再起動します。
+
+
+====
+
+
+=== Oracle グリッド インフラストラクチャのインストール
+
+[%collapsible%open]
+====
+. SSH経由でec2-userとしてEC2インスタンスにログインし、コメントアウトを解除してパスワード認証を有効にします。 `PasswordAuthentication yes`そしてコメントアウトする `PasswordAuthentication no`。
++
+....
+sudo vi /etc/ssh/sshd_config
+....
+. sshd サービスを再起動します。
++
+....
+sudo systemctl restart sshd
+....
+. Oracle ユーザーのパスワードをリセットします。
++
+....
+sudo passwd oracle
+....
+. Oracle Restart ソフトウェア所有者ユーザー (oracle) としてログインします。次のように Oracle ディレクトリを作成します。
++
+....
+mkdir -p /u01/app/oracle
+mkdir -p /u01/app/oraInventory
+....
+. ディレクトリの権限設定を変更します。
++
+....
+chmod -R 775 /u01/app
+....
+. グリッド ホーム ディレクトリを作成し、そこに移動します。
++
+....
+mkdir -p /u01/app/oracle/product/19.0.0/grid
+cd /u01/app/oracle/product/19.0.0/grid
+....
+. グリッドインストールファイルを解凍します。
++
+....
+unzip -q /tmp/archive/LINUX.X64_193000_grid_home.zip
+....
+. グリッドホームから、 `OPatch`ディレクトリ。
++
+....
+rm -rf OPatch
+....
+. グリッドホームからコピー `p6880880_190000_Linux-x86-64.zip`grid_home にコピーし、解凍します。
++
+....
+cp /tmp/archive/p6880880_190000_Linux-x86-64.zip .
+unzip p6880880_190000_Linux-x86-64.zip
+....
+. グリッドホームから修正 `cv/admin/cvu_config`コメントを外して置き換えます `CV_ASSUME_DISTID=OEL5`と `CV_ASSUME_DISTID=OL7`。
++
+....
+vi cv/admin/cvu_config
+....
+. 準備する `gridsetup.rsp`サイレントインストール用のファイルを作成し、rspファイルを `/tmp/archive`ディレクトリ。  rsp ファイルは、セクション A、B、および G をカバーし、次の情報を含める必要があります。
++
+....
+INVENTORY_LOCATION=/u01/app/oraInventory
+oracle.install.option=HA_CONFIG
+ORACLE_BASE=/u01/app/oracle
+oracle.install.asm.OSDBA=dba
+oracle.install.asm.OSOPER=oper
+oracle.install.asm.OSASM=asm
+oracle.install.asm.SYSASMPassword="SetPWD"
+oracle.install.asm.diskGroup.name=DATA
+oracle.install.asm.diskGroup.redundancy=EXTERNAL
+oracle.install.asm.diskGroup.AUSize=4
+oracle.install.asm.diskGroup.disks=/oradata/asm/nfs_data_disk01,/oradata/asm/nfs_data_disk02,/oradata/asm/nfs_data_disk03,/oradata/asm/nfs_data_disk04
+oracle.install.asm.diskGroup.diskDiscoveryString=/oradata/asm/*,/oralogs/asm/*
+oracle.install.asm.monitorPassword="SetPWD"
+oracle.install.asm.configureAFD=false
+
+
+....
+. EC2 インスタンスに root ユーザーとしてログインします。
+. インストール `cvuqdisk-1.0.10-1.rpm`。
++
+....
+rpm -ivh /u01/app/oracle/product/19.0.0/grid/cv/rpm/cvuqdisk-1.0.10-1.rpm
+....
+. OracleユーザーとしてEC2インスタンスにログインし、 `/tmp/archive`フォルダ。
++
+....
+unzip p34762026_190000_Linux-x86-64.zip
+....
+. グリッドホーム/u01/app/oracle/product/19.0.0/gridからoracleユーザーとして起動します。 `gridSetup.sh`グリッド インフラストラクチャのインストール用。
++
+....
+ ./gridSetup.sh -applyRU /tmp/archive/34762026/ -silent -responseFile /tmp/archive/gridsetup.rsp
+....
++
+グリッド インフラストラクチャの間違ったグループに関する警告は無視してください。  Oracle Restart を管理するために単一の Oracle ユーザーを使用しているため、これは予想された動作です。
+
+. root ユーザーとして、次のスクリプトを実行します。
++
+....
+/u01/app/oraInventory/orainstRoot.sh
+
+/u01/app/oracle/product/19.0.0/grid/root.sh
+....
+. Oracle ユーザーとして、次のコマンドを実行して構成を完了します。
++
+....
+/u01/app/oracle/product/19.0.0/grid/gridSetup.sh -executeConfigTools -responseFile /tmp/archive/gridsetup.rsp -silent
+....
+. Oracle ユーザーとして、LOGS ディスク グループを作成します。
++
+....
+bin/asmca -silent -sysAsmPassword 'yourPWD' -asmsnmpPassword 'yourPWD' -createDiskGroup -diskGroupName LOGS -disk '/oralogs/asm/nfs_logs_disk*' -redundancy EXTERNAL -au_size 4
+....
+. Oracle ユーザーとして、インストール構成後にグリッド サービスを検証します。
++
+....
+bin/crsctl stat res -t
++
+Name                Target  State        Server                   State details
+Local Resources
+ora.DATA.dg         ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.LISTENER.lsnr   ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.LOGS.dg         ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.asm             ONLINE  ONLINE       ip-172-30-15-58          Started,STABLE
+ora.ons             OFFLINE OFFLINE      ip-172-30-15-58          STABLE
+Cluster Resources
+ora.cssd            ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.diskmon         OFFLINE OFFLINE                               STABLE
+ora.driver.afd      ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.evmd            ONLINE  ONLINE       ip-172-30-15-58          STABLE
+....
+
+
+====
+
+
+=== Oracleデータベースのインストール
+
+[%collapsible%open]
+====
+. Oracleユーザーとしてログインし、 `$ORACLE_HOME`そして `$ORACLE_SID`設定されている場合。
++
+....
+unset ORACLE_HOME
+unset ORACLE_SID
+....
+. Oracle DB ホーム ディレクトリを作成し、そこに移動します。
++
+....
+mkdir /u01/app/oracle/product/19.0.0/db1
+cd /u01/app/oracle/product/19.0.0/db1
+....
+. Oracle DB インストール ファイルを解凍します。
++
+....
+unzip -q /tmp/archive/LINUX.X64_193000_db_home.zip
+....
+. DBホームから、 `OPatch`ディレクトリ。
++
+....
+rm -rf OPatch
+....
+. DBホームからコピー `p6880880_190000_Linux-x86-64.zip`に `grid_home`をダウンロードし、解凍します。
++
+....
+cp /tmp/archive/p6880880_190000_Linux-x86-64.zip .
+unzip p6880880_190000_Linux-x86-64.zip
+....
+. DBホームから修正 `cv/admin/cvu_config`をコメント解除して置き換えます `CV_ASSUME_DISTID=OEL5`と `CV_ASSUME_DISTID=OL7`。
++
+....
+vi cv/admin/cvu_config
+....
+. から `/tmp/archive`ディレクトリで、DB 19.18 RU パッチを解凍します。
++
+....
+unzip p34765931_190000_Linux-x86-64.zip
+....
+. DBサイレントインストールrspファイルを準備します `/tmp/archive/dbinstall.rsp`次の値を持つディレクトリ:
++
+....
+oracle.install.option=INSTALL_DB_SWONLY
+UNIX_GROUP_NAME=oinstall
+INVENTORY_LOCATION=/u01/app/oraInventory
+ORACLE_HOME=/u01/app/oracle/product/19.0.0/db1
+ORACLE_BASE=/u01/app/oracle
+oracle.install.db.InstallEdition=EE
+oracle.install.db.OSDBA_GROUP=dba
+oracle.install.db.OSOPER_GROUP=oper
+oracle.install.db.OSBACKUPDBA_GROUP=oper
+oracle.install.db.OSDGDBA_GROUP=dba
+oracle.install.db.OSKMDBA_GROUP=dba
+oracle.install.db.OSRACDBA_GROUP=dba
+oracle.install.db.rootconfig.executeRootScript=false
+....
+. db1 ホーム /u01/app/oracle/product/19.0.0/db1 から、サイレント ソフトウェアのみの DB インストールを実行します。
++
+....
+ ./runInstaller -applyRU /tmp/archive/34765931/ -silent -ignorePrereqFailure -responseFile /tmp/archive/dbinstall.rsp
+....
+. ルートユーザーとして、 `root.sh`ソフトウェアのみのインストール後のスクリプト。
++
+....
+/u01/app/oracle/product/19.0.0/db1/root.sh
+....
+. Oracleユーザーとして、 `dbca.rsp`次のエントリを含むファイル:
++
+....
+gdbName=db1.demo.netapp.com
+sid=db1
+createAsContainerDatabase=true
+numberOfPDBs=3
+pdbName=db1_pdb
+useLocalUndoForPDBs=true
+pdbAdminPassword="yourPWD"
+templateName=General_Purpose.dbc
+sysPassword="yourPWD"
+systemPassword="yourPWD"
+dbsnmpPassword="yourPWD"
+storageType=ASM
+diskGroupName=DATA
+characterSet=AL32UTF8
+nationalCharacterSet=AL16UTF16
+listeners=LISTENER
+databaseType=MULTIPURPOSE
+automaticMemoryManagement=false
+totalMemory=8192
+....
++
+
+NOTE: EC2 インスタンス ホストで使用可能なメモリに基づいて合計メモリを設定します。オラクルは75%を割り当てている `totalMemory`DB インスタンスの SGA またはバッファ キャッシュに保存します。
+
+. Oracle ユーザーとして、dbca を使用して DB 作成を開始します。
++
+....
+bin/dbca -silent -createDatabase -responseFile /tmp/archive/dbca.rsp
+
+output:
+Prepare for db operation
+7% complete
+Registering database with Oracle Restart
+11% complete
+Copying database files
+33% complete
+Creating and starting Oracle instance
+35% complete
+38% complete
+42% complete
+45% complete
+48% complete
+Completing Database Creation
+53% complete
+55% complete
+56% complete
+Creating Pluggable Databases
+60% complete
+64% complete
+69% complete
+78% complete
+Executing Post Configuration Actions
+100% complete
+Database creation complete. For details check the logfiles at:
+ /u01/app/oracle/cfgtoollogs/dbca/db1.
+Database Information:
+Global Database Name:db1.demo.netapp.com
+System Identifier(SID):db1
+Look at the log file "/u01/app/oracle/cfgtoollogs/dbca/db1/db1.log" for further details.
+....
+. Oracle ユーザーとして、DB 作成後に Oracle Restart HA サービスを検証します。
++
+....
+[oracle@ip-172-30-15-58 db1]$ ../grid/bin/crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.asm
+               ONLINE  ONLINE       ip-172-30-15-58          Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      ip-172-30-15-58          STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       ip-172-30-15-58          STABLE
+ora.db1.db
+      1        ONLINE  ONLINE       ip-172-30-15-58          Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /db1,STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.evmd
+      1        ONLINE  ONLINE       ip-172-30-15-58          STABLE
+--------------------------------------------------------------------------------
+[oracle@ip-172-30-15-58 db1]$
+
+....
+. Oracleユーザーを設定する `.bash_profile`。
++
+....
+vi ~/.bash_profile
+....
+. 次のエントリを追加します。
++
+....
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/db1
+export ORACLE_SID=db1
+export PATH=$PATH:$ORACLE_HOME/bin
+alias asm='export ORACLE_HOME=/u01/app/oracle/product/19.0.0/grid;export ORACLE_SID=+ASM;export PATH=$PATH:$ORACLE_HOME/bin'
+....
+. 作成された CDB/PDB を検証します。
++
+....
+. ~/.bash_profile
+
+sqlplus / as sysdba
+
+SQL> select name, open_mode from v$database;
+
+NAME      OPEN_MODE
+
+DB1       READ WRITE
+
+SQL> select name from v$datafile;
+
+NAME
+
++DATA/DB1/DATAFILE/system.256.1132176177
++DATA/DB1/DATAFILE/sysaux.257.1132176221
++DATA/DB1/DATAFILE/undotbs1.258.1132176247
++DATA/DB1/86B637B62FE07A65E053F706E80A27CA/DATAFILE/system.265.1132177009
++DATA/DB1/86B637B62FE07A65E053F706E80A27CA/DATAFILE/sysaux.266.1132177009
++DATA/DB1/DATAFILE/users.259.1132176247
++DATA/DB1/86B637B62FE07A65E053F706E80A27CA/DATAFILE/undotbs1.267.1132177009
++DATA/DB1/F7852758DCD6B800E0533A0F1EAC1DC6/DATAFILE/system.271.1132177853
++DATA/DB1/F7852758DCD6B800E0533A0F1EAC1DC6/DATAFILE/sysaux.272.1132177853
++DATA/DB1/F7852758DCD6B800E0533A0F1EAC1DC6/DATAFILE/undotbs1.270.1132177853
++DATA/DB1/F7852758DCD6B800E0533A0F1EAC1DC6/DATAFILE/users.274.1132177871
+
+NAME
+
++DATA/DB1/F785288BBCD1BA78E0533A0F1EACCD6F/DATAFILE/system.276.1132177871
++DATA/DB1/F785288BBCD1BA78E0533A0F1EACCD6F/DATAFILE/sysaux.277.1132177871
++DATA/DB1/F785288BBCD1BA78E0533A0F1EACCD6F/DATAFILE/undotbs1.275.1132177871
++DATA/DB1/F785288BBCD1BA78E0533A0F1EACCD6F/DATAFILE/users.279.1132177889
++DATA/DB1/F78529A14DD8BB18E0533A0F1EACB8ED/DATAFILE/system.281.1132177889
++DATA/DB1/F78529A14DD8BB18E0533A0F1EACB8ED/DATAFILE/sysaux.282.1132177889
++DATA/DB1/F78529A14DD8BB18E0533A0F1EACB8ED/DATAFILE/undotbs1.280.1132177889
++DATA/DB1/F78529A14DD8BB18E0533A0F1EACB8ED/DATAFILE/users.284.1132177907
+
+19 rows selected.
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+
+         2 PDB$SEED                       READ ONLY  NO
+         3 DB1_PDB1                       READ WRITE NO
+         4 DB1_PDB2                       READ WRITE NO
+         5 DB1_PDB3                       READ WRITE NO
+SQL>
+....
+. Oracleユーザーとして、Oracleデータベースのホームディレクトリ/u01/app/oracle/product/19.0.0/db1に移動し、dNFSを有効にします。
++
+....
+cd /u01/app/oracle/product/19.0.0/db1
+
+mkdir rdbms/lib/odm
+
+cp lib/libnfsodm19.so rdbms/lib/odm/
+....
+. ORACLE_HOMEでoranfstabファイルを設定する
++
+....
+vi $ORACLE_HOME/dbs/oranfstab
+
+add following entries:
+
+server: fsx_01
+local: 172.30.15.58 path: 172.30.15.19
+nfs_version: nfsv3
+export: /ora_01_biny mount: /u01
+export: /ora_01_data mount: /oradata
+export: /ora_01_logs mount: /oralogs
+....
+. Oracle ユーザーとして、sqlplus からデータベースにログインし、DB リカバリのサイズと場所を +LOGS ディスク グループに設定します。
++
+....
+
+. ~/.bash_profile
+
+sqlplus / as sysdba
+
+alter system set db_recovery_file_dest_size = 80G scope=both;
+
+alter system set db_recovery_file_dest = '+LOGS' scope=both;
+....
+. アーカイブログモードを有効にし、Oracle DBインスタンスを再起動します。
++
+....
+
+shutdown immediate;
+
+startup mount;
+
+alter database archivelog;
+
+alter database open;
+
+alter system switch logfile;
+
+....
+. インスタンスの再起動後に DB ログモードと dNFS を検証する
++
+....
+
+SQL> select name, log_mode from v$database;
+
+NAME      LOG_MODE
+--------- ------------
+DB1       ARCHIVELOG
+
+SQL> select svrname, dirname from v$dnfs_servers;
+
+SVRNAME
+--------------------------------------------------------------------------------
+DIRNAME
+--------------------------------------------------------------------------------
+fsx_01
+/ora_01_data
+
+fsx_01
+/ora_01_biny
+
+fsx_01
+/ora_01_logs
+
+....
+. Oracle ASMの検証
++
+....
+[oracle@ip-172-30-15-58 db1]$ asm
+[oracle@ip-172-30-15-58 db1]$ sqlplus / as sysasm
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue May 9 20:39:39 2023
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2022, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.18.0.0.0
+
+SQL> set lin 200
+SQL> col path form a30
+SQL> select name, path, header_status, mount_status, state from v$asm_disk;
+
+NAME                           PATH                           HEADER_STATU MOUNT_S STATE
+------------------------------ ------------------------------ ------------ ------- --------
+DATA_0002                      /oradata/asm/nfs_data_disk01   MEMBER       CACHED  NORMAL
+DATA_0000                      /oradata/asm/nfs_data_disk02   MEMBER       CACHED  NORMAL
+DATA_0001                      /oradata/asm/nfs_data_disk03   MEMBER       CACHED  NORMAL
+DATA_0003                      /oradata/asm/nfs_data_disk04   MEMBER       CACHED  NORMAL
+LOGS_0000                      /oralogs/asm/nfs_logs_disk01   MEMBER       CACHED  NORMAL
+LOGS_0001                      /oralogs/asm/nfs_logs_disk02   MEMBER       CACHED  NORMAL
+
+6 rows selected.
+
+
+SQL> select name, state, ALLOCATION_UNIT_SIZE, TOTAL_MB, FREE_MB from v$asm_diskgroup;
+
+NAME                           STATE       ALLOCATION_UNIT_SIZE   TOTAL_MB    FREE_MB
+------------------------------ ----------- -------------------- ---------- ----------
+DATA                           MOUNTED                  4194304      81920      73536
+LOGS                           MOUNTED                  4194304      81920      81640
+
+This completes Oracle 19c version 19.18 Restart deployment on an Amazon FSx ONTAP and EC2 compute instance with NFS/ASM. If desired, NetApp recommends relocating the Oracle control file and online log files to the +LOGS disk group.
+....
+
+
+====
+
+
+=== 自動展開オプション
+
+NetApp は、このソリューションの実装を容易にするために、Ansible を使用した完全に自動化されたソリューション導入ツールキットをリリースする予定です。ツールキットの可用性については再度ご確認ください。公開後、こちらにリンクを掲載いたします。
+
+
+
+== SnapCenterサービスによる Oracle データベースのバックアップ、リストア、クローン作成
+
+現時点では、NFSおよびASMストレージオプションを備えたOracleデータベースは、従来のSnapCenter Server UIツールでのみサポートされています。link:../dbops/hybrid-dbops-snapcenter-usecases.html["SnapCenterを使用したハイブリッド クラウド データベース ソリューション"^] NetApp SnapCenter UI ツールを使用した Oracle データベースのバックアップ、リストア、およびクローン作成の詳細については、こちらをご覧ください。
+
+
+
+== 詳細情報の入手方法
+
+このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。
+
+* 新しいデータベースのインストールによるスタンドアロン・サーバーへのOracle Grid Infrastructureのインストール
++
+link:https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-oracle-grid-infrastructure-for-a-standalone-server-with-a-new-database-installation.html#GUID-0B1CEE8C-C893-46AA-8A6A-7B5FAAEC72B3["https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-oracle-grid-infrastructure-for-a-standalone-server-with-a-new-database-installation.html#GUID-0B1CEE8C-C893-46AA-8A6A-7B5FAAEC72B3"^]
+
+* レスポンスファイルを使用したOracle Databaseのインストールと構成
++
+link:https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-and-configuring-oracle-database-using-response-files.html#GUID-D53355E9-E901-4224-9A2A-B882070EDDF7["https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/installing-and-configuring-oracle-database-using-response-files.html#GUID-D53355E9-E901-4224-9A2A-B882070EDDF7"^]
+
+* Amazon FSx ONTAP
++
+link:https://aws.amazon.com/fsx/netapp-ontap/["https://aws.amazon.com/fsx/netapp-ontap/"^]
+
+* Amazon EC2
++
+link:https://aws.amazon.com/pm/ec2/?trk=36c6da98-7b20-48fa-8225-4784bced9843&sc_channel=ps&s_kwcid=AL!4422!3!467723097970!e!!g!!aws%20ec2&ef_id=Cj0KCQiA54KfBhCKARIsAJzSrdqwQrghn6I71jiWzSeaT9Uh1-vY-VfhJixF-xnv5rWwn2S7RqZOTQ0aAh7eEALw_wcB:G:s&s_kwcid=AL!4422!3!467723097970!e!!g!!aws%20ec2["https://aws.amazon.com/pm/ec2/?trk=36c6da98-7b20-48fa-8225-4784bced9843&sc_channel=ps&s_kwcid=AL!4422!3!467723097970!e!!g!!aws%20ec2&ef_id=Cj0KCQiA54KfBhCKARIsAJzSrdqwQrghn6I71jiWzSeaT9Uh1-vY-VfhJixF-xnv5rWwn2S7RqZOTQ0aAh7eEALw_wcB:G:s&s_kwcid=AL!4422!3!467723097970!e!!g!!aws%20ec2"^]
+
+

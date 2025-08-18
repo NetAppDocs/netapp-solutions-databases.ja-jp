@@ -1,0 +1,1368 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcp-ora-gcnv-vldb-dg.html 
+keywords: Database, VLDB, Oracle, Data Guard, Google, GCNV, 
+summary: このソリューションでは、Google クラウドの Oracle Data Guard を使用して、 Google Cloud NetApp Volumes （GCNV）上に高スループットの Oracle Very Large Database（VLDB）を構成するための概要と詳細を説明します。 
+---
+= TR-5006: Data Guard を使用したGoogle Cloud NetApp Volumesへの高スループット Oracle VLDB 実装
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+アレン・カオ、ニヤズ・モハメド、NetApp
+
+[role="lead"]
+このソリューションでは、Google クラウドの Oracle Data Guard を使用して、 Google Cloud NetApp Volumes （GCNV）上に高スループットの Oracle Very Large Database（VLDB）を構成するための概要と詳細を説明します。
+
+
+
+== 目的
+
+高いスループットとミッションクリティカルな Oracle VLDB では、バックエンドのデータベース ストレージに大きな要求が課せられます。サービス レベル アグリーメント (SLA) を満たすには、データベース ストレージは、ミリ秒未満のレイテンシ パフォーマンスを維持しながら、必要な容量と 1 秒あたりの高い入出力操作 (IOPS) を提供する必要があります。これは、共有ストレージ リソース環境を備えたパブリック クラウドにこのようなデータベース ワークロードを展開する場合に特に困難になります。すべてのストレージ プラットフォームが同じように作成されるわけではありません。 GCNV は、Google が提供するプレミアム ストレージ サービスであり、持続的な IOPS と低レイテンシのパフォーマンス特性を必要とする、Google クラウドでのミッション クリティカルな Oracle データベースの導入をサポートできます。このアーキテクチャは、さまざまなパフォーマンス プロファイルをサポートする構成可能なサービス層を備え、OLTP および OLAP ワークロードに対応します。  GCNV は、ミリ秒未満のレイテンシで超高速のパフォーマンスを提供し、読み取り/書き込み混合ワークロードでボリュームあたり最大 4.5 GiBps のスループットを実現します。
+
+GCNV の高速スナップショット バックアップ (数秒) とクローン (数分) 機能を活用することで、実稼働データベースのフルサイズ コピーを物理スタンバイからオンザフライでクローンし、DEV、UAT などの他の多くのユース ケースに使用できます。Active Data Guard ライセンスと、非効率的で複雑なスナップショット スタンバイは不要になります。コストの節約は相当なものとなる可能性があります。プライマリおよびスタンバイ Oracle サーバーの両方に 64 個のコア CPU を搭載した標準的な Oracle Data Guard セットアップの場合、最新の Oracle 価格表に基づくと、Active Data Guard ライセンス コストの節約額は 1,472,000 ドルになります。  
+
+このドキュメントでは、複数の NFS ボリュームとストレージ負荷分散用の Oracle ASM を備えた GCNVS ストレージ上に Data Guard 構成で Oracle VLDB を設定する方法を説明します。スタンバイ データベース ボリュームは、スナップショットを介して迅速にバックアップされ、読み取り/書き込みアクセス用にクローン化されます。  NetAppソリューション エンジニアリング チームは、合理化されたライフサイクル管理を使用してクローンを作成および更新するための自動化ツールキットを提供します。
+
+このソリューションは、次のユースケースに対応します。
+
+* Google クラウド リージョン全体の GCNV ストレージ サービス上の Data Guard 設定で Oracle VLDB を実装します。
+* 自動化により、レポート、開発、テストなどのユースケースに対応するために、物理スタンバイ データベースのスナップショット バックアップとクローンを作成します。
+
+
+
+
+== 観客
+
+このソリューションは次の人々を対象としています。
+
+* 高可用性、データ保護、障害復旧を実現するために、Google Cloud で Data Guard を使用して Oracle VLDB を設定する DBA。
+* Google クラウドでの Data Guard 構成を使用した Oracle VLDB に関心のあるデータベース ソリューション アーキテクト。
+* Oracle データベースをサポートする GCNV ストレージを管理するストレージ管理者。
+* Google クラウド環境で Data Guard を使用して Oracle VLDB を立ち上げたいアプリケーション オーナー。
+
+
+
+
+== ソリューションのテストおよび検証環境
+
+このソリューションのテストと検証は、実際のユーザーの展開環境と一致しない可能性のある Google Cloud ラボ設定で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
+
+
+
+=== アーキテクチャ
+
+image:gcnv-ora-vldb-dg-architecture.png["この画像は、GCNV 上の Google Cloud における Oracle Data Guard の実装の詳細を示しています。"]
+
+
+
+=== ハードウェアおよびソフトウェアコンポーネント
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+| *ハードウェア* 
+
+
+| Google Cloud NetApp Volumes | Googleが現在提供しているサービス | 2つのストレージプール、プレミアムサービスレベル、自動QoS 
+
+
+| DB サーバー用の Google Compute Engine VM | N1（4 vCPU、15 GiB メモリ） | 4 つの DB VM、プライマリ DB サーバー、スタンバイ DB サーバー、クローン DB サーバー、および Data Guard オブザーバー。 
+
+
+3+| *ソフトウェア* 
+
+
+| レッドハットリナックス | Red Hat Enterprise Linux 8.10 (Ootpa) - x86/64 | RHEL マーケットプレイス イメージ、PAYG 
+
+
+| Oracle グリッド・インフラストラクチャ | バージョン19.18 | RUパッチp34762026_190000_Linux-x86-64.zipを適用しました 
+
+
+| Oracle Database | バージョン19.18 | RUパッチp34765931_190000_Linux-x86-64.zipを適用しました 
+
+
+| dNFS ワンオフパッチ | p32931941_190000_Linux-x86-64.zip | グリッドとデータベースの両方に適用 
+
+
+| Oracle OPatch | バージョン 12.2.0.1.36 | 最新パッチ p6880880_190000_Linux-x86-64.zip 
+
+
+| Ansible | バージョン コア 2.16.2 | Pythonバージョン - 3.10.13 
+
+
+| NFS | バージョン3.0 | Oracle で dNFS が有効 
+|===
+
+
+=== Oracle VLDB Data Guard 構成と NY から LA への DR セットアップのシミュレーション
+
+[cols="33%, 33%, 33%"]
+|===
+
+
+3+|  
+
+
+| *データベース* | *DB_UNIQUE_NAME* | *Oracleネットサービス名* 
+
+
+| プライマリ | NTAP_NY | NTAP_NY.cvs-pm-host-1p.内部 
+
+
+| Standby | NTAP_LA | NTAP_LA.cvs-pm-host-1p.内部 
+|===
+
+
+=== 導入検討の重要な要素
+
+* * Google Cloud NetApp Volumes の構成。* GCNVはGoogleクラウド内で次のように割り当てられます。 `Storage Pools` 。これらのテストと検証では、East4 リージョンで Oracle プライマリ データベースをホストするために 2 TiB のストレージ プールを展開し、West4 リージョンでスタンバイ データベースと DB クローンをホストするために 4 TiB のストレージ プールを展開しました。  GCNV ストレージ プールには、Flex、Standard、Premium、Extreme の 4 つのサービス レベルがあります。 ANF 容量プールの IO 容量は、容量プールのサイズとサービス レベルによって決まります。容量プールの作成時に、ストレージ プールの場所、サービス レベル、可用性ゾーン、およびストレージ プールの容量を設定します。  Oracle Data Guard 構成の場合、ゾーン レベルの障害によるデータベース フェイルオーバー保護を Data Guard が提供するため、ゾーン可用性で十分です。
+* *データベース ボリュームのサイズ設定。*本番環境への導入では、 NetAppOracle AWR レポートから Oracle データベースのスループット要件を完全に評価することを推奨しています。 VLDB データベースの GCNV ボリューム レイアウトを設計するときは、データベースのサイズ、スループット要件、およびサービス レベルを考慮してください。のみ使用することをお勧めします `Premium`または `Extreme`Oracle データベースのサービス。帯域幅は、TiBボリューム容量あたり64 MiB/秒、最大4.5 GiBpsまで保証されます。 `Premium`サービスと128 MiB/秒/TiBボリューム容量最大4.5 GiBps `Extreme`サービス。スループットを高くすると、要件を満たすためにボリューム サイズを大きくする必要があります。
+* *複数のボリュームと負荷分散。* QoS はボリュームのサイズとストレージ プールのサービス レベルに基づいて厳密に適用されるため、単一の大きなボリュームで、同じ合計ボリューム サイズを持つ複数のボリュームと同様のパフォーマンス レベルを提供できます。共有バックエンド GCNV ストレージ リソース プールをより有効に活用し、4.5 GiBps を超えるスループット要件を満たすには、Oracle VLDB に複数のボリューム (複数の NFS マウント ポイント) を実装することをお勧めします。複数の NFS ボリューム上の IO ロード バランシングのために Oracle ASM を実装します。
+* *Google Compute Engine VM インスタンスの考慮事項*これらのテストと検証では、4 つの vCPU と 15 GiB のメモリを備えた Compute Engine VM - N1 を使用しました。高いスループット要件を持つ Oracle VLDB には、Compute Engine DB VM インスタンスを適切に選択する必要があります。  vCPU の数と RAM の量に加えて、データベース ストレージのスループットに達する前に、VM ネットワーク帯域幅 (入力と出力または NIC スループットの制限) がボトルネックになる可能性があります。
+* *dNFS 構成。* dNFS を使用すると、GCNV ストレージを備えた Google Compute Engine VM 上で実行される Oracle データベースは、ネイティブ NFS クライアントよりもはるかに多くの I/O を実行できます。潜在的なバグに対処するために、Oracle dNFS パッチ p32931941 が適用されていることを確認します。
+
+
+
+
+== ソリューションの展開
+
+次のセクションでは、GCNV ストレージを備えた東部リージョンの Google Cloud のプライマリ Oracle DB と、GCNV ストレージを備えた西部リージョンの Google Cloud の物理スタンバイ Oracle DB 間の Oracle Data Guard 設定における GCNV 上の Oracle VLDB の構成について説明します。
+
+
+
+=== 展開の前提条件
+
+[%collapsible%open]
+====
+展開には次の前提条件が必要です。
+
+. Google クラウド アカウントが設定され、Oracle Data Guard を設定するためのリソースをデプロイするためのプロジェクトが Google アカウント内に作成されました。
+. Data Guard に必要なリージョンにまたがる VPC とサブネットを作成します。回復力のある DR セットアップを実現するには、プライマリ DB とスタンバイ DB を、ローカル リージョンでの大規模な災害に耐えられる地理的に異なる場所に配置することを検討してください。
+. Google クラウド ポータル コンソールから、4 つの Google Compute Engine Linux VM インスタンス（プライマリ Oracle DB サーバーとして 1 つ、スタンバイ Oracle DB サーバーとして 1 つ、クローン ターゲット DB サーバー、および Oracle Data Guard オブザーバー）をデプロイします。環境設定の詳細については、前のセクションのアーキテクチャ図を参照してください。  Googleのドキュメントに従うlink:https://cloud.google.com/compute/docs/create-linux-vm-instance["Compute Engine で Linux VM インスタンスを作成する"^]詳細な手順については、こちらをご覧ください。
++
+
+NOTE: Oracle インストール ファイルをステージングするための十分な領域を確保するために、Azure VM のルート ボリュームに少なくとも 50 GB が割り当てられていることを確認します。  Google Compute Engine VM は、デフォルトでインスタンス レベルでロックダウンされます。  VM 間の通信を有効にするには、一般的な Oracle ポート 1521 などの TCP ポート トラフィック フローを開くための特定のファイアウォール ルールを作成する必要があります。
+
+. Google クラウド ポータル コンソールから、Oracle データベース ボリュームをホストする 2 つの GCNV ストレージ プールをデプロイします。参照ドキュメントlink:https://cloud.google.com/netapp/volumes/docs/get-started/quickstarts/create-storage-pool["ストレージプールの作成クイックスタート"^]ステップバイステップの手順については、こちらをご覧ください。以下に、簡単に参照できるスクリーンショットをいくつか示します。
++
+image:gcnv-ora-vldb-dg-pool-001.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-pool-002.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-pool-003.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-pool-004.png["GCNV 環境構成を示すスクリーンショット。"]
+
+. ストレージ プールにデータベース ボリュームを作成します。参照ドキュメントlink:https://cloud.google.com/netapp/volumes/docs/get-started/quickstarts/create-volume["ボリュームクイックスタートの作成"^]ステップバイステップの手順については、こちらをご覧ください。以下に、簡単に参照できるスクリーンショットをいくつか示します。
++
+image:gcnv-ora-vldb-dg-vol-001.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-vol-002.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-vol-003.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-vol-004.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-vol-005.png["GCNV 環境構成を示すスクリーンショット。"] image:gcnv-ora-vldb-dg-vol-006.png["GCNV 環境構成を示すスクリーンショット。"]
+
+. プライマリ Oracle データベースは、プライマリ Oracle DB サーバーにインストールされ、構成されている必要があります。一方、スタンバイ Oracle DB サーバーまたはクローン Oracle DB サーバーには、Oracle ソフトウェアのみがインストールされ、Oracle データベースは作成されません。理想的には、Oracle ファイル ディレクトリのレイアウトは、すべての Oracle DB サーバー上で完全に一致している必要があります。 Oracle グリッド インフラストラクチャおよびデータベースのインストールと NFS/ASM を使用した構成に関するヘルプについては、TR-4974 を参照してください。このソリューションは AWS FSx/EC2 環境で検証されていますが、Google GCNV/Compute Engine 環境にも同様に適用できます。
++
+** link:aws-ora-fsx-ec2-nfs-asm.html["TR-4974: NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動"^]
+
+
+
+
+====
+
+
+=== Data GuardのプライマリOracle VLDB構成
+
+[%collapsible%open]
+====
+このデモでは、プライマリ DB サーバー上に NTAP というプライマリ Oracle データベースを 8 つの NFS マウント ポイントとともにセットアップしました。/u01 は Oracle バイナリ用、/u02、/u03、/u04、/u05、/u06、/u07 は Oracle データ ファイル用で、Oracle ASM ディスク グループ +DATA で負荷分散されています。/u08 は Oracle アクティブ ログ、アーカイブ ログ ファイル用で、Oracle ASM ディスク グループ +LOGS で負荷分散されています。冗長性を確保するために、Oracle 制御ファイルは +DATA ディスク グループと +LOGS ディスク グループの両方に配置されます。このセットアップは参照構成として機能します。実際の展開では、ストレージ プールのサイズ、サービス レベル、データベース ボリュームの数、各ボリュームのサイズなど、特定のニーズと要件を考慮する必要があります。
+
+ASMを使用したNFS上でOracle Data Guardを設定するための詳細な手順については、TR-5002を参照してください。link:azure-ora-anf-data-guard.html["Azure NetApp Filesによる Oracle Active Data Guard のコスト削減"] 。  TR-5002 の手順は Azure ANF 環境で検証されていますが、Google GCNV 環境にも同様に適用できます。
+
+以下は、Google GCNV 環境の Data Guard 構成におけるプライマリ Oracle VLDB の詳細を示しています。
+
+. プライマリ コンピューティング エンジン DB サーバーのプライマリ データベース NTAP は、NFS プロトコルとデータベース ストレージ ボリューム マネージャーとしての ASM を使用して、GCNV ストレージ上のスタンドアロン再起動構成で単一インスタンス データベースとしてデプロイされます。
++
+....
+
+orap.us-east4-a.c.cvs-pm-host-1p.internal:
+Zone: us-east-4a
+size: n1-standard-4 (4 vCPUs, 15 GB Memory)
+OS: Linux (redhat 8.10)
+pub_ip: 35.212.124.14
+pri_ip: 10.70.11.5
+
+[oracle@orap ~]$ df -h
+Filesystem                Size  Used Avail Use% Mounted on
+devtmpfs                  7.2G     0  7.2G   0% /dev
+tmpfs                     7.3G     0  7.3G   0% /dev/shm
+tmpfs                     7.3G  8.5M  7.2G   1% /run
+tmpfs                     7.3G     0  7.3G   0% /sys/fs/cgroup
+/dev/sda2                  50G   40G   11G  80% /
+/dev/sda1                 200M  5.9M  194M   3% /boot/efi
+10.165.128.180:/orap-u05  250G  201G   50G  81% /u05
+10.165.128.180:/orap-u08  400G  322G   79G  81% /u08
+10.165.128.180:/orap-u04  250G  201G   50G  81% /u04
+10.165.128.180:/orap-u07  250G  201G   50G  81% /u07
+10.165.128.180:/orap-u02  250G  201G   50G  81% /u02
+10.165.128.180:/orap-u06  250G  201G   50G  81% /u06
+10.165.128.180:/orap-u01  100G   21G   80G  21% /u01
+10.165.128.180:/orap-u03  250G  201G   50G  81% /u03
+
+
+[oracle@orap ~]$ cat /etc/oratab
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
++ASM:/u01/app/oracle/product/19.0.0/grid:N
+NTAP:/u01/app/oracle/product/19.0.0/NTAP:N
+
+
+
+....
+. Oracle ユーザーとしてプライマリ DB サーバーにログインします。グリッド構成を検証します。
++
+[source, cli]
+----
+$GRID_HOME/bin/crsctl stat res -t
+----
++
+....
+[oracle@orap ~]$ $GRID_HOME/bin/crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       orap                     STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       orap                     STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       orap                     STABLE
+ora.asm
+               ONLINE  ONLINE       orap                     Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      orap                     STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       orap                     STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.evmd
+      1        ONLINE  ONLINE       orap                     STABLE
+ora.ntap.db
+      1        ONLINE  ONLINE       orap                     Open,HOME=/u01/app/o
+                                                             racle/product/19.0.0
+                                                             /NTAP,STABLE
+--------------------------------------------------------------------------------
+[oracle@orap ~]$
+
+
+....
+. ASM ディスク グループの構成。
++
+[source, cli]
+----
+asmcmd
+----
++
+....
+
+[oracle@orap ~]$ asmcmd
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304   1228800  1219888                0         1219888              0             N  DATA/
+MOUNTED  EXTERN  N         512             512   4096  4194304    327680   326556                0          326556              0             N  LOGS/
+ASMCMD> lsdsk
+Path
+/u02/oradata/asm/orap_data_disk_01
+/u02/oradata/asm/orap_data_disk_02
+/u02/oradata/asm/orap_data_disk_03
+/u02/oradata/asm/orap_data_disk_04
+/u03/oradata/asm/orap_data_disk_05
+/u03/oradata/asm/orap_data_disk_06
+/u03/oradata/asm/orap_data_disk_07
+/u03/oradata/asm/orap_data_disk_08
+/u04/oradata/asm/orap_data_disk_09
+/u04/oradata/asm/orap_data_disk_10
+/u04/oradata/asm/orap_data_disk_11
+/u04/oradata/asm/orap_data_disk_12
+/u05/oradata/asm/orap_data_disk_13
+/u05/oradata/asm/orap_data_disk_14
+/u05/oradata/asm/orap_data_disk_15
+/u05/oradata/asm/orap_data_disk_16
+/u06/oradata/asm/orap_data_disk_17
+/u06/oradata/asm/orap_data_disk_18
+/u06/oradata/asm/orap_data_disk_19
+/u06/oradata/asm/orap_data_disk_20
+/u07/oradata/asm/orap_data_disk_21
+/u07/oradata/asm/orap_data_disk_22
+/u07/oradata/asm/orap_data_disk_23
+/u07/oradata/asm/orap_data_disk_24
+/u08/oralogs/asm/orap_logs_disk_01
+/u08/oralogs/asm/orap_logs_disk_02
+/u08/oralogs/asm/orap_logs_disk_03
+/u08/oralogs/asm/orap_logs_disk_04
+ASMCMD>
+
+....
+. プライマリ DB 上の Data Guard のパラメータ設定。
++
+....
+SQL> show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      ntap
+db_unique_name                       string      ntap_ny
+global_names                         boolean     FALSE
+instance_name                        string      NTAP
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      ntap_ny.cvs-pm-host-1p.interna
+
+SQL> sho parameter log_archive_dest
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+log_archive_dest                     string
+log_archive_dest_1                   string      LOCATION=USE_DB_RECOVERY_FILE_
+                                                 DEST VALID_FOR=(ALL_LOGFILES,A
+                                                 LL_ROLES) DB_UNIQUE_NAME=NTAP_
+                                                 NY
+log_archive_dest_10                  string
+log_archive_dest_11                  string
+log_archive_dest_12                  string
+log_archive_dest_13                  string
+log_archive_dest_14                  string
+log_archive_dest_15                  string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+log_archive_dest_16                  string
+log_archive_dest_17                  string
+log_archive_dest_18                  string
+log_archive_dest_19                  string
+log_archive_dest_2                   string      SERVICE=NTAP_LA ASYNC VALID_FO
+                                                 R=(ONLINE_LOGFILES,PRIMARY_ROL
+                                                 E) DB_UNIQUE_NAME=NTAP_LA
+log_archive_dest_20                  string
+log_archive_dest_21                  string
+log_archive_dest_22                  string
+
+....
+. プライマリ DB 構成。
++
+....
+
+SQL> select name, open_mode, log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+NTAP      READ WRITE           ARCHIVELOG
+
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       READ ONLY  NO
+         3 NTAP_PDB1                      READ WRITE NO
+         4 NTAP_PDB2                      READ WRITE NO
+         5 NTAP_PDB3                      READ WRITE NO
+
+
+SQL> select name from v$datafile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP/DATAFILE/system.257.1198026005
++DATA/NTAP/DATAFILE/sysaux.258.1198026051
++DATA/NTAP/DATAFILE/undotbs1.259.1198026075
++DATA/NTAP/86B637B62FE07A65E053F706E80A27CA/DATAFILE/system.266.1198027075
++DATA/NTAP/86B637B62FE07A65E053F706E80A27CA/DATAFILE/sysaux.267.1198027075
++DATA/NTAP/DATAFILE/users.260.1198026077
++DATA/NTAP/86B637B62FE07A65E053F706E80A27CA/DATAFILE/undotbs1.268.1198027075
++DATA/NTAP/32639B76C9BC91A8E063050B460A2116/DATAFILE/system.272.1198028157
++DATA/NTAP/32639B76C9BC91A8E063050B460A2116/DATAFILE/sysaux.273.1198028157
++DATA/NTAP/32639B76C9BC91A8E063050B460A2116/DATAFILE/undotbs1.271.1198028157
++DATA/NTAP/32639B76C9BC91A8E063050B460A2116/DATAFILE/users.275.1198028185
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP/32639D40D02D925FE063050B460A60E3/DATAFILE/system.277.1198028187
++DATA/NTAP/32639D40D02D925FE063050B460A60E3/DATAFILE/sysaux.278.1198028187
++DATA/NTAP/32639D40D02D925FE063050B460A60E3/DATAFILE/undotbs1.276.1198028187
++DATA/NTAP/32639D40D02D925FE063050B460A60E3/DATAFILE/users.280.1198028209
++DATA/NTAP/32639E973AF79299E063050B460AFBAD/DATAFILE/system.282.1198028209
++DATA/NTAP/32639E973AF79299E063050B460AFBAD/DATAFILE/sysaux.283.1198028209
++DATA/NTAP/32639E973AF79299E063050B460AFBAD/DATAFILE/undotbs1.281.1198028209
++DATA/NTAP/32639E973AF79299E063050B460AFBAD/DATAFILE/users.285.1198028229
+
+19 rows selected.
+
+
+SQL> select member from v$logfile;
+
+MEMBER
+--------------------------------------------------------------------------------
++DATA/NTAP/ONLINELOG/group_3.264.1198026139
++LOGS/NTAP/ONLINELOG/group_3.259.1198026147
++DATA/NTAP/ONLINELOG/group_2.263.1198026137
++LOGS/NTAP/ONLINELOG/group_2.258.1198026145
++DATA/NTAP/ONLINELOG/group_1.262.1198026137
++LOGS/NTAP/ONLINELOG/group_1.257.1198026145
++DATA/NTAP/ONLINELOG/group_4.286.1198511423
++LOGS/NTAP/ONLINELOG/group_4.265.1198511425
++DATA/NTAP/ONLINELOG/group_5.287.1198511445
++LOGS/NTAP/ONLINELOG/group_5.266.1198511447
++DATA/NTAP/ONLINELOG/group_6.288.1198511459
+
+MEMBER
+--------------------------------------------------------------------------------
++LOGS/NTAP/ONLINELOG/group_6.267.1198511461
++DATA/NTAP/ONLINELOG/group_7.289.1198511477
++LOGS/NTAP/ONLINELOG/group_7.268.1198511479
+
+14 rows selected.
+
+
+SQL> select name from v$controlfile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP/CONTROLFILE/current.261.1198026135
++LOGS/NTAP/CONTROLFILE/current.256.1198026135
+
+
+....
+. Oracle リスナーの構成。
++
+[source, cli]
+----
+lsnrctl status listener
+----
++
+....
+[oracle@orap admin]$ lsnrctl status
+
+LSNRCTL for Linux: Version 19.0.0.0.0 - Production on 15-APR-2025 16:14:00
+
+Copyright (c) 1991, 2022, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 19.0.0.0.0 - Production
+Start Date                14-APR-2025 19:44:21
+Uptime                    0 days 20 hr. 29 min. 38 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/oracle/product/19.0.0/grid/network/admin/listener.ora
+Listener Log File         /u01/app/oracle/diag/tnslsnr/orap/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=orap.us-east4-a.c.cvs-pm-host-1p.internal)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+Services Summary...
+Service "+ASM" has 1 instance(s).
+  Instance "+ASM", status READY, has 1 handler(s) for this service...
+Service "+ASM_DATA" has 1 instance(s).
+  Instance "+ASM", status READY, has 1 handler(s) for this service...
+Service "+ASM_LOGS" has 1 instance(s).
+  Instance "+ASM", status READY, has 1 handler(s) for this service...
+Service "32639b76c9bc91a8e063050b460a2116.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "32639d40d02d925fe063050b460a60e3.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "32639e973af79299e063050b460afbad.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "86b637b62fdf7a65e053f706e80a27ca.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "NTAPXDB.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "NTAP_NY_DGMGRL.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status UNKNOWN, has 1 handler(s) for this service...
+Service "ntap.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "ntap_pdb1.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "ntap_pdb2.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+Service "ntap_pdb3.cvs-pm-host-1p.internal" has 1 instance(s).
+  Instance "NTAP", status READY, has 1 handler(s) for this service...
+The command completed successfully
+
+
+....
+. プライマリ データベースでフラッシュバックが有効になっています。
++
+....
+
+SQL> select name, database_role, flashback_on from v$database;
+
+NAME      DATABASE_ROLE    FLASHBACK_ON
+--------- ---------------- ------------------
+NTAP      PRIMARY          YES
+
+....
+. プライマリ DB 上の dNFS 構成。
++
+....
+SQL> select svrname, dirname from v$dnfs_servers;
+
+SVRNAME
+--------------------------------------------------------------------------------
+DIRNAME
+--------------------------------------------------------------------------------
+10.165.128.180
+/orap-u04
+
+10.165.128.180
+/orap-u05
+
+10.165.128.180
+/orap-u07
+
+
+SVRNAME
+--------------------------------------------------------------------------------
+DIRNAME
+--------------------------------------------------------------------------------
+10.165.128.180
+/orap-u03
+
+10.165.128.180
+/orap-u06
+
+10.165.128.180
+/orap-u02
+
+
+SVRNAME
+--------------------------------------------------------------------------------
+DIRNAME
+--------------------------------------------------------------------------------
+10.165.128.180
+/orap-u08
+
+10.165.128.180
+/orap-u01
+
+
+8 rows selected.
+
+
+
+....
+
+
+これで、NFS/ASM を使用した GCNV 上のプライマリ サイトでの VLDB NTAP 用の Data Guard セットアップのデモンストレーションが完了します。
+
+====
+
+
+=== Data GuardのスタンバイOracle VLDB構成
+
+[%collapsible%open]
+====
+Oracle Data Guard では、プライマリ DB サーバーと一致させるために、スタンバイ DB サーバー上の OS カーネル構成とパッチ セットを含む Oracle ソフトウェア スタックが必要です。管理を容易にし、簡素化するために、スタンバイ DB サーバーのデータベース ストレージ構成 (データベース ディレクトリのレイアウトや NFS マウント ポイントのサイズなど) は、プライマリ DB サーバーと一致させることが理想的です。
+
+また、ASMを使用したNFS上でOracle Data Guardスタンバイを設定するための詳細な手順については、以下を参照してください。link:azure-ora-anf-data-guard.html["TR-5002 - Azure NetApp Filesによる Oracle Active Data Guard のコスト削減"]そしてlink:aws-ora-fsx-ec2-nfs-asm.html#purpose["TR-4974 - NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動"]関連するセクション。以下は、Google GCNV 環境の Data Guard 設定におけるスタンバイ DB サーバー上のスタンバイ Oracle VLDB 構成の詳細を示しています。
+
+. デモ ラボのスタンバイ サイトのスタンバイ Oracle DB サーバー構成。
++
+....
+oras.us-west4-a.c.cvs-pm-host-1p.internal:
+Zone: us-west4-a
+size: n1-standard-4 (4 vCPUs, 15 GB Memory)
+OS: Linux (redhat 8.10)
+pub_ip: 35.219.129.195
+pri_ip: 10.70.14.16
+
+[oracle@oras ~]$ df -h
+Filesystem                Size  Used Avail Use% Mounted on
+devtmpfs                  7.2G     0  7.2G   0% /dev
+tmpfs                     7.3G  1.1G  6.2G  16% /dev/shm
+tmpfs                     7.3G  8.5M  7.2G   1% /run
+tmpfs                     7.3G     0  7.3G   0% /sys/fs/cgroup
+/dev/sda2                  50G   40G   11G  80% /
+/dev/sda1                 200M  5.9M  194M   3% /boot/efi
+10.165.128.197:/oras-u07  250G  201G   50G  81% /u07
+10.165.128.197:/oras-u06  250G  201G   50G  81% /u06
+10.165.128.197:/oras-u02  250G  201G   50G  81% /u02
+10.165.128.196:/oras-u03  250G  201G   50G  81% /u03
+10.165.128.196:/oras-u01  100G   20G   81G  20% /u01
+10.165.128.197:/oras-u05  250G  201G   50G  81% /u05
+10.165.128.197:/oras-u04  250G  201G   50G  81% /u04
+10.165.128.197:/oras-u08  400G  317G   84G  80% /u08
+
+[oracle@oras ~]$ cat /etc/oratab
+#Backup file is  /u01/app/oracle/crsdata/oras/output/oratab.bak.oras.oracle line added by Agent
+#
+
+
+
+# This file is used by ORACLE utilities.  It is created by root.sh
+# and updated by either Database Configuration Assistant while creating
+# a database or ASM Configuration Assistant while creating ASM instance.
+
+# A colon, ':', is used as the field terminator.  A new line terminates
+# the entry.  Lines beginning with a pound sign, '#', are comments.
+#
+# Entries are of the form:
+#   $ORACLE_SID:$ORACLE_HOME:<N|Y>:
+#
+# The first and second fields are the system identifier and home
+# directory of the database respectively.  The third field indicates
+# to the dbstart utility that the database should , "Y", or should not,
+# "N", be brought up at system boot time.
+#
+# Multiple entries with the same $ORACLE_SID are not allowed.
+#
+#
++ASM:/u01/app/oracle/product/19.0.0/grid:N
+NTAP:/u01/app/oracle/product/19.0.0/NTAP:N              # line added by Agent
+
+....
+. スタンバイ DB サーバー上のグリッド インフラストラクチャ構成。
++
+....
+[oracle@oras ~]$ $GRID_HOME/bin/crsctl stat res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       oras                     STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       oras                     STABLE
+ora.LOGS.dg
+               ONLINE  ONLINE       oras                     STABLE
+ora.asm
+               ONLINE  ONLINE       oras                     Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      oras                     STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       oras                     STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.evmd
+      1        ONLINE  ONLINE       oras                     STABLE
+ora.ntap_la.db
+      1        ONLINE  INTERMEDIATE oras                     Dismounted,Mount Ini
+                                                             tiated,HOME=/u01/app
+                                                             /oracle/product/19.0
+                                                             .0/NTAP,STABLE
+--------------------------------------------------------------------------------
+
+....
+. スタンバイ DB サーバー上の ASM ディスク グループ構成。
++
+....
+
+[oracle@oras ~]$ asmcmd
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304   1228800  1228420                0         1228420              0             N  DATA/
+MOUNTED  EXTERN  N         512             512   4096  4194304    322336   322204                0          322204              0             N  LOGS/
+ASMCMD> lsdsk
+Path
+/u02/oradata/asm/oras_data_disk_01
+/u02/oradata/asm/oras_data_disk_02
+/u02/oradata/asm/oras_data_disk_03
+/u02/oradata/asm/oras_data_disk_04
+/u03/oradata/asm/oras_data_disk_05
+/u03/oradata/asm/oras_data_disk_06
+/u03/oradata/asm/oras_data_disk_07
+/u03/oradata/asm/oras_data_disk_08
+/u04/oradata/asm/oras_data_disk_09
+/u04/oradata/asm/oras_data_disk_10
+/u04/oradata/asm/oras_data_disk_11
+/u04/oradata/asm/oras_data_disk_12
+/u05/oradata/asm/oras_data_disk_13
+/u05/oradata/asm/oras_data_disk_14
+/u05/oradata/asm/oras_data_disk_15
+/u05/oradata/asm/oras_data_disk_16
+/u06/oradata/asm/oras_data_disk_17
+/u06/oradata/asm/oras_data_disk_18
+/u06/oradata/asm/oras_data_disk_19
+/u06/oradata/asm/oras_data_disk_20
+/u07/oradata/asm/oras_data_disk_21
+/u07/oradata/asm/oras_data_disk_22
+/u07/oradata/asm/oras_data_disk_23
+/u07/oradata/asm/oras_data_disk_24
+/u08/oralogs/asm/oras_logs_disk_01
+/u08/oralogs/asm/oras_logs_disk_02
+/u08/oralogs/asm/oras_logs_disk_03
+/u08/oralogs/asm/oras_logs_disk_04
+ASMCMD>
+
+
+....
+. スタンバイ DB 上の Data Guard のパラメータ設定。
++
+....
+
+SQL> show parameter name
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+cdb_cluster_name                     string
+cell_offloadgroup_name               string
+db_file_name_convert                 string
+db_name                              string      NTAP
+db_unique_name                       string      NTAP_LA
+global_names                         boolean     FALSE
+instance_name                        string      NTAP
+lock_name_space                      string
+log_file_name_convert                string
+pdb_file_name_convert                string
+processor_group_name                 string
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+service_names                        string      NTAP_LA.cvs-pm-host-1p.interna
+                                                 l
+
+SQL> show parameter log_archive_config
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+log_archive_config                   string      DG_CONFIG=(NTAP_NY,NTAP_LA)
+SQL> show parameter fal_server
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+fal_server                           string      NTAP_NY
+
+
+....
+. スタンバイ DB 構成。
++
+....
+
+SQL> select name, open_mode, log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+NTAP      MOUNTED              ARCHIVELOG
+
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 NTAP_PDB1                      MOUNTED
+         4 NTAP_PDB2                      MOUNTED
+         5 NTAP_PDB3                      MOUNTED
+
+SQL> select name from v$datafile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP_LA/DATAFILE/system.261.1198520347
++DATA/NTAP_LA/DATAFILE/sysaux.262.1198520373
++DATA/NTAP_LA/DATAFILE/undotbs1.263.1198520399
++DATA/NTAP_LA/32635CC1DCF58A60E063050B460AB746/DATAFILE/system.264.1198520417
++DATA/NTAP_LA/32635CC1DCF58A60E063050B460AB746/DATAFILE/sysaux.265.1198520435
++DATA/NTAP_LA/DATAFILE/users.266.1198520451
++DATA/NTAP_LA/32635CC1DCF58A60E063050B460AB746/DATAFILE/undotbs1.267.1198520455
++DATA/NTAP_LA/32639B76C9BC91A8E063050B460A2116/DATAFILE/system.268.1198520471
++DATA/NTAP_LA/32639B76C9BC91A8E063050B460A2116/DATAFILE/sysaux.269.1198520489
++DATA/NTAP_LA/32639B76C9BC91A8E063050B460A2116/DATAFILE/undotbs1.270.1198520505
++DATA/NTAP_LA/32639B76C9BC91A8E063050B460A2116/DATAFILE/users.271.1198520513
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP_LA/32639D40D02D925FE063050B460A60E3/DATAFILE/system.272.1198520517
++DATA/NTAP_LA/32639D40D02D925FE063050B460A60E3/DATAFILE/sysaux.273.1198520533
++DATA/NTAP_LA/32639D40D02D925FE063050B460A60E3/DATAFILE/undotbs1.274.1198520551
++DATA/NTAP_LA/32639D40D02D925FE063050B460A60E3/DATAFILE/users.275.1198520559
++DATA/NTAP_LA/32639E973AF79299E063050B460AFBAD/DATAFILE/system.276.1198520563
++DATA/NTAP_LA/32639E973AF79299E063050B460AFBAD/DATAFILE/sysaux.277.1198520579
++DATA/NTAP_LA/32639E973AF79299E063050B460AFBAD/DATAFILE/undotbs1.278.1198520595
++DATA/NTAP_LA/32639E973AF79299E063050B460AFBAD/DATAFILE/users.279.1198520605
+
+19 rows selected.
+
+
+SQL> select name from v$controlfile;
+
+NAME
+--------------------------------------------------------------------------------
++DATA/NTAP_LA/CONTROLFILE/current.260.1198520303
++LOGS/NTAP_LA/CONTROLFILE/current.257.1198520305
+
+
+SQL> select group#, type, member from v$logfile order by 2, 1;
+
+    GROUP# TYPE    MEMBER
+---------- ------- ------------------------------------------------------------
+         1 ONLINE  +DATA/NTAP_LA/ONLINELOG/group_1.280.1198520649
+         1 ONLINE  +LOGS/NTAP_LA/ONLINELOG/group_1.259.1198520651
+         2 ONLINE  +DATA/NTAP_LA/ONLINELOG/group_2.281.1198520659
+         2 ONLINE  +LOGS/NTAP_LA/ONLINELOG/group_2.258.1198520661
+         3 ONLINE  +DATA/NTAP_LA/ONLINELOG/group_3.282.1198520669
+         3 ONLINE  +LOGS/NTAP_LA/ONLINELOG/group_3.260.1198520671
+         4 STANDBY +DATA/NTAP_LA/ONLINELOG/group_4.283.1198520677
+         4 STANDBY +LOGS/NTAP_LA/ONLINELOG/group_4.261.1198520679
+         5 STANDBY +DATA/NTAP_LA/ONLINELOG/group_5.284.1198520687
+         5 STANDBY +LOGS/NTAP_LA/ONLINELOG/group_5.262.1198520689
+         6 STANDBY +DATA/NTAP_LA/ONLINELOG/group_6.285.1198520697
+
+    GROUP# TYPE    MEMBER
+---------- ------- ------------------------------------------------------------
+         6 STANDBY +LOGS/NTAP_LA/ONLINELOG/group_6.263.1198520699
+         7 STANDBY +DATA/NTAP_LA/ONLINELOG/group_7.286.1198520707
+         7 STANDBY +LOGS/NTAP_LA/ONLINELOG/group_7.264.1198520709
+
+14 rows selected.
+
+
+....
+. スタンバイ データベースのリカバリ ステータスを検証します。注意してください `recovery logmerger`で `APPLYING_LOG`アクション。
++
+....
+
+SQL> SELECT ROLE, THREAD#, SEQUENCE#, ACTION FROM V$DATAGUARD_PROCESS;
+
+ROLE                        THREAD#  SEQUENCE# ACTION
+------------------------ ---------- ---------- ------------
+post role transition              0          0 IDLE
+recovery apply slave              0          0 IDLE
+recovery apply slave              0          0 IDLE
+recovery apply slave              0          0 IDLE
+recovery apply slave              0          0 IDLE
+recovery logmerger                1         24 APPLYING_LOG
+managed recovery                  0          0 IDLE
+RFS ping                          1         24 IDLE
+archive redo                      0          0 IDLE
+archive redo                      0          0 IDLE
+gap manager                       0          0 IDLE
+
+ROLE                        THREAD#  SEQUENCE# ACTION
+------------------------ ---------- ---------- ------------
+archive local                     0          0 IDLE
+redo transport timer              0          0 IDLE
+archive redo                      0          0 IDLE
+RFS async                         1         24 IDLE
+redo transport monitor            0          0 IDLE
+log writer                        0          0 IDLE
+
+17 rows selected.
+
+
+....
+. スタンバイ データベースでフラッシュバックが有効になっています。
++
+....
+
+SQL> select name, database_role, flashback_on from v$database;
+
+NAME      DATABASE_ROLE    FLASHBACK_ON
+--------- ---------------- ------------------
+NTAP      PHYSICAL STANDBY YES
+
+....
+. スタンバイ DB 上の dNFS 構成。
+
+
+....
+
+SQL> select svrname, dirname from v$dnfs_servers;
+
+SVRNAME
+--------------------------------------------------------------------------------
+DIRNAME
+--------------------------------------------------------------------------------
+10.165.128.197
+/oras-u04
+
+10.165.128.197
+/oras-u05
+
+10.165.128.197
+/oras-u06
+
+10.165.128.197
+/oras-u07
+
+10.165.128.197
+/oras-u02
+
+10.165.128.197
+/oras-u08
+
+10.165.128.196
+/oras-u03
+
+10.165.128.196
+/oras-u01
+
+
+8 rows selected.
+
+
+....
+これで、スタンバイ サイトで管理スタンバイ リカバリが有効になっている VLDB NTAP の Data Guard セットアップのデモンストレーションが完了します。
+
+====
+
+
+=== オブザーバーを使用して Data Guard Broker と FSFO を設定する
+
+
+
+==== Data Guard Brokerのセットアップ
+
+[%collapsible%open]
+====
+Oracle Data Guard Broker は、Oracle Data Guard 構成の作成、保守、監視を自動化および一元化する分散管理フレームワークです。次のセクションでは、Data Guard 環境を管理するために Data Guard Broker を設定する方法を説明します。
+
+. sqlplus 経由で次のコマンドを使用して、プライマリ データベースとスタンバイ データベースの両方でデータ ガード ブローカーを起動します。
++
+[source, cli]
+----
+alter system set dg_broker_start=true scope=both;
+----
+. プライマリ データベースから、SYSDBA として Data Guard Borker に接続します。
++
+....
+
+[oracle@orap ~]$ dgmgrl sys@NTAP_NY
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Wed Dec 11 20:53:20 2024
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+Password:
+Connected to "NTAP_NY"
+Connected as SYSDBA.
+DGMGRL>
+
+
+....
+. Data Guard Broker 構成を作成して有効にします。
++
+....
+
+DGMGRL> create configuration dg_config as primary database is NTAP_NY connect identifier is NTAP_NY;
+Configuration "dg_config" created with primary database "ntap_ny"
+DGMGRL> add database NTAP_LA as connect identifier is NTAP_LA;
+Database "ntap_la" added
+DGMGRL> enable configuration;
+Enabled.
+DGMGRL> show configuration;
+
+Configuration - dg_config
+
+  Protection Mode: MaxPerformance
+  Members:
+  ntap_ny - Primary database
+    ntap_la - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 3 seconds ago)
+
+....
+. Data Guard Broker 管理フレームワーク内でデータベースのステータスを検証します。
++
+....
+
+DGMGRL> show database ntap_ny;
+
+Database - ntap_ny
+
+  Role:               PRIMARY
+  Intended State:     TRANSPORT-ON
+  Instance(s):
+    NTAP
+
+Database Status:
+SUCCESS
+
+
+DGMGRL> show database ntap_la;
+
+Database - ntap_la
+
+  Role:               PHYSICAL STANDBY
+  Intended State:     APPLY-ON
+  Transport Lag:      0 seconds (computed 0 seconds ago)
+  Apply Lag:          0 seconds (computed 0 seconds ago)
+  Average Apply Rate: 3.00 KByte/s
+  Real Time Query:    OFF
+  Instance(s):
+    NTAP
+
+Database Status:
+SUCCESS
+
+DGMGRL>
+
+....
+
+
+障害が発生した場合、Data Guard Broker を使用してプライマリ データベースをスタンバイに瞬時にフェイルオーバーできます。もし `Fast-Start Failover`有効になっている場合、Data Guard Broker は、障害が検出されると、ユーザーの介入なしにプライマリ データベースをスタンバイにフェイルオーバーできます。
+
+====
+
+
+==== オブザーバーを使用してFSFOを構成する
+
+[%collapsible%open]
+====
+オプションで、Data Guard Broker の Fast Start Fail Over (FSFO) を有効にして、障害発生時にプライマリ データベースをスタンバイ データベースに自動的にフェイルオーバーすることもできます。オブザーバー インスタンスを使用して FSFO を設定する手順は次のとおりです。
+
+. プライマリまたはスタンバイ DB サーバーとは異なるゾーンで Observer を実行するための軽量の Google Compute Engine インスタンスを作成します。テストケースでは、2 つの vCPU と 7.5G のメモリを備えた N1 インスタンスを使用しました。ホストに同じバージョンの Oracle がインストールされています。
+. Oracle ユーザーとしてログインし、Oracle ユーザーの .bash_profile で Oracle 環境を設定します。
++
+[source, cli]
+----
+vi ~/.bash_profile
+----
++
+....
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/NTAP
+export PATH=$ORACLE_HOME/bin:$PATH
+
+....
+. プライマリおよびスタンバイ DB TNS 名エントリを tnsname.ora ファイルに追加します。
++
+[source, cli]
+----
+vi $ORACLE_HOME/network/admin/tsnames.ora
+----
++
+....
+
+NTAP_NY =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = orap.us-east4-a.c.cvs-pm-host-1p.internal)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = NTAP_NY.cvs-pm-host-1p.internal)
+      (UR=A)
+    )
+  )
+
+NTAP_LA =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = oras.us-west4-a.c.cvs-pm-host-1p.internal)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = NTAP_LA.cvs-pm-host-1p.internal)
+      (UR=A)
+    )
+  )
+
+....
+. パスワードを使用してウォレットを作成し、初期化します。
++
+[source, cli]
+----
+mkdir -p /u01/app/oracle/admin/NTAP/wallet
+----
++
+[source, cli]
+----
+mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -create
+----
++
+....
+
+[oracle@orao NTAP]$ mkdir -p /u01/app/oracle/admin/NTAP/wallet
+[oracle@orao NTAP]$ mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -create
+Oracle Secret Store Tool Release 19.0.0.0.0 - Production
+Version 19.4.0.0.0
+Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
+
+Enter password:
+Enter password again:
+[oracle@orao NTAP]$
+
+....
+. プライマリ データベースとスタンバイ データベースの両方のユーザー sys に対してパスワードなしの認証を有効にします。最初に sys パスワードを入力し、次に前の手順のウォレット パスワードを入力します。
++
+mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -createCredential NTAP_NY sys
+
++
+mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -createCredential NTAP_LA sys
+
++
+....
+
+[oracle@orao NTAP]$ mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -createCredential NTAP_NY sys
+Oracle Secret Store Tool Release 19.0.0.0.0 - Production
+Version 19.4.0.0.0
+Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
+
+Your secret/Password is missing in the command line
+Enter your secret/Password:
+Re-enter your secret/Password:
+Enter wallet password:
+[oracle@orao NTAP]$ mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -createCredential NTAP_LA sys
+Oracle Secret Store Tool Release 19.0.0.0.0 - Production
+Version 19.4.0.0.0
+Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
+
+Your secret/Password is missing in the command line
+Enter your secret/Password:
+Re-enter your secret/Password:
+Enter wallet password:
+[oracle@orao NTAP]$
+
+....
+. ウォレットの場所を指定して sqlnet.ora を更新します。
++
+[source, cli]
+----
+vi $ORACLE_HOME/network/admin/sqlnet.ora
+----
++
+....
+
+WALLET_LOCATION =
+   (SOURCE =
+      (METHOD = FILE)
+      (METHOD_DATA = (DIRECTORY = /u01/app/oracle/admin/NTAP/wallet))
+)
+SQLNET.WALLET_OVERRIDE = TRUE
+
+....
+. 資格情報を検証します。
++
+[source, cli]
+----
+mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -listCredential
+----
++
+[source, cli]
+----
+sqlplus /@NTAP_LA as sysdba
+----
++
+[source, cli]
+----
+sqlplus /@NTAP_NY as sysdba
+----
++
+....
+[oracle@orao NTAP]$ mkstore -wrl /u01/app/oracle/admin/NTAP/wallet -listCredential
+Oracle Secret Store Tool Release 19.0.0.0.0 - Production
+Version 19.4.0.0.0
+Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
+
+Enter wallet password:
+List credential (index: connect_string username)
+2: NTAP_LA sys
+1: NTAP_NY sys
+
+....
+. ファスト スタート フェイルオーバーを構成して有効にします。
++
+[source, cli]
+----
+mkdir /u01/app/oracle/admin/NTAP/fsfo
+----
++
+[source, cli]
+----
+dgmgrl
+----
++
+....
+
+Welcome to DGMGRL, type "help" for information.
+DGMGRL> connect /@NTAP_NY
+Connected to "ntap_ny"
+Connected as SYSDBA.
+DGMGRL> show configuration;
+
+Configuration - dg_config
+
+  Protection Mode: MaxAvailability
+  Members:
+  ntap_ny - Primary database
+    ntap_la - Physical standby database
+
+Fast-Start Failover:  Disabled
+
+Configuration Status:
+SUCCESS   (status updated 58 seconds ago)
+
+DGMGRL> enable fast_start failover;
+Enabled in Zero Data Loss Mode.
+DGMGRL> show configuration;
+
+Configuration - dg_config
+
+  Protection Mode: MaxAvailability
+  Members:
+  ntap_ny - Primary database
+    Warning: ORA-16819: fast-start failover observer not started
+
+    ntap_la - (*) Physical standby database
+
+Fast-Start Failover: Enabled in Zero Data Loss Mode
+
+Configuration Status:
+WARNING   (status updated 43 seconds ago)
+
+....
+. オブザーバーを起動して検証します。
++
+[source, cli]
+----
+nohup dgmgrl /@NTAP_NY "start observer file='/u01/app/oracle/admin/NTAP/fsfo/fsfo.dat'" >> /u01/app/oracle/admin/NTAP/fsfo/dgmgrl.log &
+----
++
+....
+
+[oracle@orao NTAP]$ nohup dgmgrl /@NTAP_NY "start observer file='/u01/app/oracle/admin/NTAP/fsfo/fsfo.dat'" >> /u01/app/oracle/admin/NTAP/fsfo/dgmgrl.log &
+[1] 94957
+
+[oracle@orao fsfo]$ dgmgrl
+DGMGRL for Linux: Release 19.0.0.0.0 - Production on Wed Apr 16 21:12:09 2025
+Version 19.18.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Welcome to DGMGRL, type "help" for information.
+DGMGRL> connect /@NTAP_NY
+Connected to "ntap_ny"
+Connected as SYSDBA.
+DGMGRL> show configuration verbose;
+
+Configuration - dg_config
+
+  Protection Mode: MaxAvailability
+  Members:
+  ntap_ny - Primary database
+    ntap_la - (*) Physical standby database
+
+  (*) Fast-Start Failover target
+
+  Properties:
+    FastStartFailoverThreshold      = '30'
+    OperationTimeout                = '30'
+    TraceLevel                      = 'USER'
+    FastStartFailoverLagLimit       = '30'
+    CommunicationTimeout            = '180'
+    ObserverReconnect               = '0'
+    FastStartFailoverAutoReinstate  = 'TRUE'
+    FastStartFailoverPmyShutdown    = 'TRUE'
+    BystandersFollowRoleChange      = 'ALL'
+    ObserverOverride                = 'FALSE'
+    ExternalDestination1            = ''
+    ExternalDestination2            = ''
+    PrimaryLostWriteAction          = 'CONTINUE'
+    ConfigurationWideServiceName    = 'ntap_CFG'
+
+Fast-Start Failover: Enabled in Zero Data Loss Mode
+  Lag Limit:          30 seconds (not in use)
+  Threshold:          30 seconds
+  Active Target:      ntap_la
+  Potential Targets:  "ntap_la"
+    ntap_la    valid
+  Observer:           orao
+  Shutdown Primary:   TRUE
+  Auto-reinstate:     TRUE
+  Observer Reconnect: (none)
+  Observer Override:  FALSE
+
+Configuration Status:
+SUCCESS
+
+DGMGRL>
+
+....
+
+
+
+NOTE: データ損失ゼロを実現するには、Oracle Data Guard保護モードを次のように設定する必要があります。 `MaxAvailability`または `MaxProtection`モード。デフォルトの保護モード `MaxPerformance`Data Guard BrokerインターフェースからData Guard構成を編集して変更することができます。 `LogXptMode` ASYNC から SYNC へ。 Oracle アーカイブ ログの宛先ログ モードをそれに応じて変更する必要があります。必要に応じて、Data Guardでリアルタイムログアプリケーションを有効にすると、 `MaxAvailability`自動データベース再起動により、スタンバイデータベースが誤って開かれる可能性があるため、データベースを自動的に再起動することは避けてください。 `READ ONLY WITH APPLY`モードでは、Active Data Guard ライセンスが必要です。代わりに、データベースを手動で起動して、 `MOUNT`リアルタイムで管理されたリカバリを備えた状態。
+
+====
+
+
+=== 自動化により他のユースケース用にスタンバイデータベースをクローン
+
+[%collapsible%open]
+====
+次の自動化ツールキットは、完全なクローンライフサイクル管理のために、NFS/ASM 構成で GCNV にデプロイされた Oracle Data Guard スタンバイ DB のクローンを作成または更新するように特別に設計されています。
+
+[source, cli]
+----
+https://bitbucket.ngage.netapp.com/projects/NS-BB/repos/na_oracle_clone_gcnv/browse
+----
+
+NOTE: 現時点では、このツールキットにアクセスできるのは、Bitbucket アクセス権を持つNetApp内部ユーザーのみです。関心のある外部ユーザーの場合は、アカウント チームにアクセスをリクエストするか、 NetAppソリューション エンジニアリング チームに問い合わせてください。参照link:../automation/automation-ora-clone-gcnv-asm.html#purpose["ASMを使用したGCNVでのOracleクローンライフサイクルの自動化"]使用方法についてはこちらをご覧ください。
+
+====
+
+
+== 詳細情報の入手方法
+
+このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。
+
+* TR-5002: Azure NetApp Filesによる Oracle Active Data Guard のコスト削減
++
+link:azure-ora-anf-data-guard.html#purpose["TR-5002: Azure NetApp Filesによる Oracle Active Data Guard のコスト削減"]
+
+* TR-4974: NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動
++
+link:aws-ora-fsx-ec2-nfs-asm.html#purpose["TR-4974: NFS/ASM を使用した AWS FSx/EC2 での Oracle 19c のスタンドアロン再起動"]
+
+* NetAppのクラス最高のファイルストレージサービス（Google Cloud）
++
+link:https://cloud.google.com/netapp-volumes?hl=en["https://cloud.google.com/netapp-volumes?hl=en"^]
+
+* Oracle Data Guardの概念と管理
++
+link:https://docs.oracle.com/en/database/oracle/oracle-database/19/sbydb/index.html#Oracle%C2%AE-Data-Guard["https://docs.oracle.com/en/database/oracle/oracle-database/19/sbydb/index.html#Oracle%C2%AE-Data-Guard"^]
+
+

@@ -162,6 +162,9 @@ sidebar:
         url: "/mssql/sql-srv-anf-conclusion.html"
       - title: 詳細情報の入手方法
         url: "/mssql/sql-srv-anf-add-info.html"
+    - title: Google Cloud NetApp Volumes で SQL Server Always On を実現
+      pdf-filename: Google Cloud NetApp Volumes で SQL Server Always On を実現
+      url: "/mssql/gcnv-sql-aoag-setup.html"
     - title: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       pdf-filename: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       url: "/mssql/tr-4467.html"

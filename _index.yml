@@ -54,6 +54,8 @@ indexpage:
       url: "/mssql/sql-aws-ec2.html"
     - title: Azure NetApp Filesで SQL Server を実行する
       url: "/mssql/sql-srv-anf-overview.html"
+    - title: Google Cloud NetApp Volumes で SQL Server を実行する
+      url: "/mssql/gcnv-sql-aoag-setup.html"
     - title: オンプレミスの SQL ワークロードを FSx ONTAPに移行する
       url: "/mssql/customer-usecase-mssql-fsx1.html"
     - title: クラスタ化されたデータONTAPを使用した Windows 上の Microsoft SQL Server と SAP

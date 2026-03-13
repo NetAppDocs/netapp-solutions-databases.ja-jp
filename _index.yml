@@ -40,6 +40,8 @@ indexpage:
       url: "/oracle/azure-ora-nfile-usecase.html"
   - title: Google Cloud 向け Oracle
     links:
+    - title: NFS を使用して Google NetApp Volumes に Oracle SI を導入する
+      url: "/oracle/gcp-ora-gcnv-si-nfs.html"
     - title: Google Cloud で Oracle VLDB のバックアップとリカバリを最適化
       url: "/oracle/gcp-ora-gcnv-inc-merge.html"
     - title: Google Cloud に Data Guard を搭載した Oracle VLDB をデプロイする

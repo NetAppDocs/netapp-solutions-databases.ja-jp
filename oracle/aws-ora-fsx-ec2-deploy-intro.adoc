@@ -26,4 +26,5 @@ Amazon FSx ONTAP は、NFS、SMB、iSCSI を公開する業界をリードする
 
 ソリューションとユースケースの詳細については、次の概要ビデオをご覧ください。
 
-link:https://www.netapp.tv/insight/details/30000?playlist_id=275&mcid=04891225598830484314259903524057913910["AWS と FSx ONTAPのハイブリッドクラウドで Oracle データベースをモダナイズする、パート 1 - ユースケースとソリューション アーキテクチャ"^]
+.AWS と FSx ONTAPのハイブリッドクラウドで Oracle データベースをモダナイズする、パート 1 - ユースケースとソリューション アーキテクチャ
+video::b1a7bb05-caea-44a0-bd9a-b01200f372e9[panopto,width=360]

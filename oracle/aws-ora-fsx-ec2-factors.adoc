@@ -71,7 +71,7 @@ NetApp自動化ツールキットを使用した自動化された Oracle デプ
 ----
 sysctl -a | grep tcp.*.slot_table
 ----
-* 次の表は、Linux NFSv3 - 単一インスタンスに推奨される NFS マウント オプションを示しています。
+* 以下の表は、Linux（シングルインスタンス）における推奨NFSマウントオプションを示しています。
 +
 image:aws-ora-fsx-ec2-nfs-001.png["入出力ダイアログまたは書かれたコンテンツを示す図"]
 

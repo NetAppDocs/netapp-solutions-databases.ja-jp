@@ -88,6 +88,10 @@ sidebar:
           url: "/oracle/azure-ora-nfile-migration.html"
     - title: Google Cloud
       entries:
+      - title: NFS を使用した Google NetApp Volumes での Oracle Standalone Instance の導入
+        pdf-filename: NFS 経由の Google NetApp Volumes での Oracle Standalone Instance
+          の導入
+        url: "/oracle/gcp-ora-gcnv-si-nfs.html"
       - title: Google Cloud NetApp Volumesのサーバー内増分マージにより Oracle VLDB のバックアップとリカバリを最適化
         pdf-filename: Google Cloud NetApp Volumesのサーバー内増分マージによる Oracle VLDB バックアップとリカバリの最適化
         url: "/oracle/gcp-ora-gcnv-inc-merge.html"

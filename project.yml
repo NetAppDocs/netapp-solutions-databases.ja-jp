@@ -101,6 +101,9 @@ sidebar:
       - title: '概要: Google Cloud NetApp Volumesを使用した Oracle データベース'
         pdf-filename: '概要: Oracle Database とGoogle Cloud NetApp Volumes'
         url: "/oracle/gcp-oracle-gcnv-overview.html"
+      - title: Google Cloud NetApp Volumes を使用して Oracle Database 26ai の高可用性をデプロイします
+        pdf-filename: Google Cloud NetApp Volumes を使用した Oracle Database 26ai 高可用性のデプロイ
+        url: "/oracle/gcnv-oracle-deployment.html"
     - title: オンプレミスとハイブリッドクラウド
       entries:
       - title: vVolsを使用したVCFでのOracle RACの導入と保護

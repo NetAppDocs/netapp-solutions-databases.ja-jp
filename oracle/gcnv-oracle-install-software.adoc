@@ -1,0 +1,209 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-install-software.html 
+keywords: oracle database, grid infrastructure, oracle restart, asm, asm disk groups, oracle database 26ai, silent install, gridsetup 
+summary: 各データベースホスト用にGoogle Cloud NetApp Volumes iSCSIストレージにOracle RestartとASMを使用してOracle Grid Infrastructureをインストールし、その後Oracle Database 26aiソフトウェアをインストールします。この手順では、Oracle Grid Infrastructure GoldImageのステージングと解凍、gridSetup応答ファイルの実行、GCNVボリューム上へのASM ディスク グループの作成、およびOracle Databaseホームのソフトウェアのみのサイレントインストールの実行について説明します。 
+---
+= Google Cloud NetApp Volumes に Oracle Grid Infrastructure と Oracle Database 26ai をインストールする
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+各データベースホスト用のGoogle Cloud NetApp Volumes iSCSIストレージに Oracle Restart と ASM を使用して Oracle Grid Infrastructure をインストールし、その後 Oracle Database 26ai ソフトウェアをインストールします。この手順には、Oracle GoldImages のステージング、応答ファイルを使用したサイレントインストールの実行、GCNV ボリューム上への ASM ディスク グループの作成、およびデータベース作成前にプライマリホストとスタンバイホストの両方に同一の Oracle ソフトウェアを準備することが含まれます。
+
+
+
+== ステップ 1：各 DB ホストに Grid Infrastructure をインストールする
+
+各データベースホストに Oracle Grid Infrastructure GoldImage をインストールして、Oracle Restart と ASM を有効にします。どちらのホストも、それぞれ独自の Grid ホーム、ASM インスタンス、およびディスク グループが必要です。Data Guard は、共有ストレージではなく、Oracle Net を介してデータを複製します。すべてのステップを `oracdb1`で完了してから、 `oracdb2`で繰り返してください。
+
+. [[stage-oracle-binaries-on-u01]]Oracle GoldImages、リリースアップデート、およびOPatchバイナリを `/u01/stage`にステージングします：
++
+[source, bash]
+----
+sudo chown oracle:oinstall /u01/stage && sudo chmod 775 /u01/stage
+# Upload GoldImages, RU, OPatch to /u01/stage.
+----
+. [[unzip-grid-home]]ターゲットのグリッドホームでグリッド GoldImage を解凍します。26ai GoldImage は、ターゲットディレクトリに直接解凍してインストールします。
++
+[source, bash]
+----
+sudo -u grid bash -c '
+cd /u01/app/26ai/grid
+unzip -q /u01/stage/LINUX.X64_<RELEASE>_grid_home.zip
+'
+sudo chown -R grid:oinstall /u01/app/26ai/grid
+----
++
+Grid GoldImageがターゲット RU より古い場合は、 `gridSetup.sh -applyRU`フローを使用してセットアップ中に Grid ホームにパッチを適用するか、RU が同梱された GoldImage を使用してください。Grid と Database のホームを同じ意図したパッチ レベルに維持してください。
+
+. [[gridsetup-response-file]]各ホストで `gridSetup`レスポンスファイル `/tmp/grid.rsp`を構築します。ホスト名を置き換え、強力なパスワードを使用してください：
++
+[source, bash]
+----
+HOST=$(hostname -s)
+
+sudo -u grid bash -c "cat > /tmp/grid.rsp <<RSP
+oracle.install.responseFileVersion=/oracle/install/rspfmt_crsinstall_response_schema_v23.0.0
+INVENTORY_LOCATION=/u01/app/oraInventory
+installOption=HA_CONFIG
+ORACLE_BASE=/u01/app/grid
+clusterUsage=GENERAL_PURPOSE
+OSDBA=asmdba
+OSOPER=asmoper
+OSASM=asmadmin
+storageOption=FLEX_ASM_STORAGE
+sysasmPassword=WelcomeOracle1!
+asmsnmpPassword=WelcomeOracle1!
+diskGroupName=DATA
+redundancy=EXTERNAL
+auSize=4
+diskString=/dev/mapper/ora_${HOST}_*p*
+diskList=/dev/mapper/ora_${HOST}_data_01p1,/dev/mapper/ora_${HOST}_data_02p1
+managementOption=NONE
+RSP"
+sudo -u grid chmod 600 /tmp/grid.rsp
+----
+.  `gridSetup.sh`をサイレントモードで実行して、バイナリをコピーし、設定を準備します。 `Successfully Setup Software with warning(s).`と終了コード6（警告）または0を想定します：
++
+[source, bash]
+----
+sudo -u grid bash -c '
+export ORACLE_HOME=/u01/app/26ai/grid
+export ORACLE_BASE=/u01/app/grid
+cd /u01/app/26ai/grid
+./gridSetup.sh -silent -responseFile /tmp/grid.rsp -ignorePrereqFailure
+'
+----
+. [[run-orainstroot-and-root]] `orainstRoot.sh`および `root.sh`をrootとして実行します。 `root.sh`スクリプトは `crsctl`、 `srvctl`、および `asmcmd`ラッパーを作成し、OHASを起動します。
++
+[source, bash]
+----
+sudo /u01/app/oraInventory/orainstRoot.sh
+sudo /u01/app/26ai/grid/root.sh
+----
+. [[execute-config-tools]] `gridSetup.sh -executeConfigTools`を実行して、<<gridsetup-response-file,応答ファイル>>に対して構成アシスタント（NETCA、ASMCA、CVU）を実行します。これにより、ASM インスタンスと `+DATA` ディスク グループが作成されます。NETCA / ASMCA / CVU 後に `Successfully Configured Software.`が表示されます：
++
+[source, bash]
+----
+sudo -u grid bash -c '
+export ORACLE_HOME=/u01/app/26ai/grid
+export ORACLE_BASE=/u01/app/grid
+cd /u01/app/26ai/grid
+./gridSetup.sh -silent -executeConfigTools -responseFile /tmp/grid.rsp
+'
+----
+. [[create-reco-and-fra-disk-groups]] `+RECO`および `+FRA`のディスク グループを `asmca`を使用して作成します。シングルショットインストールでは、 `+DATA`のみが作成されます：
++
+[source, bash]
+----
+HOST=$(hostname -s)
+
+sudo -u grid bash -c "
+export ORACLE_HOME=/u01/app/26ai/grid
+export ORACLE_SID=+ASM
+
+\$ORACLE_HOME/bin/asmca -silent -createDiskGroup \
+  -diskGroupName RECO \
+  -disk /dev/mapper/ora_${HOST}_arch_01p1 \
+  -redundancy EXTERNAL -au_size 4
+
+\$ORACLE_HOME/bin/asmca -silent -createDiskGroup \
+  -diskGroupName FRA \
+  -disk /dev/mapper/ora_${HOST}_fra_01p1 \
+  -redundancy EXTERNAL -au_size 4
+"
+----
+. [[verify-asm-and-oracle-restart]]ASM ディスク グループと Oracle Restart リソースのステータスを確認します。
++
+[source, bash]
+----
+sudo -u grid ORACLE_HOME=/u01/app/26ai/grid ORACLE_SID=+ASM \
+  /u01/app/26ai/grid/bin/sqlplus -s / as sysasm <<'SQL'
+SELECT name, total_mb, free_mb, state FROM v$asm_diskgroup ORDER BY name;
+SQL
+
+sudo /u01/app/26ai/grid/bin/crsctl stat res -t
+# Expected ONLINE: ora.DATA.dg, ora.RECO.dg, ora.FRA.dg, ora.LISTENER.lsnr, ora.asm, ora.cssd, ora.evmd.
+----
+. 上記のステップを `oracdb2`で繰り返します。<<gridsetup-response-file,ステップ3と4>>および<<create-reco-and-fra-disk-groups,ステップ7>>内の `HOST=$(hostname -s)`パターンにより、そのホストのGCNV iSCSIデバイスが自動的に選択されます。
++
+同じASMディスク グループ名を使用します—Data GuardはストレージではなくOracle Net経由でレプリケートします。
+
+
+
+
+
+== ステップ2：各DBホストにOracle Databaseをインストールする
+
+最新のリリースアップデートを適用した上で、サイレントインストール（ソフトウェアのみのインストール）を使用して、各データベースホストにOracle Database 26aiソフトウェアホームをインストールします。すべてのステップを `oracdb1`で完了してから、 `oracdb2`で繰り返します。
+
+. [[unzip-db-home-and-ru-patch]]データベースホーム、最新のOPatch、およびRUパッチをそれぞれのディレクトリに解凍します。RUディレクトリのレイアウトと `-applyRU`パスについては、Oracleのドキュメントを参照してください：
++
+[source, bash]
+----
+sudo su - oracle
+cd /u01/app/oracle/product/26ai/db_1
+unzip -q /u01/stage/LINUX.X64_<RELEASE>_db_home.zip
+rm -rf OPatch
+unzip -q /u01/stage/p6880880_<base>_Linux-x86-64.zip                    # latest OPatch
+unzip -q /u01/stage/p<RU_PATCH>_<base>_Linux-x86-64.zip -d /u01/stage   # latest 26ai RU
+----
+. [[silent-db-home-install]]インストール応答ファイルを作成し、RUを適用したサイレント ソフトウェアのみのインストールを実行します。OL 8/9では、 `runInstaller`行から `-applyOneOffs`を省略します：
++
+[source, bash]
+----
+sudo -u oracle tee /u01/stage/dbinstall.rsp >/dev/null <<'EOF'
+oracle.install.option=INSTALL_DB_SWONLY
+UNIX_GROUP_NAME=oinstall
+INVENTORY_LOCATION=/u01/app/oraInventory
+ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+ORACLE_BASE=/u01/app/oracle
+oracle.install.db.InstallEdition=EE
+oracle.install.db.OSDBA_GROUP=dba
+oracle.install.db.OSOPER_GROUP=oper
+oracle.install.db.OSBACKUPDBA_GROUP=backupdba
+oracle.install.db.OSDGDBA_GROUP=dgdba
+oracle.install.db.OSKMDBA_GROUP=kmdba
+oracle.install.db.OSRACDBA_GROUP=racdba
+oracle.install.db.rootconfig.executeRootScript=false
+EOF
+
+sudo -u oracle bash -c '
+export CV_ASSUME_DISTID=OEL10    # OEL9 / OEL8.10 if cluvfy requires it
+cd /u01/app/oracle/product/26ai/db_1
+./runInstaller -applyRU /u01/stage/<RU_PATCH> \
+  -applyOneOffs /u01/stage/39292021 \
+  -silent -ignorePrereqFailure -responseFile /u01/stage/dbinstall.rsp
+'
+----
+. インストール後のルートスクリプトを実行します。
++
+[source, bash]
+----
+sudo /u01/app/oracle/product/26ai/db_1/root.sh
+----
+. [[set-oracle-environment]]各DBホストでOracle環境を設定します。 `ORACLE_SID=orcl`を `oracdb1`で使用し、 `ORACLE_SID=orcls`を `oracdb2`で使用します：
++
+[source, bash]
+----
+sudo -u oracle tee -a /home/oracle/.bash_profile >/dev/null <<'EOF'
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export ORACLE_SID=orcl                          # use 'orcls' on oracdb2
+export GRID_HOME=/u01/app/26ai/grid
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+export TNS_ADMIN=$ORACLE_HOME/network/admin
+EOF
+----
++
+スタンバイデータベースはxref:gcnv-oracle-standby-database.adoc[スタンバイデータベースを作成する]に作成されます。
+
+
+
+
+
+== 次の手順
+
+HAデプロイ用の本番プライマリ インスタンスを作成するには、 `oracdb1`のxref:gcnv-oracle-primary-database.adoc[Oracleプライマリデータベースを作成する]に移動します。

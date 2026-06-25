@@ -1346,7 +1346,6 @@
   <block id="af072236983e991ab34e773871b10236" category="cell"><block ref="af072236983e991ab34e773871b10236" category="inline-link-rx"></block></block>
   <block id="499477cf7953707f63a1b1313c8c065a" category="cell"><block ref="499477cf7953707f63a1b1313c8c065a" category="inline-link-rx"></block></block>
   <block id="2900c5e1ee191606f20d007194e70edf" category="cell">DB OS Google Compute Engineインスタンスをオンプレミスにマッチング</block>
-  <block id="012b603d852affe4779f095a5c59f0c5" category="summary">パブリック クラウドの俊敏性、価値実現までの時間、コスト削減はすべて、企業がデータベース アプリケーションの開発とテスト作業にパブリック クラウドを採用する上で意味のある価値提案です。これを急いで実現するには、 SnapCenterより優れたツールはありません。 SnapCenter は、オンプレミスの運用データベースを保護できるだけでなく、追加のストレージをほとんど消費せずに、パブリック クラウドでのアプリケーション開発やコード テスト用のコピーを迅速に複製することもできます。ツールを使用した手順ごとの詳細を以下に示します。</block>
   <block id="38da6679588aeb2754e14dd58994685e" category="doc">クラウドへの開発/テストのバーストのワークフロー</block>
   <block id="4d8a5b6bc9c43ab79e376d1aa4d83217" category="paragraph">パブリック クラウドの俊敏性、価値実現までの時間、コスト削減はすべて、データベース アプリケーションの開発とテスト作業にパブリック クラウドを採用する企業にとって、意味のある価値提案です。これを実現するには、 SnapCenterより優れたツールはありません。 SnapCenter は、オンプレミスの運用データベースを保護できるだけでなく、追加のストレージをほとんど消費せずに、パブリック クラウドでのアプリケーション開発やコード テスト用のコピーを迅速に複製することもできます。このツールを使用するための手順ごとの詳細を以下に示します。</block>
   <block id="b47b42841be2e173707ab5884714970b" category="section-title">複製されたスナップショットバックアップから開発/テスト用の Oracle データベースをクローンする</block>
@@ -1859,8 +1858,6 @@
   <block id="3de639403ea86ae87a5883d359deb4ab" category="list-text">Azure NetApp Files はソフトウェア ライセンス コストも削減し、全体的な TCO も削減します。</block>
   <block id="46790c8fe72176f6262b4b5531482ee5" category="list-text">ボリュームの再形成と動的なサービス レベル機能により、安定した状態のワークロードに合わせてサイズを調整し、過剰プロビジョニングを回避することでコストが最適化されます。</block>
   <block id="860d93b2ef30525111fa6440bf4d5bd7" category="list-text">冗長性と高可用性を高めるには、SQL Server VMは同じ<block ref="47fe032b9b8e985355e53596ae7973ec" category="inline-link-rx"></block>または異なる<block ref="ef39442dc7c0eb954c4472567a9ca1e3" category="inline-link-rx"></block>。ユーザー定義のデータ ファイルが必要な場合は、ファイル パスの要件を考慮してください。その場合は、SQL AOAG ではなく SQL FCI を選択します。</block>
-  <block id="c6fbfcd868e29e37e88eaeff82a7f430" category="inline-link">\\ANFSMB-b4ca.anf.test\SQLDB および \\ANFSMB-b4ca.anf.test\SQLDB\</block>
-  <block id="e2bed4e218692d056237b3ae3d24293c" category="list-text">次の UNC パスがサポートされています。<block ref="cb8cdd6ee3ebeed12086142f1a66cc3e" category="inline-link-rx"></block> 。</block>
   <block id="0b4d3828f5dae91cd27e48bffa786d91" category="list-text">ループバック UNC パスはサポートされていません。</block>
   <block id="db3d2f4f54b992af225801eb51ea7387" category="list-text">サイズ設定には、オンプレミス環境の履歴データを使用します。 OLTP ワークロードの場合、平均時間とピーク時のワークロードと、ディスク読み取り/秒およびディスク書き込み/秒のパフォーマンス カウンターを使用して、ターゲット IOPS をパフォーマンス要件と一致させます。データ ウェアハウスおよびレポート ワークロードの場合、平均時間とピーク時のワークロード、およびディスク読み取りバイト数/秒とディスク書き込みバイト数/秒を使用して、ターゲット スループットを一致させます。平均値はボリュームの再形成機能と組み合わせて使用できます。</block>
   <block id="da3259c6aa3dafdc8ca15c687022a5cd" category="section-title">継続的に利用可能な共有を作成する</block>
@@ -5686,10 +5683,6 @@
   <block id="4cf73d6ef3868d34a0363e40eef4fa2d" category="sidebar">NFS を使用して Google NetApp Volumes に Oracle SI を導入する</block>
   <block id="2fc358e366a2f0c47255223a019cdeb4" category="sidebar">NFS を使用した Google NetApp Volumes での Oracle Standalone Instance の導入</block>
   <block id="8e3e5c03980534c9c25ff5b83706d4eb" category="sidebar">NFS 経由の Google NetApp Volumes での Oracle Standalone Instance の導入</block>
-  <block id="6f400c01bfff3d3f8bbd7bedb4a491d7" category="summary">iSCSI ブロック ストレージを使用する Google Cloud NetApp Volumes で、Google Compute Engine に Oracle Database 26ai 高可用性をデプロイします。このガイドでは、コンピューティング インスタンスとストレージのプロビジョニング、Oracle Grid Infrastructure と Oracle Database のインストール、スタンバイ データベースの初期化、および Fast-Start Failover を使用した Oracle Data Guard の設定方法について説明します。</block>
-  <block id="570d7a507bccd399a746bfcd67657b8b" category="doc">Google Cloud NetApp Volumes を使用して Oracle Database 26ai の高可用性をデプロイします</block>
-  <block id="5c895dea5cdcb9cd0db925c45d2779f4" category="paragraph">このガイドでは、コンピューティング インスタンスとストレージのプロビジョニング、Oracle Grid Infrastructure と Oracle Database のインストール、スタンバイ データベースの初期化、および Fast-Start Failover を使用した Oracle Data Guard の設定方法について説明します。</block>
-  <block id="0e8cd694c57c67a5da0d1e6a87b7b5a3" category="paragraph">始める前に、以下のものを用意してください：</block>
   <block id="14f8086b974149db9bcd1a822cff7dc3" category="list-text">Compute Engine、VPC ネットワーク、ファイアウォール構成、IAM、および NetApp Volumes の権限を持つ Google Cloud プロジェクト</block>
   <block id="eaeb30f9f18e0c50b178676f3eaef45f" category="cell">Task</block>
   <block id="b0c993c43c7f9b598a362c2aeae6be13" category="cell">必要なアクセス</block>
@@ -5712,8 +5705,6 @@
   <block id="ec395561951f382bbefa5a823677fc38" category="list-text">Oracle Data Guard、Oracle Restart、およびiSCSIストレージの概念に関する知識</block>
   <block id="c4f0f99c0831852c4c5b694c501b7eeb" category="list-text">すべての仮想マシンで時刻同期が設定されています。</block>
   <block id="0ceedcda92c72b47f16e1967565f68a3" category="paragraph">以下のコマンドを使用できます：</block>
-  <block id="2603a18f720497da38e276677c294f43" category="section-title">このガイドで使用する構成例</block>
-  <block id="5b219fec69751daaf3d71c549a16bd3c" category="paragraph">このガイドでは、以下の導入前提条件を使用します：</block>
   <block id="1baad04ea35d661ee7a81655251d71f2" category="list-text">3台のGoogle Compute Engine仮想マシン：</block>
   <block id="62fc7bbc96175753d21cf4e94b1dbe97" category="list-text"><block ref="9514606aa0e81e08de08842f8136911c" prefix="" category="inline-code"></block>プライマリデータベースの場合</block>
   <block id="ce57f48d99efde619ae9bcb04156c209" category="list-text"><block ref="307e0423cd7859aca914691fcbaacca5" prefix="" category="inline-code"></block>スタンバイデータベース用</block>
@@ -5722,16 +5713,8 @@
   <block id="3cd45e2461c436bac2d277a83a91bb5f" category="list-text">データベース ホストごとに 5 つの GCNV iSCSI ボリューム</block>
   <block id="ca371b4b1f2da6a204eef9c0cf2f2f13" category="list-text">Oracle Data Guard BrokerおよびFast-Start Failoverによる自動フェイルオーバー</block>
   <block id="e7965015da23ff8abe627441a120b218" category="list-text">データベース ホストごとに専用ストレージが割り当てられ、プライマリ ホストとスタンバイ ホストは iSCSI ボリュームを共有しません</block>
-  <block id="b617a894739e677261d2baa49d24fe05" category="paragraph">コマンド内の例の値を、ホスト名、IP アドレス、ゾーン、プロジェクト名、ポータル IP、パスワード、Oracle メディアファイル名など、ご使用の環境の値に置き換えてください。</block>
-  <block id="bfaec92b2d5de19dd08a50aa9395ccc5" category="paragraph">この手順では、以下のタスクを実行します：</block>
-  <block id="570e3ebea06ed5485a51ab8a141e8478" category="list-text">プライマリデータベース、スタンバイデータベース、およびオブザーバー用の Compute Engine インスタンスをプロビジョニングします</block>
-  <block id="0ea55a73f52ab03fcd005c3d8b336b71" category="list-text">Oracle 向けに GCNV iSCSI ストレージとマルチパス デバイスを設定する</block>
-  <block id="ac23cea8234ed48e62fc280b9e2d94ce" category="list-text">両方のデータベースホストにOracle Grid InfrastructureとOracle Database 26aiをインストールします</block>
-  <block id="2ad5b6649af83bc7a6a08da75558b3d9" category="list-text">プライマリOracleデータベースを作成する</block>
-  <block id="da05e7e946807759f242ae48605e9b3d" category="list-text">Google Cloud NetApp Volumes レプリケーション、スナップショット、またはクローンを使用してスタンバイデータベースを初期化します。</block>
   <block id="318fa9fd33ab8e3e071bedfb407f5409" category="list-text">Oracle Data Guard Broker、Fast-Start Failover、およびObserverを設定する</block>
   <block id="e2c5a3645710b0ed6fec1053fdfe0ead" category="section-title">導入オプション</block>
-  <block id="996829dcca4cc326664fd6c94c212912" category="paragraph">このセクションでは、Google Compute Engine（GCE）と Google Cloud NetApp Volumes（GCNV）iSCSI ブロック ストレージを使用した Oracle Database の実用的な HA/DR デプロイメント パターンを比較します。また、GCNV レプリケーションがスタンバイの初期化をいかに高速化するかについても強調しています。始める前に、このマトリックスを使用してティアを選択してください。このガイドでは、Prod HA（Data Guard + FSFO）を実装します（一番下の行）。</block>
   <block id="3d7e86901edfb5dd4ff831b110dc3454" category="cell">推奨されるアーキテクチャ</block>
   <block id="594c16ca0695f6665d7cf4971707adf6" category="cell">HA</block>
   <block id="3754385271c4f2a2648b471683d21149" category="cell">DR</block>
@@ -5757,61 +5740,28 @@
   <block id="b16e662ab29521df679195787c66e2d0" category="cell">Data Guard + FSFO</block>
   <block id="bbd47109890259c0127154db1af26c75" category="cell">フル</block>
   <block id="54962912fb2e8054be9d47426799a601" category="cell">真のHAと高速フェイルオーバー</block>
-  <block id="c6b79d434f793ebf874e8413b181eca9" category="paragraph">*HA / DR / 自動化：* はい = 階層の目標を満たしています；いいえ = 対象外です；部分的 = ストレージ レベルまたは手動の手順のみ。</block>
-  <block id="d4a11793ed5dcdb8168a5f3e8f960d7c" category="section-title">お客様の階層に合わせて読むべきセクション</block>
-  <block id="a41aa4fa0a10cf20b90e80b8ca55c3c0" category="paragraph">達成したいHAのレベルに応じて、以下のマトリックスの各セクションをお読みください。例えば、Data GuardとFSFOを使用した本番環境の高可用性（HA）を実現したい場合は、すべてのセクションをお読みください。Dev/TestまたはProd Basic with Restartが必要な場合は、最初の列のみをお読みください。</block>
-  <block id="0247f5ba79c8fd6ea3216d9a3fb2c466" category="cell">開発/テスト環境または本番環境の基本設定（再起動）</block>
   <block id="ebf9190be73acaf4542a69de1d99a909" category="cell">本番環境HA（Data Guardなし）</block>
   <block id="6f3432e185b2a0a8259ea8de4bd41a71" category="cell">本番環境の高可用性（Data Guard + FSFO）</block>
-  <block id="6295875e19e489debb21f5f152416fdc" category="paragraph"><block ref="9cfef9c1e7788b80af76f2c7a3395949" category="inline-xref-macro-rx"></block></block>
-  <block id="25f9d5f7c0f7b963bda6aca484c72ac2" category="paragraph"><block ref="790db1d15aa381134087e86064c1cc15" category="inline-xref-macro-rx"></block></block>
-  <block id="89c12fc930953cc9f25c37b3a18b97c4" category="paragraph"><block ref="823b6d6787566dd433a87dae5f5da72a" category="inline-xref-macro-rx"></block></block>
-  <block id="4f9ea9768f5d0dde8183758e651e6199" category="paragraph"><block ref="f8636ffb086ecd5cca26f35c27e574c8" category="inline-xref-macro-rx"></block></block>
-  <block id="18a99e643c4d2b0bc583afba7f340ea8" category="paragraph"><block ref="5a928dc4203c092ef6c0a9810e7ee53a" category="inline-xref-macro-rx"></block></block>
-  <block id="b3e8bc476ceb94843197a745ded6465f" category="paragraph"><block ref="1a51d28b819003ec401451c9a6b4ac89" category="inline-xref-macro-rx"></block></block>
-  <block id="c43278cb8138b24221eb8749f0536585" category="inline-xref">Compute Engine のプロビジョニング</block>
-  <block id="ab1db3b9583f4b742597095362669dc8" category="paragraph"><block ref="0798f80eb496dd6c656fbd9afd60cca1" category="inline-xref-macro-rx"></block></block>
   <block id="00d0182bef9180d0aff1d0d845d42e10" category="inline-xref">GCNV iSCSI ボリュームをプロビジョニングする</block>
-  <block id="615a51b5ee895bef988e751d290cd113" category="paragraph"><block ref="4ae55d7b9b6ac07a69a1c98e4d8c5546" category="inline-xref-macro-rx"></block></block>
   <block id="6056ba56003af3745ff8fa3b66fbb670" category="inline-xref">Oracleソフトウェアをインストールする</block>
-  <block id="596199c52877556032fbcffd480579e5" category="paragraph"><block ref="05950070aa1a509ef920318170062864" category="inline-xref-macro-rx"></block></block>
   <block id="eee2a011536270d86e577840ae5568d9" category="inline-xref">プライマリデータベースを作成する</block>
-  <block id="e08d4df472d415f254bb49e94059f32e" category="paragraph"><block ref="a22e8bc507fee62eb8c57269515eb9b0" category="inline-xref-macro-rx"></block></block>
   <block id="4ac505713cfada8b1590e76b9e41c218" category="inline-xref">スタンバイデータベースを作成する</block>
   <block id="7971dfdf9edb733e0ab4635c9c754464" category="inline-xref">ステップ3：GCNVスタンバイの初期化</block>
-  <block id="7c736aaab68eb0b5c5cd6427dde8792a" category="paragraph"><block ref="2325ddbeb97493991acefece02396eff" category="inline-xref-macro-rx"></block>（<block ref="595ca2272dfa782b5226a19af86c4f37" category="inline-xref-macro-rx"></block>経由のみ）</block>
-  <block id="3182ef46f1fc2349218ba2685349ae33" category="paragraph"><block ref="2325ddbeb97493991acefece02396eff" category="inline-xref-macro-rx"></block></block>
   <block id="6c65be57ba0b7a7c5e8c087c78698514" category="inline-xref">Data Guard Broker、FSFO、およびObserverを構成する</block>
-  <block id="52f62d72690015fc6f32c11bd343aa8d" category="paragraph"><block ref="570201f6cc183155f279a9ee0f1dd27c" category="inline-xref-macro-rx"></block></block>
-  <block id="051f3f699ce1b7edc3419d499e0037bd" category="paragraph">このアーキテクチャは、Google Cloud NetApp Volumes（GCNV）iSCSI ストレージと Oracle Data Guard を使用して、Google Cloud 上に Oracle Database 26ai の高可用性をデプロイします。GCNV は、ハイパフォーマンス ブロック ストレージを提供し、ストレージ レイヤでのスタンバイ初期化をサポートします。Data Guard は、継続的な同期、切り替え、および高速起動フェイルオーバー機能を提供します。</block>
   <block id="359b71e88f40029251366609358a302f" category="cell">レイヤ</block>
   <block id="79423f31b24b340dd9352be752fc5c18" category="cell">GCNV</block>
   <block id="e3296db9b868f3df3cf0c26b374ad45b" category="cell">ブロック ストレージ、スタンバイ初期化、ストレージ レプリケーション</block>
   <block id="edd8af7eaa131179cb70a5db89636876" category="cell">Data Guard</block>
   <block id="eeb002a92e371795f7a90c52f2bea874" category="cell">継続的な同期、REDO の適用、スイッチオーバー、FSFO</block>
-  <block id="8101175ec0be8dcfbde6e362ad665912" category="paragraph">GCNV レプリケーションは、Oracle データベース チャネルを経由するのではなく、ストレージ レイヤでデータを移動することで、RMAN アクティブ複製と比較して、スタンバイ初期化時間を大幅に短縮します。環境が対応している場合は、本番環境のスタンバイ シードには GCNV レプリケーションを優先してください。</block>
   <block id="2cb05e4bb7830be982f0922fed86b4cd" category="cell">コンポーネント</block>
   <block id="a254c25adc7d10d7e9c4889484f875a5" category="cell">詳細</block>
   <block id="ac777d777ae29687664b95ccd2875f6f" category="cell">DBホスト</block>
-  <block id="05a1d5351e0f2fde238e808c1675d6c6" category="cell"><block ref="9514606aa0e81e08de08842f8136911c" prefix="" category="inline-code"></block> /<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block> — 異なるゾーン、それぞれ5つのGCNV iSCSIボリューム</block>
   <block id="8c4aa541ee911e8d80451ef8cc304806" category="cell">ストレージ</block>
-  <block id="9a7240a0c943a8ab7e97981fb452769e" category="cell"><block ref="a8946fa5f211c5345e3610710e471cb4" prefix="" category="inline-code"></block> + ASM<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>,<block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block>,<block ref="80f3131b9dc238e16c645ddfad01b783" prefix=" " category="inline-code"></block> on GCNV（EXTERNAL）</block>
   <block id="fbc6afae895aa15b4de94880f94d327a" category="cell">スタンバイ初期化</block>
-  <block id="a61464b13c6b33859f09693876605ab8" category="cell">GCNVのレプリケート/スナップショット/クローン → Oracleのファイナライズ → Data Guard</block>
-  <block id="cfe42fd5d4e544839378d7a67942f434" category="cell">再起動、物理スタンバイ（MOUNTED）、Broker、FSFO、Observer <block ref="c7f5bde16987c7d543c988c216354ee9" prefix="(" category="inline-code"></block>）</block>
   <block id="a6f00c82b6eb55a13a1f242313aaf9c9" category="cell">アプリ</block>
-  <block id="5f65e71d325d775a2b58b33aeb8f1e94" category="cell">サービス<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block></block>
-  <block id="a79eb72d4dd6fb0dda84ce7307150f42" category="paragraph">*ゾーニング:* データベースゾーンごとに 1 つの GCNV Flex Unified プール。ホストごとに専用ボリューム。ブートディスクは OS のみです。*対象外:* TDE、RAC、NVMe/TCP、OEM、Active Data Guard（スタンバイは *MOUNTED* 状態のまま）。</block>
-  <block id="1142393d49f79cd9812a1f4b3f3fa02e" category="section-title">参考図</block>
-  <block id="2ee442b3237b97b6099735cc1a076aa1" category="paragraph">このアーキテクチャは、3つの独立したデータパスを提供する。ストレージレプリケーションとData Guardのリドゥ転送は、別々の経路で行われます。</block>
-  <block id="fba2d7931ab2a35d8d5b6cb6276830be" category="image-title">GCNV Oracle デプロイメント - リファレンス アーキテクチャ</block>
-  <block id="217d35c3ea12d30b07dac643ba5f02ff" category="image-alt">Oracle 26ai HA on GCNV - リファレンス アーキテクチャ</block>
-  <block id="478f5c274a903954ce7894f9b33ba59d" category="paragraph">*ストレージレプリケーション≠リドゥレプリケーション。*パス1は、スタンバイ初期化のためにGCNVレイヤーでデータファイルを移動します。パス2では、切り替え後もデータベースの同期が維持されます。パス3は、Oracle Data Guard BrokerとObserverを介して、ロールの移行と自動フェイルオーバーをオーケストレーションします。</block>
   <block id="cb9e27422b343274f9974efbc9c3dbc1" category="section-title">プラットフォームロール</block>
   <block id="419f3742e6de8e0ec4b22cce005e7630" category="cell">プラットフォーム</block>
   <block id="7e730a226c1abe4e7a9dde9102b9c81a" category="cell">提供</block>
-  <block id="093acb110aacf54e4d298a19b7c3044c" category="cell">iSCSI ボリューム、Snapshot、ボリュームレプリケーション（ベースライン+増分）— スタンバイ初期化</block>
-  <block id="175d96046645cf87adf382b378585577" category="cell">Redo トランスポート、MRP、Broker、FSFO — 継続的な同期とフェイルオーバー</block>
   <block id="47febd95375e98ce605eaa32243d61b3" category="paragraph">GCNV レプリケーションは、まずベースラインコピーを実行し、その後、ポリシーごとにブロックの増分更新を実行します。スタンバイが初期化された後、Data Guard はリドゥ適用と FSFO を所有します。</block>
   <block id="ed498a266688cfb5e0faabe6d0ed4cea" category="section-title">トポロジとストレージ</block>
   <block id="b3ff996fe5c77610359114835baf9b38" category="cell">ゾーン</block>
@@ -5828,7 +5778,6 @@
   <block id="83d694b8b98b155b8817ac412c4d3e9c" category="cell">オブザーバー</block>
   <block id="aa4080137b1eef796ca61e4690c790f7" category="cell"><block ref="c7f5bde16987c7d543c988c216354ee9" prefix="" category="inline-code"></block></block>
   <block id="f095b0b316b4f06f2f1be592365e493e" category="cell"><block ref="54420979f24fe03e6067aef46b2d7b19" prefix="" category="inline-code"></block></block>
-  <block id="26aeabd0c99c77002e55825fbcd435af" category="cell">—</block>
   <block id="8e6431c5abf069b8a3a35ed8abba8341" category="cell">ブートディスクのみ</block>
   <block id="a5bfccfcb5543ce6cd1d6a5471e3224c" category="cell">バッキング</block>
   <block id="ad8783089f828b927473fb61d51940ec" category="cell">用途</block>
@@ -5839,11 +5788,8 @@
   <block id="a9a1b624d4df65057ecc4d03bd34fa08" category="cell">GCNV iSCSI</block>
   <block id="fb4d79e081113859fc37805b64f81a53" category="cell">グリッド/DBホーム、ステージング（XFS）</block>
   <block id="cb7cc0f9531b8cfee1be7fd8953f8452" category="cell"><block ref="c097579d8cb34b312d396304e0b8f487" prefix="" category="inline-code"></block> /<block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block> /<block ref="80f3131b9dc238e16c645ddfad01b783" prefix=" " category="inline-code"></block></block>
-  <block id="d6cab2913ff457e5d19c6412efb6d21f" category="cell">ASM EXTERNAL — データファイル、アーカイブ、FRA</block>
   <block id="45ce8fb9d12209f44a24f5c6625f2336" category="paragraph-title">マシンタイプ</block>
-  <block id="d9fa131dc2f2aabbebf27c61e0944f16" category="paragraph">このガイドのサンプル<block ref="781e05c5c208b0d55d2b16b06ad7ccbe" prefix=" " category="inline-code"></block>。OLTPワークロードは通常<block ref="fe1633c2ac7a622d0b89e58f57e15903" prefix=" " category="inline-code"></block>を使用します。</block>
   <block id="8ed982666bddcd8ff02a5747ff73e458" category="section-title">ステップ1：VMを作成する</block>
-  <block id="e5ea886932e3869d766934475a76cfe8" category="paragraph">同一リージョン内の異なるゾーンに3つの仮想マシンを作成します（ゾーン障害分離）。TCOと持続可能性の観点から、レイテンシーとコンプライアンスのニーズを満たす低炭素地域を優先します（例：<block ref="7460527a94dd1cdca7f80472ca36103e" prefix=" " category="inline-code"></block>対<block ref="68ceb8e3f47e5536a6434f040549ec8b" prefix=" " category="inline-code"></block>）。Cloud Console、<block ref="7f22bf39aaf5ce5980111c3587bef5b5" prefix=" " category="inline-code"></block>、Terraform、または標準的なプロビジョニングワークフローを使用します。</block>
   <block id="3ea4bf9da7622edeeae1bf80e9c5cded" category="cell">マシンタイプ</block>
   <block id="0fe30f7d2c6d9fa750acc035e9d2df03" category="cell">ブートディスク</block>
   <block id="eec89088ee408b80387155272b113256" category="cell">Network</block>
@@ -5857,11 +5803,7 @@
   <block id="85b84850fdf091ce2b8db484ab9e1c33" category="cell"><block ref="2cacbf1ab442ffaa5b437941e551f041" prefix="" category="inline-code"></block></block>
   <block id="1f06b01186359475d82c6d064be8806d" category="cell">OL 10、20 GB Hyperdisk Balanced</block>
   <block id="0d1988376825015a69424f118fa0d9ba" category="cell">FSFOオブザーバー（Instant Clientのみ）</block>
-  <block id="134db94cc9d355845d78fb5fd08adfb5" category="paragraph">*ネットワークティア：* レイテンシまたは出力（&gt;~200 GiB/月）が重要な場合はプレミアム、開発とテストで TCO を抑える場合はスタンダード。</block>
-  <block id="3e912ad74db884147cbe49ec6e648f62" category="paragraph">3台すべてで*セキュアブート*、*vTPM*、および*整合性監視*を有効にしてください。ブートディスクにはOSのみが格納されています。<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>Grid/DBホーム、ステージング、およびすべてのASMデータはGCNV iSCSIボリュームを使用します（<block ref="4ae55d7b9b6ac07a69a1c98e4d8c5546" category="inline-xref-macro-rx"></block>を参照）—<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>用に別のGCEデータディスクを接続*しないでください*。</block>
   <block id="7f658ecfbb2f8abf805202d737460198" category="section-title">ステップ2：VPCファイアウォール — 3つのゾーンすべてでTCP/1521を許可リストに追加する</block>
-  <block id="a233dc626e7616b1cb789efe03c51b29" category="paragraph">3つのVM<block ref="1c2834cd351fe5f23b2e7096f2732eff" prefix=" " category="inline-code"></block>すべての内部IP間で、各ゾーン<block ref="17dfa8b70fd4f9130b1e6cb3a82a8f79" prefix="(" category="inline-code"></block>でTCP/1521を許可します）。同じ許可リストを持つVPCファイアウォールルールまたはファイアウォールポリシーを使用します。ルールが欠落していると、REDOトランスポートとObserver接続が中断されます。</block>
-  <block id="f8b89b1617aeea4320e159e39f22ad4f" category="paragraph">*Cloud Console：* VPC ネットワーク → ファイアウォール → ルールの作成<block ref="09b7b0b04e727fd655b5aec3c5b9b0c0" prefix=" " category="inline-code"></block>オン<block ref="2027eeee86a22251d3d3ffbc95e965b5" prefix=" " category="inline-code"></block> — Ingress、Allow、sources = 3 つの<block ref="1c2834cd351fe5f23b2e7096f2732eff" prefix=" " category="inline-code"></block> IP、TCP 1521。必要に応じて Egress をミラーリングします。各 VM から検証：</block>
   <block id="60aaf44d4b562252c04db7f98497e9aa" category="cell">ポート</block>
   <block id="c87076fc9901bb23fee8eda95971b5a5" category="cell">想定</block>
   <block id="7277de5f2ed6f17c61f1f25594591a82" category="cell">説明</block>
@@ -5871,28 +5813,15 @@
   <block id="47bfab5eca222340898b48d75b206e05" category="cell"><block ref="253f7b5d921338af34da817c00f42753" prefix="" category="inline-code"></block></block>
   <block id="1867e4a765d502c76e2b022504c37d92" category="cell">接続が拒否されました</block>
   <block id="5d50b52633f5bef8715e30e4a8fc12a6" category="inline-xref">ステップ1：各DBホストにOracle Grid Infrastructure（Oracle Restart）をインストールします</block>
-  <block id="007aa00a3b581b065f771dbe79986af2" category="cell">ファイアウォールが開いています。グリッドリスナーは<block ref="6077d869d1c17b4609a7a121dc0426ac" category="inline-xref-macro-rx"></block>中に起動します</block>
   <block id="9e70a5d3dab1960c04b55a29f310331e" category="cell">どちらか</block>
   <block id="c85a251cc457840f1e032f1b733e9398" category="cell">Timeout</block>
   <block id="53998773f8e834f94209b1d69c925f32" category="cell">ファイアウォールまたはルーティングを修正する</block>
   <block id="ee6f41d8b788e77298c6295e18ca7b89" category="paragraph">3 台の VM すべてから、各ピア IP に向けて実行します。</block>
-  <block id="272ab50d7a25c897af2133b0505d9153" category="section-title">ステップ 3：ホスト名、DNS、<block ref="ad942c725cd0cae65ca4c63717ec464c" prefix=" " category="inline-code"></block></block>
-  <block id="7f2f4a3547fbe3b2ab1c5468a554d07f" category="paragraph">各VMの起動後、ホスト名を設定し、<block ref="ad942c725cd0cae65ca4c63717ec464c" prefix=" " category="inline-code"></block>エントリを3つのホストすべてに追加して、Oracle Net、ブローカー、およびObserverの正引き/逆引き名前解決が機能するようにします。</block>
-  <block id="8fc5a7e393f74252b30f268ee94af3bd" category="paragraph">GCEの内部IPアドレス（*Compute Engine → VMインスタンス*リストの_Internal IP_列に表示されます）に置き換えてください。</block>
-  <block id="6276b3074f4adeb978e6e1c9789ac500" category="paragraph">各ホストから検証する：</block>
-  <block id="b7a6078dc05fdad35eedcb863a1a424b" category="section-title">ステップ4：OSベースライン（DBホストのみ）</block>
   <block id="58b64cbd6d646767067f1a3ae1d1a6dd" category="paragraph">*前提条件：*<block ref="c129932d9c09d1c318e36e52fc4ef0bb" prefix=" " category="inline-code"></block>へのアウトバウンドHTTPS（プライベートサブネット上のCloud NATまたは内部ミラー）。</block>
   <block id="8f0aa1f80b6a3fea3f5f3f35282ab944" category="inline-xref">ステップ4：オブザーバーホストにOracle Instant Clientをインストールする</block>
-  <block id="928b0be7fe417cd128db374651a5f33e" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>および<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で実行（Observerのセットアップについては<block ref="f834f71b7b95d7b0b6bc91d673168263" category="inline-xref-macro-rx"></block>を参照）。</block>
   <block id="2d602cd2927004a1baef2c08ab0be038" category="paragraph">*セキュリティ態勢（OL 10）：*以下のコマンドはSELinuxをpermissiveに設定し、<block ref="7ba21652408bcade58b8719451511f2a" prefix=" " category="inline-code"></block>を無効にします。これは最小限のラボ環境の設定です。SELinuxとファイアウォールの強化された設定については、組織のセキュリティベースラインを参照してください。</block>
-  <block id="30be3a68f571bdf2e2aaccce6cc938c6" category="section-title">ステップ5：iSCSIイニシエータ名（IQN）を取得する</block>
   <block id="41e6b9276493ce264cc0f48065ee97a8" category="inline-xref">ステップ2：ホストグループを作成する</block>
-  <block id="e1f105442b4fbe4f7ccfdc9bd6b3df88" category="paragraph">再起動後、各 DB ホストの IQN を取得します。これらの IQN を使用して、<block ref="9fc0077264de0ccac2bc390e8e2588e0" category="inline-xref-macro-rx"></block>で GCNV ホスト グループを作成します。</block>
-  <block id="09a9aca5b3001f666ba2a4a0d99aa831" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で繰り返します。各ホストのIQNを記録します。ホストごとに1つのホストグループを作成することで、1つのホストの再起動やIQNの再生成が、他のホストのGCNV iSCSIボリュームの可視性に影響を与えることがなくなります。</block>
   <block id="b869ecbb2882a1e727a0bdee595b1c02" category="paragraph">*クローンされた VM：* 両方のホストが同じ IQN を共有している場合は、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で再生成します（停止<block ref="39eea648dab96b0ee6022dabb38bc420" prefix=" " category="inline-code"></block>、クリア<block ref="732b4f233335f6653bbc69eb25801802" prefix=" " category="inline-code"></block>、新しい<block ref="c23e5c42f09add6332c9db71a9774c3f" prefix=" " category="inline-code"></block>を<block ref="22565a44e8f73044eb2029acbb069639" prefix=" " category="inline-code"></block>に、再起動<block ref="3fe4dc8de876aca2c78fa0cd9c6d0b65" prefix=" " category="inline-code"></block>）。</block>
-  <block id="9f0519aa4a93d0d1c0a95b0dff2bd965" category="section-title">ステップ1：データベースゾーンごとに1つのGCNV Flex Unified iSCSIストレージプールを作成します</block>
-  <block id="20a31ad10baa17b5d17ac9d18e28b111" category="paragraph">データベースゾーンごとに 1 つの Flex Unified プール（<block ref="1a51d28b819003ec401451c9a6b4ac89" category="inline-xref-macro-rx"></block>を参照）。</block>
-  <block id="a91129e4ffe7da23c62aca53e4c64cc7" category="paragraph">このHA設計用に2つのプールを作成します（各ゾーンごとに手順を繰り返します）：</block>
   <block id="c931e064dd64a38adddc55cf37391292" category="cell">プール名</block>
   <block id="11cd4b12c171c74f7146ba4e4ede2f62" category="cell">使用者</block>
   <block id="0c0bad4c5f2c059789d5fbb27a7ff0fd" category="cell"><block ref="9514606aa0e81e08de08842f8136911c" prefix="" category="inline-code"></block>（プライマリ）</block>
@@ -5904,17 +5833,8 @@
   <block id="8750f2664755ee27d7667d0c71546c87" category="list-text">*PSA:* に接続<block ref="2027eeee86a22251d3d3ffbc95e965b5" prefix=" " category="inline-code"></block></block>
   <block id="02aa93caee1e448c2ec6b5203557efaa" category="list-text">*容量：*ワークロードに合わせてサイズが設定されます。リドゥ、バックアップ、またはリストアがデフォルトの余裕を超える場合（製品制限ごとにプールあたり最大5120 MiB/sまたは160K IOPS）、カスタムプロビジョニングされたスループット/IOPSを使用します。</block>
   <block id="38d150db7ef372a8f8970104a2e8aab0" category="inline-xref">ステップ3：GCNV iSCSIボリュームを作成する</block>
-  <block id="d577faa76333018a77342c6c3a4529a6" category="paragraph"><block ref="2baa69eafc7204f3bd8648eba580c489" prefix=" " category="inline-code"></block>を待ちます。プールのサイズをデータベースのフットプリントに合わせて調整します（<block ref="62251f099442e38ae7b0eafb65c9d537" category="inline-xref-macro-rx"></block>のサイズは例です）。</block>
-  <block id="c5b12dd3623cbb4064fca1b7aad72e82" category="paragraph">*デフォルトモード（このガイド）：* Flex Unified プールはデフォルトモードを使用します<block ref="fc3ffd95288f0a9c0078286de2bc3467" prefix="(" category="inline-code"></block>)。Cloud Console または<block ref="be461f2f19fe40ccc0c8414ac6aa799f" prefix=" " category="inline-code"></block>でプールと iSCSI ボリュームを作成します。ボリュームのレプリケーション、スナップショット、クローンは、Google Cloud API を使用します（<block ref="595ca2272dfa782b5226a19af86c4f37" category="inline-xref-macro-rx"></block>）。</block>
-  <block id="fa582d4273725bb79b90068083149121" category="section-title">ステップ2：ホストグループを作成する（DBホストごとに1つ）</block>
-  <block id="e2d4481176265dc1a3a23e7f3918036d" category="paragraph">データベースホストごとにホストグループを1つ作成し、各VMが自身のボリュームのみを参照できるようにします。プライマリとスタンバイはGCNV iSCSIボリュームを共有してはなりません。ObserverにはGCNVリソースがありません。Cloud Consoleで：</block>
   <block id="de2c98ee68fb9b9198e6f9558a6b36d5" category="list-text">*NetApp Volumes → ホストグループ → 作成*</block>
-  <block id="700894200be37f60f4b74318a5a795d7" category="list-text">*名前：*<block ref="895d9ad3946d63f2384be29aafa0979d" prefix=" " category="inline-code"></block> ・ *リージョン：*<block ref="7460527a94dd1cdca7f80472ca36103e" prefix=" " category="inline-code"></block> ・ *タイプ：* iSCSI イニシエータ ・ *OS タイプ：* Linux</block>
   <block id="b4d2e8a88d73ee5dbc5b5cfcfd1d3404" category="list-text">*ホスト：*<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>からIQNを貼り付けます（<block ref="22565a44e8f73044eb2029acbb069639" prefix=" " category="inline-code"></block>の値）</block>
-  <block id="43402061a1c98c9d5ba14df979a08744" category="list-text">*概要：* "Oracle primary host oracdb1" · *Create*</block>
-  <block id="80dd2a8a344fe218b6279270dfb025d6" category="list-text"><block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>と<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>のIQNについて繰り返します</block>
-  <block id="c66592ab7e27918f0f533809cac4fa24" category="section-title">ステップ3：GCNV iSCSIボリュームを作成する（データベースホストごと）</block>
-  <block id="dd72252c1e11b315fe48e630aaae1207" category="paragraph">各データベースホストは、ゾーンのプールに 5 つの GCNV iSCSI ボリュームを取得します。1 つは<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>用で、4 つは ASM バッキングデバイス用です：</block>
   <block id="179f6f47f36f2f8b25930bbb5706bfdc" category="cell">GCNV iSCSI ボリューム</block>
   <block id="6f6cb72d544962fa333e2e34ce64f719" category="cell">サイズ</block>
   <block id="f9e5c9984d5ffdf0fba283eb0e0951e4" category="cell">マルチパス エイリアス</block>
@@ -5937,159 +5857,390 @@
   <block id="f4f9f49c93e3e3b1edebec8dd716cf6c" category="cell"><block ref="5ffa49ce3a3785edbe1a9cbd98dda743" prefix="" category="inline-code"></block></block>
   <block id="aeb62ad031c4fac80dc64de0c2742a2a" category="paragraph">ボリューム名：英字、数字、アンダースコアのみ使用可能（ハイフンは不可）。</block>
   <block id="9797600304cf56e59eecd53643947707" category="paragraph">*最小限のレイアウト（検証のみ）：* ホストあたり2つのLUN<block ref="302d00dd053834542788c28e3e2dd381" prefix="(" category="inline-code"></block><block ref="7fbf99ef1c96027aac19ecd6af720594" prefix=" " category="inline-code"></block>）と<block ref="586ff5f5d1906de25c1aa22812306114" prefix=" " category="inline-code"></block><block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix="→" category="inline-code"></block>および<block ref="88dca2eaae990b0f6ab57d2245b672cd" prefix=" " category="inline-code"></block><block ref="80f3131b9dc238e16c645ddfad01b783" prefix="→" category="inline-code"></block>はラボでの使用には適しています。本番環境では<block ref="62251f099442e38ae7b0eafb65c9d537" category="inline-xref-macro-rx"></block>あたり5つのボリュームを使用します。</block>
-  <block id="0bacaf7bbf2eba0dba7abc42e7d17b22" category="paragraph">オン<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>：<block ref="79d523916802ef5e588f3a0e1f37e882" prefix=" " category="inline-code"></block>に 5 つのボリュームすべてを作成し、ホスト グループ<block ref="895d9ad3946d63f2384be29aafa0979d" prefix=" " category="inline-code"></block>を作成します。</block>
-  <block id="0309352ded62c2362e1452265f1b6664" category="paragraph">オン<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>：<block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>に 5 つのボリュームすべてを作成し、ホスト グループ<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>を作成します。</block>
-  <block id="9227c7111abb4c3bc6ac07d6e6066a38" category="paragraph">*NetApp Volumes → Volumes → Create* — iSCSI、正しいプールとホストグループ、Linux。プールごとの記録：</block>
   <block id="8385ecabb21384e77b969d3da9b71f83" category="list-text">iSCSI ポータル IP →<block ref="1a166cb3995363e3b206805f722e998f" prefix=" " category="inline-code"></block>、<block ref="d1bde1532ebbeda95cf8ca6392f7cb8c" prefix=" " category="inline-code"></block>（<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block> 上のプライマリプールポータル、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block> 上のスタンバイプールポータル。両者は異なる場合があります）</block>
   <block id="234628016c35cfe67afe88cfd3570147" category="inline-xref">ステップ4：Google Cloud NetApp Volumes iSCSIボリューム用にLinux iSCSIとマルチパスを設定する</block>
   <block id="e940f06f517df8a2d2e3787da4e73cca" category="list-text">クラウドコンソールからのボリュームシリアル：ホストで検出されたWWIDで使用<block ref="e3e604617fdd62c104597da028962427" category="inline-xref-macro-rx"></block></block>
-  <block id="24c9df26ad3e64494e1f33835d9bd012" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>でそのホストのプール ポータルを使用して実行し、次に<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>でスタンバイ プール ポータルを使用して実行します。</block>
-  <block id="fc29f66b6b53d73fdb5970962aa78ad2" category="paragraph">ホストの送信が制限されている場合、各データベース VM からその GCNV iSCSI ポータル IP への TCP/3260 を許可します（<block ref="216a3dfc061d9ad1db7651f0db156818" category="inline-xref-macro-rx"></block>からの VM 間 TCP/1521 に加えて）。</block>
   <block id="a1765cabcd3f7054ce66029367e15843" category="list-text">ターゲットを検出し、ログインして、ノードの起動状態を維持する：</block>
   <block id="17564cc1bd1692fb3a6e967425b29fde" category="paragraph">再起動後、Oracle を起動する前に再度確認してください：</block>
   <block id="26b17225b626fb9238849fd60eabdf60" category="paragraph">+</block>
-  <block id="dc57dd149181e8f4b2a20c749748abd6" category="list-text">設定する：<block ref="a3938eeca32dce6ca3908d2eae163c75" prefix=" " category="inline-code"></block></block>
   <block id="ce3834713e5b88bd239b82444cb14422" category="list-text">ホストが検出した WWID エイリアスを<block ref="dd5ff67ba72768d33f75e645aa2b8e56" prefix=" " category="inline-code"></block>に追加します（推測しないでください —<block ref="9ac80d53ede05256c28cf9e043eb423c" prefix=" " category="inline-code"></block>はシェル変数を展開*しません*）。WWID を検出：</block>
   <block id="c39397366affde6dc5123be9df430ed0" category="paragraph">そのホストの具体的なエイリアスを<block ref="dd5ff67ba72768d33f75e645aa2b8e56" prefix=" " category="inline-code"></block>に追加し、次に<block ref="05f91f8866e5890377760c5f890d13a0" prefix=" " category="inline-code"></block>を実行します。</block>
   <block id="39f6f767b6bd10e2b919e16bc4c8f4bd" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で、次を追加します。</block>
-  <block id="8fc1fe6065aa97d1a1160f4700a86a56" category="paragraph">+ <block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>では、<block ref="e206f004cb05d43b06ce54926cb4831e" prefix=" " category="inline-code"></block>エイリアスで同じパターンを使用します。次に：</block>
-  <block id="4a51abd54bbd73e99fdc4a0d677b51ed" category="section-title">ステップ5：Google Cloud NetApp Volumes iSCSIボリューム上にASMバッキングデバイスをパーティション分割する</block>
-  <block id="3e8b963fd2c66af8116d0db159daeb1f" category="paragraph">4 つの ASM バッキング デバイス（<block ref="997802bac7f8b4cb6d5cee9adf487d9d" prefix=" " category="inline-code"></block>ではない）をパーティション分割し、それぞれに 1 つの GPT パーティションを作成します。ASM は raw パーティションを使用します。各ホストで実行します。以降のすべてのブロックでは、<block ref="2bb0b2911e6b14e33864a2330bd3d3b6" prefix=" " category="inline-code"></block>を使用してローカル ホストのデバイスを自動的に選択します。</block>
-  <block id="00aa3ade28e8ca95470f0fc6adf21b3a" category="section-title">ステップ6：ローカルGCNV iSCSIボリューム上で<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>をフォーマットしてマウントする</block>
-  <block id="e0ab15441764bbd4731c68ecb88f232d" category="paragraph"><block ref="5adb925391dcc0e1f89a27100238aa98" prefix=" " category="inline-code"></block>GCNV iSCSIボリュームには、Gridホーム、Oracleホーム、およびステージング環境が格納されます。マルチパスデバイス（ASM用にパーティション分割されていないデバイス）にXFSをフォーマットします。<block ref="816a3ef77b62ade41c3f936c958aa555" prefix=" " category="inline-code"></block>でUUIDを使用します（共有ファイルシステムラベルではありません）：</block>
-  <block id="5875440d1a8deaac16ec6d4d6867b7c3" category="paragraph">1回再起動し、<block ref="05950070aa1a509ef920318170062864" category="inline-xref-macro-rx"></block> の前に <block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block> がマウントされることを確認します。</block>
-  <block id="f24bb5955ef8c312af51871966a1f80f" category="paragraph"><block ref="a22e8bc507fee62eb8c57269515eb9b0" category="inline-xref-macro-rx"></block>の前に、各DBホストでGridとデータベースホームのインストールを実行します。</block>
-  <block id="41f7fb323962901a356158d531e7b71a" category="paragraph">このセクション全体を<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で実行し、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で繰り返します。両方のホストはそれぞれ独自の Grid ホーム、 ASM インスタンス、およびディスク グループを取得します。 Data Guard はストレージではなく、 Oracle Net を介してレプリケーションを行います。</block>
-  <block id="7e9c2869fdbef6d33b20c2b3eca32038" category="section-title">Oracleバイナリを<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>にステージングします</block>
-  <block id="6183747e4e2e9f37fd8cae0389d14be4" category="section-title">Grid ホームをその場で解凍します</block>
-  <block id="3a178fba805e3b5abd0c8dae8878f9f1" category="paragraph">26ai Grid GoldImageは、ターゲットのGridホームに解凍してインストールします：</block>
-  <block id="c6555ecc5ab7fd21df653f4ac956cf4e" category="paragraph">*Grid RU レベル*このガイドでは、Grid GoldImage に検証済みの RU がすでに含まれていることを前提としています。Grid GoldImage がターゲット RU よりも古い場合は、Oracle のドキュメントに記載されている<block ref="ee051a75e2660d642544e1a782ef2a15" prefix=" " category="inline-code"></block>フローを使用してセットアップ中に Grid ホームにパッチを適用するか、RU がバンドルされた Grid GoldImage を使用してください。Grid ホームと Database ホームは同じパッチレベルに維持してください。</block>
-  <block id="125c9b978a2018acc88dbee209076fd6" category="section-title">単発<block ref="6188ef2848d4d8eb4f4ed48cd6154082" prefix=" " category="inline-code"></block>：完全なHA_CONFIG応答ファイル</block>
-  <block id="53eac7008970891dc200af11015962d3" category="paragraph">各ホスト上でビルド<block ref="0e13878fba905bfdba91c98a6366125f" prefix=" " category="inline-code"></block><block ref="b32b7221bf65ca4fdf81dfafe6b4dbc2" prefix="(" category="inline-code"></block>は必須です。置換<block ref="b9361011891280a44d85b967739cc6a5" prefix=" " category="inline-code"></block>して強力なパスワードを使用してください）：</block>
-  <block id="975888b0eb888d23409c48cc757aff11" category="paragraph"><block ref="6188ef2848d4d8eb4f4ed48cd6154082" prefix=" " category="inline-code"></block>を実行して、バイナリをコピーし、設定をステージングします：</block>
-  <block id="b21fafa1d62ca7813b4d271670c59379" category="paragraph"><block ref="6eae1314173532e3774a3a0c0562c5dc" prefix=" " category="inline-code"></block>を想定し、終了コードは6（警告）または0です。</block>
-  <block id="0614ae580480d609f45d908143248554" category="section-title"><block ref="7271e605f277fd89fbb28d42f8ec0575" prefix=" " category="inline-code"></block>と<block ref="08030ad08b2b991d61b424afd8828758" prefix=" " category="inline-code"></block>をrootとして実行</block>
-  <block id="ce76c36fc6b5dd8bc4aa41d82f1e8ff0" category="paragraph"><block ref="08030ad08b2b991d61b424afd8828758" prefix="" category="inline-code"></block>は<block ref="3810a6a610bef40c0a7363dd774d87a6" prefix=" " category="inline-code"></block>/<block ref="631e391a1dd104c58c129cf7d5a4d08c" prefix=" " category="inline-code"></block>/<block ref="ae709dc3414219bf2c9c8abc9ff6c67a" prefix=" " category="inline-code"></block>ラッパーを作成し、OHAS を起動します。</block>
-  <block id="b3ff6019d8383c3567b6dcac620372ca" category="section-title"><block ref="7cea6cc86d5bdf9819f4db2ef6937ac5" prefix="" category="inline-code"></block> — ASM を起動して作成します<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block></block>
-  <block id="c08defc39ee79a774de0940923405b1d" category="inline-xref">単発&lt;block ref="6188ef2848d4d8eb4f4ed48cd6154082" prefix=" " category='inline-code'/&gt;— 完全な HA_CONFIG 応答ファイル</block>
-  <block id="2d49f3f41dc3a0d604a8ed8a2c7da56b" category="paragraph"><block ref="b48a0516a4c52f78b8c6c36d746121ac" category="inline-xref-macro-rx"></block>の応答ファイルに対して構成アシスタント（NETCA、ASMCA、CVU）を実行します — これにより ASM インスタンスと<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>ディスク グループが作成されます：</block>
-  <block id="b2ed9530f12046fa3758f714fc8777f2" category="paragraph">NETCA / ASMCA / CVU の後に<block ref="6b95da482f52dc7093ecbb9883b7852a" prefix=" " category="inline-code"></block>が表示されます。</block>
-  <block id="93ed2251d17a3a2fab931580b9f1582d" category="section-title"><block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block>および<block ref="80f3131b9dc238e16c645ddfad01b783" prefix=" " category="inline-code"></block>ディスク グループを作成する</block>
-  <block id="bc2bc650a0cf2bd1d32ffce6ccaaac81" category="paragraph">シングルショットインストールでは、<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>のみが作成されます。他の2つは<block ref="2f88ab4f1aea87019dee2980a5ea4867" prefix=" " category="inline-code"></block>から作成します：</block>
-  <block id="a01b7485299dbd5cbd6fb2d7bbc0d6aa" category="section-title">ASMとOracle Restartを確認する</block>
-  <block id="5ffa7d7e74b702f93242158a79a93a3a" category="inline-xref">&lt;block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category='inline-code'/&gt;および&lt;block ref="80f3131b9dc238e16c645ddfad01b783" prefix=" " category='inline-code'/&gt;ディスク グループを作成する</block>
-  <block id="ce26f01bfae2e5fb146708c972b8739e" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>でこのセクションを繰り返します。<block ref="b48a0516a4c52f78b8c6c36d746121ac" category="inline-xref-macro-rx"></block>および<block ref="5293afa6691aba6fcb1215cff8ee79ed" category="inline-xref-macro-rx"></block>の<block ref="2bb0b2911e6b14e33864a2330bd3d3b6" prefix=" " category="inline-code"></block>パターンは、そのホストのGCNV iSCSIデバイスを自動的に選択します。同じASMディスク グループ名を使用します—Data GuardはストレージではなくOracle Net経由でレプリケートします。</block>
-  <block id="795ea328e74e8402c26f4b4a005653f1" category="section-title">ステップ2：各DBホストにOracle Database 26aiをインストールする</block>
-  <block id="3032bb5f80cc5062f9ede1448c8f3949" category="paragraph">このセクションを<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で実行し、次に<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で実行します。スタンバイデータベースは<block ref="2325ddbeb97493991acefece02396eff" category="inline-xref-macro-rx"></block>に作成されます。</block>
-  <block id="28ab48133aa4c46d033ce715199b52c3" category="section-title">DB ホームと RU パッチを解凍します</block>
-  <block id="6027fe7360b1d70cf62ccc126cf543f1" category="paragraph">RU ディレクトリのレイアウトと<block ref="7ce39dabc2cfedccd1c6a71515794c03" prefix=" " category="inline-code"></block>パスについては、Oracle のドキュメントを参照してください。</block>
-  <block id="d801b8da00cfd010e24168a65e75fcd3" category="section-title">RU を適用したソフトウェアのみのサイレント インストール</block>
-  <block id="987cc0fbf1b6d89415d8e4c3626469e3" category="paragraph">OL 8/9では、<block ref="b82ce39ca01e6cecfdb6fcab38c5dce4" prefix=" " category="inline-code"></block>行から<block ref="5235cc1b2d7c699a9b435b06f7e3c174" prefix=" " category="inline-code"></block>を省略します。</block>
-  <block id="8f24428f3a9c0fc7454920f0f9b9000d" category="paragraph"><block ref="63a9f0ea7bb98050796b649e85481845" prefix=" " category="inline-code"></block>として、インストール後のスクリプトを実行します：</block>
-  <block id="e9f0a53f468d8b32dfcc84ba250a10fe" category="section-title">Oracle環境を設定する</block>
-  <block id="369aa96044ac762ab8dc36186b098fa6" category="paragraph">各 DB ホスト（<block ref="173ad268594dda99be99f9ab53fc66c5" prefix="(" category="inline-code"></block> 上<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>、<block ref="3ad0bd4699c7945297963a438f68d612" prefix=" " category="inline-code"></block> 上<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>）：</block>
-  <block id="d2c5d9dca5cff0bb8e4e506eb1c507a2" category="paragraph">（<block ref="2149247a998ff1efe97ec719204c2f29" prefix=" " category="inline-code"></block>をスタンバイホスト上で使用します。スタンバイデータベースは<block ref="2325ddbeb97493991acefece02396eff" category="inline-xref-macro-rx"></block>に作成されます。）</block>
-  <block id="9c6dc05580931a40c8d6159091769687" category="section-title">プライマリデータベースを作成する（<block ref="9514606aa0e81e08de08842f8136911c" prefix="(" category="inline-code"></block>のみ）</block>
-  <block id="76cdab9aa1d77dbdce41a29ca5df78ca" category="paragraph">ASM ディスク グループに対してサイレント モードで<block ref="d45e719c39bbb431346849ed79ab89c0" prefix=" " category="inline-code"></block>を実行します：</block>
-  <block id="e84a744e65776d401eabd372c57f9857" category="inline-xref">ステップ2：スタンバイ：最小限のinit.ora pfile、パスワードファイル、NOMOUNT</block>
-  <block id="965b991e02cf0538142b5b6ddddae5c9" category="paragraph">アーカイブログをポイントする<block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block>（スタンバイは、<block ref="fd1521ad570f67485d657084a1a905d4" category="inline-xref-macro-rx"></block>で一致する設定を使用します）：</block>
-  <block id="df43d9a032f76cf9f35c4df72e98a973" category="paragraph">Oracle Restartでデータベースが起動していることを確認してください：</block>
-  <block id="bc5fedb653a7c3519c3fd740fe85f25d" category="paragraph">*ロールベースのアプリケーション サービスを作成します（Oracle Restart）。*アプリケーションは、DB名ではなく<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block>経由で接続する必要があります。これにより、フェイルオーバーが透過的になります。</block>
-  <block id="acd771de807e8ac150ecf9644419193c" category="paragraph">Broker有効化後、<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block> はPRIMARYでのみ実行されます。ASMディスク グループ全体で制御ファイルを多重化し、ワークロードに合わせてメモリのサイズを設定します（このガイドでは例として4 GB / 3 GB SGAを使用しています）。</block>
-  <block id="936051adc56db91d6f8864ea21ece29f" category="paragraph"><block ref="3ad0bd4699c7945297963a438f68d612" prefix=" " category="inline-code"></block>上に構築<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>（<block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>上の専用ボリューム）。プライマリとスタンバイの初期セットアップを完了してから、<block ref="595ca2272dfa782b5226a19af86c4f37" category="inline-xref-macro-rx"></block>、スタンバイ完了タスク、および<block ref="570201f6cc183155f279a9ee0f1dd27c" category="inline-xref-macro-rx"></block>を実行します。ターゲット：プライマリ READ WRITE；スタンバイ PHYSICAL STANDBY、MOUNTED、MRP 適用中。</block>
-  <block id="c64be7bf80cf12e9b96e4b2b52073d91" category="section-title">ステップ1：プライマリ：SYSパスワード、パスワード ファイル、およびDGパラメータ</block>
-  <block id="2c12aa0c02a34946b5a866755b080190" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>の<block ref="a189c633d9995e11bf8607170ec9a4b8" prefix=" " category="inline-code"></block>：</block>
-  <block id="5601612151aba60574961e1e8d5febce" category="paragraph">オン<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>：</block>
-  <block id="c15a253d69b770bc726ed46271032582" category="paragraph">各ホストで Oracle Restart を使用して再起動します：</block>
   <block id="758bc5b22fd6bb6bff1b0e8ffc6255dc" category="paragraph"><block ref="1bc7636cf21813656343e52683e941aa" prefix="" category="inline-code"></block>をリストする必要があります<block ref="701c8da2e2528f6391b88ecdc624ae0e" prefix=" " category="inline-code"></block>および<block ref="1c6d7c413459631f3dcdadbc45d1ca3d" prefix=" " category="inline-code"></block>。</block>
-  <block id="a019c4084eedfd567702e9444115af51" category="paragraph">プライマリパスワードファイルをスタンバイ（IAP<block ref="d6dabc84f8422e23c7543fa0791f209b" prefix=" " category="inline-code"></block>）にコピーします：</block>
-  <block id="b6775709cb424d269cec2d5653f7bdaa" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、所有権を設定し、スタンバイpfileを作成します。*プライマリ*で、最初に<block ref="46e839b4f4f04c535d7961774d097ca4" prefix=" " category="inline-code"></block>をコピーします：</block>
-  <block id="685506ffb9c52d4724d0f4db522c0e9b" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、以下のブロック内の<block ref="e63e42940889bea5eb6ebfd47a5a238b" prefix=" " category="inline-code"></block>をその値に置き換えます：</block>
-  <block id="65950d148f30efa8bbf09d87304fb03f" category="paragraph"><block ref="595ca2272dfa782b5226a19af86c4f37" category="inline-xref-macro-rx"></block>までデータファイルなしでNOMOUNT。</block>
-  <block id="23bbaf39a9b33135d2cb8b67fba51eaa" category="inline-xref">Oracle の最終処理</block>
-  <block id="cee2df546018bfd30030c8f09d7558fc" category="paragraph"><block ref="dd70af3bcff9c8357ee70338cabadf23" prefix="*" category="inline-code"></block>のスタンバイASMボリュームに、*Google Cloud NetApp Volumesレプリケーション*（SnapMirrorベース、*デフォルトモード*）、*ボリュームSnapshot*、または*クローン*を使用してデータを取り込み、<block ref="289edb88c45052115560a4dc1eaccd93" category="inline-xref-macro-rx"></block>を実行します。iSCSIとASMは<block ref="4ae55d7b9b6ac07a69a1c98e4d8c5546" category="inline-xref-macro-rx"></block>と同じです。</block>
-  <block id="db974238714ca8de634a7ce1d083a14f" category="cell">API</block>
-  <block id="dbd56cfa99387d149de3a5873c30e3b4" category="cell"><block ref="758368f13db966aa3dba5a12085882cf" prefix="" category="inline-code"></block></block>
-  <block id="7459839e3e3ad94625734d093960ebd6" category="cell">*Default-mode* Flex Unified プールを作成します<block ref="fc3ffd95288f0a9c0078286de2bc3467" prefix="(" category="inline-code"></block>）</block>
-  <block id="3e57501f3165ffc71e98dae94644bd7f" category="cell"><block ref="b15200f26d72da8bfe16e9d01ad9c57b" prefix="" category="inline-code"></block></block>
-  <block id="352a8ea7691c86e661a246713e7b8dc2" category="cell">iSCSI ボリューム、ホスト グループ、Snapshot</block>
-  <block id="6b36d28ea1e5ec915fe09eafb6801b3b" category="cell"><block ref="dd2fb812573e33a308ac23e4caef3b66" prefix="" category="inline-code"></block></block>
-  <block id="231bdd36eddb3add6777610317675838" category="cell">クロスロケーション*ボリューム レプリケーション*</block>
-  <block id="48c7c41b72e1d678923ce3571aa65b2d" category="cell">手順</block>
-  <block id="004bf6c9a40003140292e97330236c53" category="cell">アクション</block>
-  <block id="c4ca4238a0b923820dcc509a6f75849b" category="cell">1</block>
-  <block id="763d1a0dde52d1fd91bdcb3bba067543" category="cell">プライマリアーカイブログ + 強制ログ記録（<block ref="0aa1ce17ba7c90083ab1993f39b32f0b" category="inline-xref-macro-rx"></block>）</block>
-  <block id="c81e728d9d4c2f636f067f89cc14862c" category="cell">2</block>
-  <block id="00477ffde3eeceddbd94b3f467668221" category="cell">静止：<block ref="52d95898daf10eaba00a9c07efb6bda0" prefix=" " category="inline-code"></block>SCN を記録、スタンバイ制御ファイル</block>
-  <block id="eccbc87e4b5ce2fe28308fd9f2a7baf3" category="cell">3</block>
-  <block id="43b53990d4d1ca1a2707c0fdff631215" category="inline-xref">ボリュームレプリケーションを作成する</block>
-  <block id="d1342cae857f632372fcdba3b87b794f" category="inline-xref">カットオーバー — 休止、レプリケーションの停止、スタンバイ LUN の接続</block>
-  <block id="6948952b7a0970ea0810ec25df6e09d9" category="inline-xref">代替案：スナップショットシード</block>
-  <block id="aa441a6f01bc56294568c46ff78220f5" category="cell">ボリュームレプリケーション（<block ref="84fe70e5f2bdea3c8472398843c250e1" category="inline-xref-macro-rx"></block>および<block ref="66a44fc7a93076d7f9a201f18a16c2ed" category="inline-xref-macro-rx"></block>）またはスナップショット（<block ref="1fe090bf4a3df8bb672bb2d6c7e59b08" category="inline-xref-macro-rx"></block>）</block>
-  <block id="a87ff679a2f3e71d9181a67b7542122c" category="cell">4</block>
-  <block id="4dc767f87847d7940a6c997bd2d120f5" category="inline-xref">ステップ6：ローカルGCNV iSCSIボリュームのフォーマットとマウント&lt;block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category='inline-code'/&gt;</block>
-  <block id="545df81bf6f8665056f91045448a252a" category="cell"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>：iSCSI、マルチパス、ASMマウント（<block ref="e3e604617fdd62c104597da028962427" category="inline-xref-macro-rx"></block>、<block ref="c214ed23399347949af0c0b3367b59cf" category="inline-xref-macro-rx"></block>、<block ref="9bd553999d38e7cadc25828eda5ea50d" category="inline-xref-macro-rx"></block>）</block>
-  <block id="e4da3b7fbbce2345d7772b0674a318d5" category="cell">5</block>
-  <block id="bfa830b2b7309b5edbd577867bfb17ed" category="cell">Oracle finalize — SCN にリカバリ、*MOUNTED* (<block ref="289edb88c45052115560a4dc1eaccd93" category="inline-xref-macro-rx"></block>)</block>
-  <block id="1679091c5a880faf6fb5e6087eb1b2dc" category="cell">6</block>
-  <block id="2b701ca7d71c8aff3dfb767d9038a67d" category="inline-xref">ステップ4：スタンバイ REDO ログファイル</block>
-  <block id="5876b5802a02d4fb6189d873597bd2c3" category="cell">SRL 再構築（<block ref="17b3e040fa8435fd43de245d0dbe1b60" category="inline-xref-macro-rx"></block>）、MRP、ブローカー（<block ref="570201f6cc183155f279a9ee0f1dd27c" category="inline-xref-macro-rx"></block>）</block>
-  <block id="7956b7dd32d04a8855f122e8445ad484" category="paragraph">RMANのアクティブ重複機能は、小規模なラボでは引き続き有効です。本番環境のスタンバイシードには、*GCNVレプリケーション*が推奨されます。</block>
   <block id="6afcb4f3a7966685ae11d809209f8b00" category="list-text"><block ref="be461f2f19fe40ccc0c8414ac6aa799f" prefix="" category="inline-code"></block>ボリューム レプリケーションに対応しています。</block>
   <block id="c6238f3076f03414fe6dbb90459cb0e9" category="list-text">異なる場所にある2つの*デフォルトモード*プール<block ref="79d523916802ef5e588f3a0e1f37e882" prefix="(" category="inline-code"></block><block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>）。</block>
   <block id="4cdf00c93e2bd3ac3179a53111653cab" category="list-text">プライマリ プール上のソース ボリュームが<block ref="895d9ad3946d63f2384be29aafa0979d" prefix=" " category="inline-code"></block>に接続され、レプリケーションによって宛先ボリュームが作成されます。</block>
   <block id="750957edeb9b4c00e9907a94eb6589ca" category="list-text">レプリケーションは、DB VMからではなく、Cloud Shellまたはワークステーションから実行してください。</block>
-  <block id="f8645124721b8adedd49097b446aec68" category="paragraph">必要に応じてスタンバイプールを作成します：</block>
-  <block id="679a6834c1819a8d18dda130b5954095" category="paragraph"><block ref="dab686ada5c9477e04c2327657fc8f30" prefix=" " category="inline-code"></block>が*MIRRORED* / 初期同期が完了するまで待ちます。</block>
-  <block id="f7d65df1842e5b8e17b3ae3a6045ae66" category="paragraph">*プライマリ：*</block>
-  <block id="1c7f26f53eca6373830e438a60535971" category="paragraph">最終レプリケーション サイクルを許可してから、次の手順を実行します。</block>
-  <block id="ad04544037208423c976de184a9443f4" category="paragraph">宛先ボリュームを<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>にアタッチします（複製された LUN はソース名を保持する可能性があります — 更新時に<block ref="9fa83431ed1c0bffae3032ef4a6d7573" prefix=" " category="inline-code"></block>を使用）：</block>
-  <block id="fd6bbc370938d4a09f36c62888a1d3c6" category="paragraph">コントロールファイルを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>にコピーし、プライマリで次を実行します：</block>
-  <block id="d50e85f8434011d66a715b40086cfdc8" category="paragraph">ワンタイム シード：ソース ボリューム上のスナップショット → スタンバイ プールのスナップショットからボリュームを作成（Cloud ConsoleまたはAPI）。<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>にアタッチした後、<block ref="289edb88c45052115560a4dc1eaccd93" category="inline-xref-macro-rx"></block>に進みます。</block>
-  <block id="594239a62893e2e802a9b54f3c573f5a" category="section-title">スタンバイ iSCSI および ASM （ RMAN 導入前）</block>
-  <block id="954c1cff0b808463b884948158ecd6a8" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、*スタンバイプール* iSCSIポータルにログインします。ASMディスクヘッダーがプライマリ命名と一致する場合は、*プライマリスタイルのマルチパスエイリアス*を使用します（lab:<block ref="d3e577701c1159d29bb37a6897fe1195" prefix=" " category="inline-code"></block>、<block ref="325b416024d98d67ef0bf8431c889820" prefix=" " category="inline-code"></block>）、パーティションに<block ref="89f1b02de5b3851d79f204e14b1a457d" prefix=" " category="inline-code"></block>、<block ref="cca4fb206ec312ebd25c1e99a02bbdb9" prefix=" " category="inline-code"></block>を設定してから、次の操作を行います：</block>
-  <block id="d55afb24fbd55b350639f4aa14b3e5ca" category="paragraph">変換後、*スタンバイ REDO ログを再構築*（複製された制御ファイルにはまだ<block ref="b9be7946c3a48c46e42b29df36135b48" prefix=" " category="inline-code"></block> SRL パスが含まれています — プライマリで<block ref="45d3f913b21d3b56afad08bf52beee16" prefix=" " category="inline-code"></block>/<block ref="c729c7564963a242b8612301629b9f19" prefix=" " category="inline-code"></block>が発生します）。<block ref="17b3e040fa8435fd43de245d0dbe1b60" category="inline-xref-macro-rx"></block>を参照してください。</block>
-  <block id="9679c1da9528350ee52b0aaa37931ce9" category="paragraph">FSFO の*両方の*ホストで必要です。サイズ ≥ 最大のプライマリ オンライン REDO（カウント = （スレッドあたりのオンライン グループ） + 1）。</block>
-  <block id="b261ae61d4cf2f97e1aa7212b93628bc" category="paragraph">*GCNV シード後：* スタンバイ上のすべてのスタンバイログファイルグループを削除し、<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>のみで再作成<block ref="34d9ae742309e48f0b66756d53f849ea" prefix="(" category="inline-code"></block>）。<block ref="b9be7946c3a48c46e42b29df36135b48" prefix=" " category="inline-code"></block>配下の複製されたパスは、再構築されるまで<block ref="45d3f913b21d3b56afad08bf52beee16" prefix=" " category="inline-code"></block>/<block ref="c729c7564963a242b8612301629b9f19" prefix=" " category="inline-code"></block>の原因となります。</block>
-  <block id="293c068c2a0a4255ddd5a7a8e134e804" category="paragraph">*プライマリ<block ref="173ad268594dda99be99f9ab53fc66c5" prefix="(" category="inline-code"></block>):*</block>
-  <block id="1ed0e256e075cc9ebc2a2ecdd88164a7" category="paragraph">*スタンバイ<block ref="3ad0bd4699c7945297963a438f68d612" prefix="(" category="inline-code"></block>）GCNV シード後：*</block>
-  <block id="b9be1a8e0a9434b4f8afa7bec67d90c0" category="section-title">ステップ5：スタンバイでフラッシュバックを有効にし、マネージドリカバリを開始します</block>
-  <block id="38e7f58a8d1391692c7407a353e68c19" category="paragraph">管理リカバリを開始する*前に*フラッシュバックを有効にしてください（MRPがアクティブな間はフラッシュバックを有効にできません）。</block>
   <block id="daeecac992fb6cd4104c35be083b504c" category="paragraph"><block ref="96e899093a4f64e9b84092873ecb4162" prefix="" category="inline-code"></block>リアルタイム適用を有効にします（SRLに到着した時点でredoが適用されます）。</block>
-  <block id="c7f9afee775efc258599e585d964fdba" category="section-title">ステップ6：プライマリでREDO転送を有効にする</block>
-  <block id="501ee1ef18f9df70df5949b0586ec27c" category="paragraph">スタンバイの作成中に継続的な<block ref="0089858c7dd22225c3de5be78ce29016" prefix=" " category="inline-code"></block>エラーを抑制するために、<block ref="fd1521ad570f67485d657084a1a905d4" category="inline-xref-macro-rx"></block>で<block ref="2f8150ac9469ed6ebf4ca88b88dde4b5" prefix="" category="inline-code"></block>は意図的に<block ref="7f5e3f26a1a530c4cc7f9b80e963e9cc" prefix=" " category="inline-code"></block>に設定されていました。スタンバイの準備ができたので、これを有効にします。</block>
-  <block id="bdffc58ccab03556b5a1c2ee289ff1f7" category="paragraph"><block ref="d0407d9670675ee36b404c4218a54bab" prefix=" " category="inline-code"></block>に切り替え<block ref="b332708e4304e13c9b424e7465254954" prefix=" " category="inline-code"></block>、ログスイッチを強制して、最初のラウンドのREDOがすぐに送信されるようにします：</block>
   <block id="9d8bb4c7d129f3129d6403ca792d40c1" category="inline-xref">手順1：両方のデータベースでブローカーを有効にする</block>
-  <block id="f2e4cb4f70ce70bdbe1fe99e172c13d3" category="paragraph"><block ref="2224873378f51ce78ccb598214ddcb89" prefix=" " category="inline-code"></block>が<block ref="0089858c7dd22225c3de5be78ce29016" prefix=" " category="inline-code"></block>を示している場合は、プライマリをバウンスします。<block ref="4eaa53aeb4b865bec8911f2b33f7d10c" category="inline-xref-macro-rx"></block>の後、DGMGRLを介してトランスポートを管理します。</block>
-  <block id="54262be793f8c8c53336ae062920258c" category="section-title">ステップ7：ターゲットのData Guard状態を確認する</block>
-  <block id="887d8fd91b7e1a1d6a5e8ec1e7ba8cc8" category="paragraph">*プライマリ* <block ref="9514606aa0e81e08de08842f8136911c" prefix="(" category="inline-code"></block>）：</block>
-  <block id="9506e566b705f66a92a926b2d91eb3a3" category="paragraph">*スタンバイ*<block ref="307e0423cd7859aca914691fcbaacca5" prefix="(" category="inline-code"></block>（Cloud Console *SSH*、またはワークステーションからのIAP）：</block>
   <block id="59d8e6829346a655b4e2efe2ff9cd9cb" category="paragraph">スタンバイで想定される値：<block ref="b054bbcaeeb7ee444b2efdecc2cf4dde" prefix=" " category="inline-code"></block>;<block ref="6a101baec717a0c2b7554a544ddf7a2f" prefix=" " category="inline-code"></block>（<block ref="1f38735e57e053804f3980f01073a19b" prefix=" " category="inline-code"></block>を使用）。</block>
-  <block id="eac1b4418af44742a4ce096fb47a4e71" category="paragraph">スタンバイがレポート<block ref="483044c0a27107e78203087cbbf6d45c" prefix=" " category="inline-code"></block>しているが、適用が実行されていない場合は、MRP を再起動してください<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>：</block>
-  <block id="2a705826d45db40e40f108837b1cb764" category="section-title">ステップ8：スタンバイデータベースをOracle Restartに登録する</block>
-  <block id="27f111f76ab683db9d1f77dca2ec5367" category="paragraph">GCNV シーディング後にスタンバイを Restart に登録すると、再起動時に ASM、MOUNT、および適用が回復されます。</block>
-  <block id="88d88a8f7514b88b511e58e3196c107e" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、spfile の場所を取得し、Oracle Restart に登録します（クエリから<block ref="39f24d8681d2402426bc0254b28e4ca8" prefix=" " category="inline-code"></block>を代入します。多くの場合<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>にあります）：</block>
-  <block id="7382ab0ce8940a8d764a5e0c7b09acc6" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で、プライマリOracle Restartデータベース リソースにASMディスク グループの依存関係がリストされていることを確認します。DBCAが<block ref="e44f9e348e41cb272efa87387728571b" prefix=" " category="inline-code"></block>と<block ref="e52a9d7f668e660411384f7f4cfa3111" prefix=" " category="inline-code"></block>のみを登録した場合は、<block ref="a3ab56e5c68dae48c656f6149fd2626e" prefix=" " category="inline-code"></block>を追加します：</block>
-  <block id="528f04a6c8e9ab6d0a45ee906b3b6d52" category="paragraph">*スタンバイ データベース リソースに同じアプリケーション サービスを追加する* <block ref="3ad0bd4699c7945297963a438f68d612" prefix="(" category="inline-code"></block> on<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>）。<block ref="64dfff6e31b96e0cbc5549861f919993" prefix=" " category="inline-code"></block>を両側で使用して、<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block>がスイッチオーバー後に使用できるようにします：</block>
-  <block id="1b024149be686cd8ee5bd425f6e352fb" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、スタンバイデータベースリソースを確認します：</block>
-  <block id="65e2cfb618dee5dd999fdad93779e5c0" category="paragraph"><block ref="a6b0d00baacd14c56c27b44792e734a9" prefix=" " category="inline-code"></block>後、*DGMGRL* を使用してトランスポートとロールを管理します（アドホック<block ref="9d2a8946ccbded26bb1775427bfc37d9" prefix=" " category="inline-code"></block> SQL ではありません）。</block>
-  <block id="e4de0042dcc7c786f7f6ddd14c367e01" category="paragraph">*プライマリ*および*スタンバイ*のデータベースホスト上：</block>
-  <block id="7fcab2c5b43cdf2569500ae5863fbab5" category="inline-xref">ステップ5：Observerをsystemdユニットとして起動する</block>
-  <block id="be61dc9b5a11062afaf00930696d5bf6" category="paragraph">*プライマリデータベースホスト*で、OS認証を使用して接続します（<block ref="3f54d7f082b381eaddb4be4be13df81f" category="inline-xref-macro-rx"></block>のObserverウォレットはDBホストでは必要ありません）：</block>
   <block id="67db5365c3b258a72b5c26bdcae15e6b" category="paragraph">Observer ホストでのみ、自動ログイン ウォレットが存在した後に<block ref="060d6517833ab8e61b51eb32ccedd603" prefix=" " category="inline-code"></block>を使用します。<block ref="b684595e149fba1c667223b300ce301d" prefix=" " category="inline-code"></block>コマンド ラインにパスワードを入力しないでください。</block>
   <block id="240ba9d8a514d5462d332e5e2b4e5259" category="inline-xref">ステップ3：FSFOプロパティを設定して有効にする</block>
-  <block id="87cc4946c3611fa199557115946a6251" category="paragraph">実行<block ref="51be8c2d480dfa8386ab67552d875dc8" prefix=" " category="inline-code"></block>即座に — スイッチオーバーを試みる前に、孤立したデータファイル、欠落したSRL、実行されていないredo apply、その他の一般的な問題を明らかにします。任意の<block ref="059e9861e0400dfbe05c98a841f3f96b" prefix=" " category="inline-code"></block>またはNULL以外の<block ref="bb1ca97ec761fc37101737ba0aa2e7c5" prefix=" " category="inline-code"></block>は、<block ref="1e50eb0fb14dafced24bbc2ae3e645b5" category="inline-xref-macro-rx"></block>の前に修正する必要があります。</block>
-  <block id="69bb7c2c9e12b752761ebbfd6e95a351" category="section-title">ステップ2：フラッシュバックの確認（FSFO自動復旧に必要）</block>
-  <block id="9d0499063285b7adb2cb16b599f1ea52" category="paragraph">FSFO を有効にする前に、*両方の*ホストで<block ref="5915cf8468db7b8035e489d020bb8412" prefix=" " category="inline-code"></block>確認してください：</block>
-  <block id="34cd217186280692ff0d91ecd32e798b" category="paragraph">*プライマリ*のみで、保持期間がまだ設定されていない場合：</block>
-  <block id="36cace7426375eff3116339b95314405" category="paragraph">認証情報は自動ログインウォレットに保存されます。<block ref="b684595e149fba1c667223b300ce301d" prefix=" " category="inline-code"></block>コマンドライン（<block ref="8812c36aa5ae336c2a77bf63211d899a" prefix=" " category="inline-code"></block> /<block ref="eed23a3d2310f43954a09887cb36b398" prefix=" " category="inline-code"></block>から見える）には保存されません。Observerでのみ<block ref="17c8111e46ce374e6a8685bbfa346ba3" prefix=" " category="inline-code"></block>と接続します。</block>
-  <block id="5e70ae9485e9fef5226c828e4932c9d6" category="list-text">*専用アカウントを使用する：* <block ref="834c3d60d84e11303f54a7dabaacb567" prefix=" " category="inline-code"></block>ではなく、専用のData Guard管理アカウント（たとえば、<block ref="9c5feafb5e3cc87dcc19ba27c46c1b5b" prefix=" " category="inline-code"></block>）のクレデンシャルをウォレットに保存します。</block>
-  <block id="355e6dc579f9a2494ac8fe0d69c85d40" category="list-text">*自動ログインウォレットが必要：* Observer systemdサービスには自動ログインウォレット<block ref="71e796326554d16610b5039dc97b84cf" prefix="(" category="inline-code"></block>）が必要です。<block ref="71e796326554d16610b5039dc97b84cf" prefix=" " category="inline-code"></block>の実行後に<block ref="13f20f2533b4fd8761279f9006c67a59" prefix=" " category="inline-code"></block>が欠落している場合は、Instant Client *tools* パッケージまたはデータベース ホームから<block ref="fb690b2120a681e6eead8d230367816f" prefix=" " category="inline-code"></block>を使用して自動ログイン ウォレットを作成し、保存済みの認証情報を再度追加します。</block>
-  <block id="3abbcae4779dea2bb36bad2edfa04521" category="list-text">オブザーバー上に、両方のメンバーの認証情報を使用してウォレットを作成します：</block>
-  <block id="c07c0502e62d2a71c9a04cdb0844ffd7" category="list-text">Systemd ユニット + ログ ローテーション：</block>
-  <block id="e3c6c14a60d971a11add738158732ffe" category="paragraph">プライマリから確認 — Observerは<block ref="a5afd6edd5336d91316964e493936858" prefix=" " category="inline-code"></block>を読む必要があります（<block ref="99c8ce56e7ab246445d3b134724428f3" prefix=" " category="inline-code"></block> ObserverはFSFOをサイレントに中断します）：</block>
-  <block id="3bc2c0a95c3a5778da1c4bb024c15a52" category="section-title">ステップ6：FSFO（スイッチオーバーとフェイルオーバー）のテスト</block>
-  <block id="68e7ca2683a553da37942fd93755ca42" category="paragraph">*計画的スイッチオーバー：*</block>
-  <block id="18711b8dcfadb8571b6b785642834b37" category="paragraph">*計画外フェイルオーバー：* テストウィンドウでVM *リセット*（クラッシュスタイルのテスト）を使用します。通常の *停止* ではFSFOがトリガーされない場合があります。<block ref="3ca876beeb71c8704cdac200d57596a6" prefix=" " category="inline-code"></block>を<block ref="c7f5bde16987c7d543c988c216354ee9" prefix=" " category="inline-code"></block>で追跡し、完了したらトポロジを復元します。</block>
-  <block id="1b8810be65a2475a4f3e2e362dbfda33" category="sidebar">Google Cloud NetApp Volumes を使用した Oracle Database 26ai 高可用性のデプロイ</block>
+  <block id="c67da3ceec3dcf796d3865a49e58edeb" category="summary">パブリッククラウドの俊敏性、価値実現までの時間、そしてコスト削減は、データベースアプリケーションの開発とテストにパブリッククラウドを採用する企業にとって、いずれも重要な価値提案となります。</block>
+  <block id="08c9cc208c409d030a1f85cbc4ad90ad" category="doc">クラウドへの開発とテストバーストのワークフロー</block>
+  <block id="c54e97421ee69de96ec7394d8f3ea3de" category="summary">このセクションでは、クラウドで SQL Server と共に Azure NetApp Files を使用する際に考慮すべきさまざまな問題について説明します。</block>
+  <block id="a706f3820d8d027315e1dec5c172788e" category="list-text">以下のUNCパスがサポートされています：<block ref="aebc2faa2476d295f2cae1d1bf9a95e9" prefix=" " category="inline-code"></block>および<block ref="b11d608f6c210c2b4a7607e210796899" prefix=" " category="inline-code"></block>。</block>
+  <block id="7644dcf5e5639ebd14209e991b1b3f7f" category="summary">Oracle Database 26ai の高可用性を導入する前に、Google Cloud NetApp Volumes に必要なアクセス権限、API の有効化、ネットワークの前提条件、および時刻同期を確認してください。</block>
+  <block id="c2348dcfb0a016cf2511a4128f3dd019" category="doc">Oracle Database 26ai 向け Google Cloud NetApp Volumes のアクセスと API を確認する</block>
+  <block id="e671b4a148229e2e56415c2d75a0950f" category="paragraph">Google Compute Engine 上で Oracle Database 26ai の高可用性を実現するために GCNV iSCSI ストレージをプロビジョニングする前に、Google Cloud NetApp Volumes のアクセス、API の有効化、ネットワークの前提条件、および時刻同期を確認してください。</block>
+  <block id="d27970a5aca6ac21051f570bb063e900" category="section-title">アクセスとAPI</block>
+  <block id="7a0a49ca934cf52849514b16ea190f29" category="paragraph">ホストとストレージ プロビジョニングを開始する前に、このチェックリストを使用して権限とプラットフォームの準備状況を確認します。</block>
+  <block id="1e862ad1e330d0f522295bb9e4be311e" category="list-text">GCP ロールは、Compute Engine VM、VPC ファイアウォール （またはファイアウォール ポリシー）、NetApp ボリューム、および PSA ネットワーキング （該当する場合は、共有 VPC ホストプロジェクトの承認を含む） に割り当てられます。</block>
+  <block id="34db65b9d32f5b64f0a9848b97db1878" category="list-text">*NetApp Volumes API* が有効になっています（Cloud Console -&gt; APIs &amp; Services、または以下のコマンド）。</block>
+  <block id="502c881d95dd4d6a86e2794fcafb66de" category="inline-link">NetApp Volumes のネットワークを構成する</block>
+  <block id="025bb44bc7256afcf8886fbb3edd4fe9" category="list-text">VPCとサブネットは、GCNVの*PSA範囲*で構成されています：<block ref="f6c9600c8915e6fd8835d0393e978c7e" category="inline-link-rx"></block>。</block>
+  <block id="cae085101c68d6384c26e96ffff93cc7" category="list-text">3台の仮想マシンすべてで時刻が同期されています（以下のコマンドを参照）。</block>
+  <block id="58eaebf972358f1cf03d386a4ade1a0f" category="section-title">次の手順</block>
+  <block id="16851825d21e85fa7616778e521d0c67" category="inline-xref-macro">Oracle Database 26ai 用の Google Compute Engine インスタンスのプロビジョニング</block>
+  <block id="04a3889a91075de726a008a6f7ddadce" category="paragraph">Oracleホストインフラストラクチャを高可用性用にプロビジョニングするには、<block ref="7c35e62469c9bdef6aa5b01b67677859" category="inline-xref-macro-rx"></block>に進みます。</block>
+  <block id="6a828e13a7af3c6657615944610ed99d" category="summary">Prod HA Data GuardおよびFSFO層のみの場合、Google Cloud NetApp Volumes上のOracle Database 26ai専用のオブザーバーを使用してOracle Data Guard BrokerとFast-Start Failoverを構成します。この手順では、ブローカーの有効化、Data Guard構成の作成、FSFOの有効化、オブザーバーホストへのOracle Instant Clientのインストール、systemdサービスとしてのオブザーバーの起動、およびスイッチオーバーとフェイルオーバーのテストについて説明します。</block>
+  <block id="8bf413fab70ea7198752aef3df81d273" category="doc">Google Cloud NetApp Volumes 上の Oracle Database 26ai 向けに Data Guard Broker と Fast-Start フェイルオーバーを構成する</block>
+  <block id="a5dc0e672de342bd563d7dd41bd4dcf3" category="paragraph">専用のオブザーバーを使用してOracle Data Guard BrokerとFast-Start Failoverを構成し、Google Cloud NetApp Volumes上のOracle Database 26aiの自動ロール遷移を有効にします。</block>
+  <block id="fed5889e84eca5118cf6e1a168ea31b2" category="paragraph">*ティア固有：* この手順は *Prod HA (Data Guard + FSFO)* ティアにのみ適用されます。</block>
+  <block id="77513464a06dbac63d8abc5d617ab421" category="paragraph">この手順では、両方のデータベースでブローカーを有効にすること、Data Guard 構成を作成すること、MaxAvailability 保護モードで FSFO を有効にすること、Observer ホストへの Oracle Instant Client のインストール、ウォレットベースの認証情報を使用した systemd サービスとしての Observer の起動、および切り替えとフェイルオーバーのテストについて説明します。後<block ref="a6b0d00baacd14c56c27b44792e734a9" prefix=" " category="inline-code"></block>、トランスポートとロールは *DGMGRL* で管理します （アドホック<block ref="9d2a8946ccbded26bb1775427bfc37d9" prefix=" " category="inline-code"></block> SQL ではなく）。</block>
+  <block id="2e0930f40d6c6c44be76234757e39e85" category="section-title">ステップ 1：Data Guard Broker を有効にする</block>
+  <block id="0812dd45101189a1daa2faa9845b3544" category="paragraph">両方のデータベースホストでData Guard Brokerを有効にし、プライマリデータベースとスタンバイデータベースを統合管理下に置くためのブローカー構成を作成します。</block>
+  <block id="8ebeecb2152cfbe9a61ff8298493e5ae" category="list-text">プライマリおよびスタンバイのデータベースホストで以下を設定します<block ref="4cd337c9133085944b22c054782c8c1c" prefix=" " category="inline-code"></block>：</block>
+  <block id="b12c44de73140a8fa8e875d4c25aa39a" category="list-text">プライマリ側で、OS認証を使用してDGMGRLに接続し、ブローカー構成を作成します。</block>
+  <block id="69ae6cfd7ce327157d73cd7f61830523" category="list-text">構成を検証します。<block ref="059e9861e0400dfbe05c98a841f3f96b" prefix=" " category="inline-code"></block>またはNULL以外<block ref="bb1ca97ec761fc37101737ba0aa2e7c5" prefix=" " category="inline-code"></block>を<block ref="1e50eb0fb14dafced24bbc2ae3e645b5" category="inline-xref-macro-rx"></block>の前に修正してください：</block>
+  <block id="b21e894efa747fb17879cd1e7e46aaac" category="section-title">ステップ2：FSFOのフラッシュバックを確認する</block>
+  <block id="9a8eac2d4c30075dac2ecb3c56026641" category="paragraph">両方のホストでフラッシュバックデータベースが有効になっていることを確認してください。FSFOの自動復旧にはフラッシュバックが必要です。これにより、フェイルオーバー後に以前のプライマリがスタンバイとして自動的に構成に復帰できるようになります。</block>
+  <block id="f45276b5eee0cdb931575dc1c81734b2" category="list-text">両方のデータベースホストで<block ref="5915cf8468db7b8035e489d020bb8412" prefix=" " category="inline-code"></block>が<block ref="7469a286259799e5b37e5db9296f00b3" prefix=" " category="inline-code"></block>であることを確認します：</block>
+  <block id="8c650e48d43c7814a1007b99917c3a09" category="list-text">プライマリデバイスのみで、フラッシュバック保持がまだ設定されていない場合：</block>
+  <block id="7542779c73fe7a4325c5a316ea51b125" category="section-title">ステップ3：FSFOの設定と有効化</block>
+  <block id="4ceec749690b8cf4e5697a7dfb5cdc93" category="paragraph">SYNC リドゥ転送を設定し、MaxAvailability 保護モードを構成し、各データベースで FSFO ターゲットを定義して、Fast-Start Failover を有効にします。</block>
+  <block id="d79abc6a1c3cc72c70048b2ea4e99ce3" category="list-text">両方のデータベースでリドゥ転送モードを<block ref="274ccef15a21e829d03293a6fd1974f3" prefix=" " category="inline-code"></block>に設定し、保護モードを<block ref="00d3443d618873afe8993c693e791995" prefix=" " category="inline-code"></block>に上げます：</block>
+  <block id="19cc93240bc21d53eb8a1f55021046ed" category="list-text">各データベースが互いをフェイルオーバーターゲットとして指定するようにFSFOターゲットを設定し、しきい値と自動復旧動作を構成します：</block>
+  <block id="c6f24169a6d8d5369aad302ae44724a4" category="list-text">高速フェイルオーバーを有効にして、設定を確認します。</block>
+  <block id="d0ef8a17dd23104e8a12e569ec1dcbf5" category="section-title">ステップ4：オブザーバーにInstant Clientをインストールする</block>
+  <block id="9a07f7f952814afbe581b1d14ba63367" category="paragraph">専用のオブザーバーVM（<block ref="c7f5bde16987c7d543c988c216354ee9" prefix="(" category="inline-code"></block>）にOracle Instant Clientをインストールし、専用の<block ref="a189c633d9995e11bf8607170ec9a4b8" prefix=" " category="inline-code"></block> OSユーザーを作成して、ObserverがTCP/1521で両方のデータベースメンバーに接続できるようにOracle Net環境を構成します。</block>
+  <block id="554890c05aacdab6781519a482486f7e" category="list-text">ObserverホストにOracle Instant Clientパッケージをインストールします（<block ref="c7f5bde16987c7d543c988c216354ee9" prefix="(" category="inline-code"></block>）：</block>
+  <block id="e487d4a5183f4feee187bfddc43b948c" category="list-text">ウォレットとsystemdユニットを所有する専用の<block ref="a189c633d9995e11bf8607170ec9a4b8" prefix=" " category="inline-code"></block> OSユーザーを作成します：</block>
+  <block id="bbe4148804695b48ea2c041fe57de5c2" category="list-text">Oracle Net 環境を構成し、両方のデータベースホストのエントリを含む<block ref="89b926d2849c8f46b48a6e20ac9b4561" prefix=" " category="inline-code"></block>を作成します：</block>
+  <block id="6453533f6602ad84d4c69ee2bf53838a" category="section-title">ステップ5：Observerをsystemdサービスとして実行する</block>
+  <block id="48735f7872cc74f339d6169b6e1871d7" category="paragraph">両方のデータベースメンバーの認証情報を含む自動ログインウォレットを作成し、Observerをsystemdサービスとして設定および起動して、再起動後も動作し、自動的に設定に再接続するようにします。</block>
+  <block id="d762be9a6e4de2cd225b908262861a31" category="paragraph">専用の Data Guard 管理アカウント（たとえば、<block ref="9c5feafb5e3cc87dcc19ba27c46c1b5b" prefix=" " category="inline-code"></block>）の資格情報は、<block ref="834c3d60d84e11303f54a7dabaacb567" prefix=" " category="inline-code"></block> ではなくウォレットに保存します。資格情報は、<block ref="8812c36aa5ae336c2a77bf63211d899a" prefix=" " category="inline-code"></block> や <block ref="eed23a3d2310f43954a09887cb36b398" prefix=" " category="inline-code"></block> から確認できる状態になってしまうため、<block ref="b684595e149fba1c667223b300ce301d" prefix=" " category="inline-code"></block> コマンドライン上には絶対に表示させないでください。Observer では常に <block ref="17c8111e46ce374e6a8685bbfa346ba3" prefix=" " category="inline-code"></block> を使用して接続してください。</block>
+  <block id="005b36b57a169f90ae797fac5eca89a2" category="list-text">暗号化ウォレットを作成し、両方のデータベースメンバーの認証情報を入力します。</block>
+  <block id="24975237e0408d0c00f97dc9aa17e9e7" category="list-text">Observerのsystemdサービスがパスワードの入力プロンプトなしで起動できるように、自動ログインウォレット<block ref="71e796326554d16610b5039dc97b84cf" prefix="(" category="inline-code"></block>）を生成します。<block ref="13f20f2533b4fd8761279f9006c67a59" prefix=" " category="inline-code"></block>の実行後に<block ref="71e796326554d16610b5039dc97b84cf" prefix=" " category="inline-code"></block>がない場合は、Instant Clientツールパッケージまたはデータベースホームの<block ref="fb690b2120a681e6eead8d230367816f" prefix=" " category="inline-code"></block>を使用して作成し、保存されている資格情報を再追加します：</block>
+  <block id="0d1b3e6d1ac8a20bc37ebb0427c31f39" category="list-text">systemd ユニットを作成し、サービスを有効にして、オブザーバーが接続されていることを確認します：</block>
+  <block id="0ddb924a819a20201b04aa49126f2e4c" category="paragraph">オブザーバーはプライマリから読み取る必要があります<block ref="a5afd6edd5336d91316964e493936858" prefix=" " category="inline-code"></block>（<block ref="99c8ce56e7ab246445d3b134724428f3" prefix=" " category="inline-code"></block>オブザーバーは暗黙的にFSFOを停止します）：</block>
+  <block id="0e43b539b6bb2b461855920807279c49" category="section-title">ステップ6：FSFOをテストする</block>
+  <block id="5fa9c2097b0834cad2248c0b1a2390e5" category="paragraph">Data Guard の構成を<block ref="51be8c2d480dfa8386ab67552d875dc8" prefix=" " category="inline-code"></block>で検証し、次に計画的なスイッチオーバーを実行して、テスト期間中に計画外の VM リセット フェイルオーバーを実行し、FSFO がエンドツーエンドで正常に動作していることを確認します。</block>
+  <block id="5d5aaa9b0335b183a06a0e15b2dea0c7" category="list-text">計画された切り替えをテストし、元のトポロジを復元します。</block>
+  <block id="08df0d73d3ccc55e697447f732731ce7" category="list-text">制御されたテストウィンドウ内で、VM のリセットを使用して計画外のフェイルオーバーをテストします。</block>
+  <block id="abe8ef09278f3bb197c9e5e7384535d5" category="paragraph">VMの*リセット*（クラッシュ形式のテスト）を使用してください。通常の*停止*ではFSFOがトリガーされない場合があります。<block ref="3ca876beeb71c8704cdac200d57596a6" prefix=" " category="inline-code"></block>tail<block ref="c7f5bde16987c7d543c988c216354ee9" prefix=" " category="inline-code"></block>を使用してフェイルオーバーの進行状況を監視し、完了したらトポロジーを復元してください。</block>
+  <block id="2df453a10ec5c3a79c77f37713efbbd2" category="paragraph">このデプロイメントでは、Oracle Data Guard Broker、Fast-Start Failover、およびObserverの構成が完了しました。</block>
+  <block id="b03415be2972f0cfecd4345ac5ff8692" category="summary">Google Cloud NetApp Volumes と Oracle Database 26ai のデプロイオプション（開発とテストから本番環境の高可用性レベルまで）。</block>
+  <block id="9727739a4a7571cb1e3a35a80d53de2d" category="doc">Oracle Database 26ai 向け Google Cloud NetApp Volumes の導入オプションについて</block>
+  <block id="d4a19bd19ef80f9fa66dfc3176d2a5a8" category="paragraph">Google Cloud NetApp Volumes は、開発とテスト環境から、Data Guard と Fast-Start Failover を使用した本番環境向けの高可用性構成まで、複数のデプロイメント階層にわたる Oracle Database 26ai をサポートしています。Google Cloud NetApp Volumes で、デプロイ要件を確認し、HA 階層を比較し、選択したソリューション アーキテクチャのタスクシーケンスを特定します。</block>
+  <block id="ff31982aef870d546d52f49bb30ef34b" category="section-title">導入の要件</block>
+  <block id="4beb79f440ca9a43fbcfd7a3cf02eda1" category="paragraph">Oracle Database 26ai 高可用性向けに Google Cloud NetApp Volumes をプロビジョニングする前に、以下の項目が揃っていることを確認してください：</block>
+  <block id="97b37ef58762f20fa92b495d5d1cf036" category="section-title">デプロイメント構成例</block>
+  <block id="ad6577088f9a08cf7c561c7e62dd6930" category="paragraph">このソリューションでは、以下のデプロイメント構成を使用します。</block>
+  <block id="8725cad6aa46e98381c12a9b1d477f2e" category="paragraph">コマンド内のすべてのサンプル値を、ホスト名、IPアドレス、ゾーン、プロジェクト名、ポータルIP、パスワード、Oracleメディアファイル名など、ご使用の環境の値に置き換えてください。</block>
+  <block id="676128d44d287ab6eecbfbbbe02db7b1" category="paragraph">以下の表は、HA と DR の導入パターンを比較し、自動化によって運用上のメリットが最も大きい箇所を示しています。</block>
+  <block id="dc321b345294f4a36b47b594df32fa61" category="list-title">HA/DR/自動化</block>
+  <block id="8f7022ae20aa975e07c297a3bc808104" category="list-text">はい＝ティア目標を達成</block>
+  <block id="c05bdee1ffb7a3fe5a895ec2db1515fe" category="list-text">いいえ = 対象外</block>
+  <block id="1f8150419d97242867a2e8fd4dcb2c53" category="list-text">部分的＝ストレージレベルまたは手動ステップのみ</block>
+  <block id="c16f6489d35dcb79acacf390d47c0936" category="section-title">HA階層別のデプロイタスク</block>
+  <block id="676a7dff43a04e6f9f305e06a3808baa" category="inline-xref-macro">デプロイメントワークフロー</block>
+  <block id="e7fd1df197e25a03677506430593af8c" category="paragraph"><block ref="21f2ca81f6affd0a5fa5def1312eeff3" category="inline-xref-macro-rx"></block>は、すべての展開階層に対して、番号付きの手順シーケンスを提供します。すべての階層は、以下に示す基本デプロイメントタスクを完了した後、本番環境の高可用性を実現するための階層固有のタスクを追加します。</block>
+  <block id="26e7590a831aca089d441a280dfc513f" category="paragraph">*基本展開（全階層）：*</block>
+  <block id="b746fb67d39aa0a2204af16523478c86" category="inline-xref-macro">ソリューション アーキテクチャの確認</block>
+  <block id="3662cec14d7b91c70e1f3c4720c9e045" category="list-text"><block ref="3662cec14d7b91c70e1f3c4720c9e045" category="inline-xref-macro-rx"></block></block>
+  <block id="f8b2a74a94b996a7c98b58e81da47c9a" category="list-text">導入オプションと要件を確認する（このページ）</block>
+  <block id="9e124975cbd5f551f1e2b666e6f8f14e" category="inline-xref-macro">アクセスとAPIを確認する</block>
+  <block id="dae4f3c6073a254df724b534976d11c9" category="list-text"><block ref="dae4f3c6073a254df724b534976d11c9" category="inline-xref-macro-rx"></block></block>
+  <block id="16e4ac4f4fabbfae0c7cc16ef9f1aad3" category="inline-xref-macro">Google Compute Engine インスタンスをプロビジョニングする</block>
+  <block id="d0adfaac56b5ba1e0c0f2441ae0829da" category="list-text"><block ref="d0adfaac56b5ba1e0c0f2441ae0829da" category="inline-xref-macro-rx"></block></block>
+  <block id="32a9cd277f74c3762c8bd1d254882f10" category="inline-xref-macro">GCNV iSCSI ストレージをプロビジョニングする</block>
+  <block id="dd491c34bf9c602195ecb1b365cafd55" category="list-text"><block ref="dd491c34bf9c602195ecb1b365cafd55" category="inline-xref-macro-rx"></block></block>
+  <block id="7bdb4495955b6a958ee2eeb781c594f7" category="inline-xref-macro">Oracle Grid InfrastructureとOracle Database 26aiをインストールする</block>
+  <block id="f7d31ebbf8ee472e3f99ff75e7cf80eb" category="list-text"><block ref="f7d31ebbf8ee472e3f99ff75e7cf80eb" category="inline-xref-macro-rx"></block></block>
+  <block id="dc55ec5f3f5e2eda5463f14f56cd1097" category="list-text"><block ref="dc55ec5f3f5e2eda5463f14f56cd1097" category="inline-xref-macro-rx"></block></block>
+  <block id="4daf1e618bc95eeb5769724221c7bd54" category="list-text"><block ref="4daf1e618bc95eeb5769724221c7bd54" category="inline-xref-macro-rx"></block></block>
+  <block id="dd2c79c76d325825b379fa799ac8fe4f" category="paragraph">*階層固有のタスク（本番環境 HA のみ）：*</block>
+  <block id="9483f17a69bd0b52dbc44f9106718634" category="cell">階層</block>
+  <block id="8388066510b59c8d3387373b6969a7af" category="cell">導入手順</block>
+  <block id="36e8453c0d8a22c393e064298a55048b" category="cell">開発とテストおよび本番環境ベーシック（再起動）ティア</block>
+  <block id="9c3195507ca341419b54e46819cbb687" category="cell">ベース展開の手順 1 から手順 7 までのみ完了してください。スタンバイデータベースは不要です。</block>
+  <block id="6b794472df94ae083c74150de0fcbf67" category="cell">基本デプロイメントのステップ 1 からステップ 8 までを完了してください。</block>
+  <block id="dc4a0d2ba827e950c41edfdecf3312a6" category="inline-xref-macro">Data Guard用のスタンバイデータベースを確定する</block>
+  <block id="08bed67817f1b9e99e4c7c2545e5f437" category="inline-xref-macro">Data Guard BrokerとFast-Startフェールオーバーの設定</block>
+  <block id="0d48f3ad3cf558f7b27d58c5b5f31883" category="cell">すべての基本展開手順を完了してから、以下を追加します。+ 手順 9：<block ref="9f150c397551572b74175fb15576c73a" category="inline-xref-macro-rx"></block> + 手順 10：<block ref="28344d67259a8da9156ee01824acd85b" category="inline-xref-macro-rx"></block></block>
+  <block id="d0758965bf0fd6cd3e77e27990dde87d" category="inline-xref-macro">Google Cloud NetApp Volumes 上の Oracle Database 26ai へのアクセスと API</block>
+  <block id="8d09f86a097b5b8cb7066bbbdc51c436" category="paragraph">デプロイ前に環境を準備するには、<block ref="7e82bee6a8a4450efc6bd16045bde7fd" category="inline-xref-macro-rx"></block>に進んでください。</block>
+  <block id="2e48ebe4c576489fa7d23c22af85ec29" category="summary">Google Cloud NetApp Volumes iSCSI ブロックストレージを使用して、Oracle Data Guard と Fast-Start Failover を備えた高可用性 Oracle Database 26ai を Google Compute Engine 上にデプロイします。このワークフローでは、ソリューション アーキテクチャ、ストレージ トポロジー、開発とテストから本番環境の HA 構成までのデプロイメント オプション、およびスタンバイの初期化を高速化する GCNV のレプリケーションの利点について説明します。</block>
+  <block id="53234c1b928e4fe390205574d7d5b4e7" category="doc">Google Cloud NetApp Volumes の高可用性 Oracle Database 26ai をデプロイするためのワークフロー</block>
+  <block id="bfbe33ae28e07a9775d360605037f02f" category="paragraph">Google Cloud NetApp Volumes の iSCSI ブロックストレージを使用して、Google Compute Engine 上に Oracle Data Guard を搭載した高可用性 Oracle Database 26ai をデプロイします。このワークフローでは、デプロイメントオプション、インフラストラクチャのプロビジョニング、Oracle ソフトウェアのインストール、および高可用性構成について手順を説明し、GCNV のストレージ層レプリケーションを活用してスタンバイ環境の初期化を高速化します。</block>
+  <block id="06c2cea18679d64399783748fa367bdd" category="inline-image-macro">1</block>
+  <block id="65c9e81256ac046d2ca9f1840e7559e7" category="paragraph-title"><block ref="58f667aaf05f87159670e12bd9bc076b" category="inline-image-macro-rx" type="image"></block><block ref="af9f39d616554c9fecb355d0641e7726" category="inline-link-macro-rx"></block></block>
+  <block id="aadb0bc74e4f800d93850d37f8354395" category="paragraph">Oracle Database 26ai の高可用性を実現するための Google Cloud NetApp Volumes アーキテクチャについて説明します。GCNV iSCSI ブロックストレージ設計、Data Guard 統合、およびストレージトポロジーを含みます。</block>
+  <block id="aada29daee1d64ed0fe907043855cb7e" category="inline-image-macro">2</block>
+  <block id="dd43808f6de16ae8d5f20cd221c7a3ca" category="inline-link-macro">導入オプションと要件を確認する</block>
+  <block id="3952a76c90961e659fe32f683a70d32e" category="paragraph-title"><block ref="54f425ce8d89f4ed6b8a546561af5d60" category="inline-image-macro-rx" type="image"></block><block ref="5e5ae0fc692ba2d8ba58fdf9868fe5ac" category="inline-link-macro-rx"></block></block>
+  <block id="a9bba766e897f971c89a95519a9c9a84" category="paragraph">デプロイメント ティアを開発とテストから本番環境の HA まで比較し、インフラストラクチャ、アクセス、およびソフトウェアの前提条件を確認します。</block>
+  <block id="ca8a2087e5557e317599344687a57391" category="inline-image-macro">3つ</block>
+  <block id="655e5764a461dab030df6af9f6259474" category="paragraph-title"><block ref="05b2444faffd66d76e88602ea7dd353f" category="inline-image-macro-rx" type="image"></block><block ref="730835f194693b98c4b91e72d9cb8d25" category="inline-link-macro-rx"></block></block>
+  <block id="8973bd217768ba98943b189e0849b23a" category="paragraph">必要なアクセス権限、APIの有効化、ネットワークの前提条件、および時刻同期を確認してください。</block>
+  <block id="981b8fcee42e1e726a67a2b9a98ea6e9" category="inline-image-macro">4</block>
+  <block id="07d7e7cc3662997aa98182f8bcaa1481" category="paragraph-title"><block ref="beadfa85a2fdca06b91edc1131c603e6" category="inline-image-macro-rx" type="image"></block><block ref="bd1976ac676fd385bcac9e80748b9637" category="inline-link-macro-rx"></block></block>
+  <block id="394105a741a54963f4ece98a40a24c44" category="paragraph">プライマリデータベース、スタンバイデータベース、および Fast-Start Failover Observer 用の VM を作成します。</block>
+  <block id="e5d9de39f7ca1ba2637e5640af3ae8aa" category="inline-image-macro">五</block>
+  <block id="6561a654fb11ae2ec5c9846af26753e1" category="paragraph-title"><block ref="99e8b2f00e172bfcff96afdce69907bc" category="inline-image-macro-rx" type="image"></block><block ref="8d92c4f9162cfd20ea9d6789b3a5bf8a" category="inline-link-macro-rx"></block></block>
+  <block id="eba8f44e59f3ae708a14dbd797db95c4" category="paragraph">GCNV ストレージ プールと iSCSI ボリュームを作成し、マルチパスを構成し、ASM ディスク グループを設定します。</block>
+  <block id="e6fbc0b9673f8c86726688d7607fc8f5" category="inline-image-macro">六</block>
+  <block id="7a593bd6e62c09d916f1ef38ce3a1300" category="paragraph-title"><block ref="ef78558f80439832e0f51cc22cee8b8c" category="inline-image-macro-rx" type="image"></block><block ref="a9f135a5c18d6e2f3f0b6cc86390f02d" category="inline-link-macro-rx"></block></block>
+  <block id="6f62f5f66abbd3b258b092800e594723" category="paragraph">両方のデータベースホストにOracle Grid InfrastructureとOracle Database 26aiソフトウェアをインストールします。</block>
+  <block id="12e67aac3e7f9227cc35f8f047d7dc74" category="inline-image-macro">セブン</block>
+  <block id="361634644c4d526bba318f73f4937514" category="paragraph-title"><block ref="36915574c413876eaa75cbd48f69fd00" category="inline-image-macro-rx" type="image"></block><block ref="530f2eab3e31bba4b0efcb8df22f46cf" category="inline-link-macro-rx"></block></block>
+  <block id="63a5574658396485137a9dd0660fcf0c" category="paragraph">ASMストレージを使用してプライマリOracleデータベースを作成し、Oracle Restartを構成します。</block>
+  <block id="baca0ca6729684fd54206793ae4b5bd5" category="inline-image-macro">8</block>
+  <block id="88174c289b546aeb21d9e822f8ee7f45" category="paragraph-title"><block ref="430057c670c01688e904ed2ba129a0b5" category="inline-image-macro-rx" type="image"></block><block ref="53c537c07d75bdacd00af2a15f5ab858" category="inline-link-macro-rx"></block></block>
+  <block id="c668ee696cb79028ed0423df825b5033" category="paragraph">GCNVレプリケーション、スナップショット、またはクローンを使用してスタンバイデータベースを初期化し、Oracle Restart に登録します。すべての HA ティアでこの手順を完了します。</block>
+  <block id="24db11216549ee55172c33cf3def2f3f" category="inline-image-macro">9</block>
+  <block id="2c091b78e22412483d6125e1a79f23d8" category="paragraph-title"><block ref="b37b448eff4f65237cf47b29bdd2817c" category="inline-image-macro-rx" type="image"></block><block ref="38b902e0cf81e746a4ebf40bb8537a78" category="inline-link-macro-rx"></block></block>
+  <block id="08abb508fa6ffc5b7aec18c86bb26ebd" category="paragraph">スタンバイREDOログを作成し、フラッシュバックを有効にし、REDO転送をアクティブ化し、Data Guardの状態を確認します。*ティア固有：* Prod HA (Data Guard + FSFO) ティアでのみ必要です。</block>
+  <block id="a185c3c138dca5ef46afc33288a67d1f" category="inline-image-macro">10</block>
+  <block id="f3885e2cdcce09760451c0d81ea0fb47" category="paragraph-title"><block ref="6097494f0af631df68e3dcb7a6da8d2a" category="inline-image-macro-rx" type="image"></block><block ref="8b701125c332d7d0219168a247bab7d4" category="inline-link-macro-rx"></block></block>
+  <block id="ef17e3565059f659a81270068e8ef477" category="paragraph">ブローカーを有効にし、Data Guard 構成を作成し、FSFO を有効にし、オブザーバーを構成します。*ティア固有：* Prod HA (Data Guard + FSFO) ティアでのみ必要です。</block>
+  <block id="53e8dfb3129d2ecc3d72ad101c651913" category="summary">各データベースホスト用にGoogle Cloud NetApp Volumes iSCSIストレージにOracle RestartとASMを使用してOracle Grid Infrastructureをインストールし、その後Oracle Database 26aiソフトウェアをインストールします。この手順では、Oracle Grid Infrastructure GoldImageのステージングと解凍、gridSetup応答ファイルの実行、GCNVボリューム上へのASM ディスク グループの作成、およびOracle Databaseホームのソフトウェアのみのサイレントインストールの実行について説明します。</block>
+  <block id="87363981c45d4067dd35422581c457df" category="doc">Google Cloud NetApp Volumes に Oracle Grid Infrastructure と Oracle Database 26ai をインストールする</block>
+  <block id="e6ed9f7c3c67ecfdfc998520eae71052" category="paragraph">各データベースホスト用のGoogle Cloud NetApp Volumes iSCSIストレージに Oracle Restart と ASM を使用して Oracle Grid Infrastructure をインストールし、その後 Oracle Database 26ai ソフトウェアをインストールします。この手順には、Oracle GoldImages のステージング、応答ファイルを使用したサイレントインストールの実行、GCNV ボリューム上への ASM ディスク グループの作成、およびデータベース作成前にプライマリホストとスタンバイホストの両方に同一の Oracle ソフトウェアを準備することが含まれます。</block>
+  <block id="9ba86d4852efc4b81855e9e622177fb9" category="section-title">ステップ 1：各 DB ホストに Grid Infrastructure をインストールする</block>
+  <block id="9542b4dd9c54bd91c89c205188554e50" category="paragraph">各データベースホストに Oracle Grid Infrastructure GoldImage をインストールして、Oracle Restart と ASM を有効にします。どちらのホストも、それぞれ独自の Grid ホーム、ASM インスタンス、およびディスク グループが必要です。Data Guard は、共有ストレージではなく、Oracle Net を介してデータを複製します。すべてのステップを<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で完了してから、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で繰り返してください。</block>
+  <block id="ef205d3070d0c4d7f0ce89c9cd64c948" category="list-text">[[stage-oracle-binaries-on-u01]]Oracle GoldImages、リリースアップデート、およびOPatchバイナリを<block ref="a7a2e0643b92cedff4ef03a0557e8c36" prefix=" " category="inline-code"></block>にステージングします：</block>
+  <block id="cad7c440823df5815241f53607afb75b" category="list-text">[[unzip-grid-home]]ターゲットのグリッドホームでグリッド GoldImage を解凍します。26ai GoldImage は、ターゲットディレクトリに直接解凍してインストールします。</block>
+  <block id="68efe52f6c69d78ec513269c252eb5c4" category="paragraph">Grid GoldImageがターゲット RU より古い場合は、<block ref="ee051a75e2660d642544e1a782ef2a15" prefix=" " category="inline-code"></block>フローを使用してセットアップ中に Grid ホームにパッチを適用するか、RU が同梱された GoldImage を使用してください。Grid と Database のホームを同じ意図したパッチ レベルに維持してください。</block>
+  <block id="ff5cd617594711f47b093575d48be702" category="list-text">[[gridsetup-response-file]]各ホストで<block ref="6188ef2848d4d8eb4f4ed48cd6154082" prefix=" " category="inline-code"></block>レスポンスファイル<block ref="0e13878fba905bfdba91c98a6366125f" prefix=" " category="inline-code"></block>を構築します。ホスト名を置き換え、強力なパスワードを使用してください：</block>
+  <block id="459659c2b459a254b311a7622af045b3" category="list-text"><block ref="30c950549715985c6b7c7cd6990d0f4b" prefix=" " category="inline-code"></block>をサイレントモードで実行して、バイナリをコピーし、設定を準備します。<block ref="6eae1314173532e3774a3a0c0562c5dc" prefix=" " category="inline-code"></block>と終了コード6（警告）または0を想定します：</block>
+  <block id="f5aa4517445d5792d6a82d884751368e" category="list-text">[[run-orainstroot-and-root]]<block ref="7271e605f277fd89fbb28d42f8ec0575" prefix=" " category="inline-code"></block>および<block ref="08030ad08b2b991d61b424afd8828758" prefix=" " category="inline-code"></block>をrootとして実行します。<block ref="08030ad08b2b991d61b424afd8828758" prefix=" " category="inline-code"></block>スクリプトは<block ref="3810a6a610bef40c0a7363dd774d87a6" prefix=" " category="inline-code"></block>、<block ref="631e391a1dd104c58c129cf7d5a4d08c" prefix=" " category="inline-code"></block>、および<block ref="ae709dc3414219bf2c9c8abc9ff6c67a" prefix=" " category="inline-code"></block>ラッパーを作成し、OHASを起動します。</block>
+  <block id="4972a14c57430947c09fc1cef66091da" category="inline-xref">応答ファイル</block>
+  <block id="d5ff69dc16f2122437a7d13b2cd292d7" category="list-text">[[execute-config-tools]]<block ref="7cea6cc86d5bdf9819f4db2ef6937ac5" prefix=" " category="inline-code"></block>を実行して、<block ref="399eadd3991fff157015969d0cd5dcd7" category="inline-xref-macro-rx"></block>に対して構成アシスタント（NETCA、ASMCA、CVU）を実行します。これにより、ASM インスタンスと<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block> ディスク グループが作成されます。NETCA / ASMCA / CVU 後に<block ref="6b95da482f52dc7093ecbb9883b7852a" prefix=" " category="inline-code"></block>が表示されます：</block>
+  <block id="43aeca5a9bfddfe7e4df1c8b68d4b7e6" category="list-text">[[create-reco-and-fra-disk-groups]]<block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block>および<block ref="80f3131b9dc238e16c645ddfad01b783" prefix=" " category="inline-code"></block>のディスク グループを<block ref="2f88ab4f1aea87019dee2980a5ea4867" prefix=" " category="inline-code"></block>を使用して作成します。シングルショットインストールでは、<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>のみが作成されます：</block>
+  <block id="a21cd752ff863933798dfe9f4af4c957" category="list-text">[[verify-asm-and-oracle-restart]]ASM ディスク グループと Oracle Restart リソースのステータスを確認します。</block>
+  <block id="a7ce79d89d87f88ca467c93577a749e2" category="inline-xref">ステップ3と4</block>
+  <block id="834ffaadb040d157daea2be06216315a" category="inline-xref">ステップ7</block>
+  <block id="83eac9b51be29dcac49264cd87c4904b" category="list-text">上記のステップを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で繰り返します。<block ref="00d4b9b4a6d1da6bfc185c4de2250def" category="inline-xref-macro-rx"></block>および<block ref="e31b5acd0056e7bfebff56e6485507ba" category="inline-xref-macro-rx"></block>内の<block ref="2bb0b2911e6b14e33864a2330bd3d3b6" prefix=" " category="inline-code"></block>パターンにより、そのホストのGCNV iSCSIデバイスが自動的に選択されます。</block>
+  <block id="c49cd3cdaa640763c731827018f6d771" category="paragraph">同じASMディスク グループ名を使用します—Data GuardはストレージではなくOracle Net経由でレプリケートします。</block>
+  <block id="27fad8d2527248e282279ff5bbd35113" category="section-title">ステップ2：各DBホストにOracle Databaseをインストールする</block>
+  <block id="03ea651ab2f18a16f713d5bb85f2051e" category="paragraph">最新のリリースアップデートを適用した上で、サイレントインストール（ソフトウェアのみのインストール）を使用して、各データベースホストにOracle Database 26aiソフトウェアホームをインストールします。すべてのステップを<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で完了してから、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で繰り返します。</block>
+  <block id="6aceb1d633558ce0f213928bb86bbc63" category="list-text">[[unzip-db-home-and-ru-patch]]データベースホーム、最新のOPatch、およびRUパッチをそれぞれのディレクトリに解凍します。RUディレクトリのレイアウトと<block ref="7ce39dabc2cfedccd1c6a71515794c03" prefix=" " category="inline-code"></block>パスについては、Oracleのドキュメントを参照してください：</block>
+  <block id="7432bbeba47c1c0e6264a381fa6dbbbe" category="list-text">[[silent-db-home-install]]インストール応答ファイルを作成し、RUを適用したサイレント ソフトウェアのみのインストールを実行します。OL 8/9では、<block ref="b82ce39ca01e6cecfdb6fcab38c5dce4" prefix=" " category="inline-code"></block>行から<block ref="5235cc1b2d7c699a9b435b06f7e3c174" prefix=" " category="inline-code"></block>を省略します：</block>
+  <block id="a2a3c427be75e988b05da2d78e3c3c29" category="list-text">インストール後のルートスクリプトを実行します。</block>
+  <block id="8c7dc71f1b6920cb87c8a05a183fca14" category="list-text">[[set-oracle-environment]]各DBホストでOracle環境を設定します。<block ref="e64f56f449fa9b026f0eb61468803b55" prefix=" " category="inline-code"></block>を<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>で使用し、<block ref="2149247a998ff1efe97ec719204c2f29" prefix=" " category="inline-code"></block>を<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で使用します：</block>
+  <block id="f69ad07255ab12ddaa6da413a81d452f" category="paragraph">スタンバイデータベースは<block ref="14d28425ed8ada3f5183cf19dcdb915b" category="inline-xref-macro-rx"></block>に作成されます。</block>
+  <block id="4e6e42aa0c14a4134ba70067e9aaed9f" category="inline-xref-macro">Oracleプライマリデータベースを作成する</block>
+  <block id="39d88b336b325570f06a7b2fefbc012a" category="paragraph">HAデプロイ用の本番プライマリ インスタンスを作成するには、<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>の<block ref="c71c383dc5dd88ffcf853513b8845b47" category="inline-xref-macro-rx"></block>に移動します。</block>
+  <block id="7104a9e94534c97d919d334a00ac98ec" category="summary">Oracle Database Configuration Assistantをサイレントモードで使用して、Google Cloud NetApp VolumesのiSCSIストレージにOracleプライマリデータベースを作成します。この手順では、dbcaを実行してGCNVベースのASM ディスク グループ上にコンテナ データベースとプラガブル データベースを作成し、アーカイブ ログの宛先を構成し、透過的なフェイルオーバーのためのロールベース アプリケーション サービスを追加する方法について説明します。</block>
+  <block id="1794f5c020f78cbb2f95215ecd5c931d" category="doc">Google Cloud NetApp Volumes に Oracle プライマリデータベースを作成する</block>
+  <block id="a3968816814643fb2e9fecf825cf918c" category="paragraph">Oracle Database Configuration Assistantをサイレントモードで使用して、Google Cloud NetApp VolumesのiSCSIストレージにOracleプライマリデータベースを作成します。この手順では、<block ref="d45e719c39bbb431346849ed79ab89c0" prefix=" " category="inline-code"></block>を実行して、GCNVを基盤とするASMディスク グループ上にコンテナ データベースとプラガブル データベースを作成し、アーカイブ ログの宛先を構成し、Data Guardを有効にした後の透過的なフェイルオーバーのためのロールベース アプリケーション サービスを追加する方法について説明します。</block>
+  <block id="6fe5e56cba3dc23a9bcb3b06bdeba6be" category="paragraph">Oracleコンテナデータベースとプラガブルデータベースを<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>上に作成し、<block ref="d45e719c39bbb431346849ed79ab89c0" prefix=" " category="inline-code"></block>をサイレントモードで使用して、アーカイブログの宛先を構成し、Oracle Restartの登録を確認し、透過的なクライアントフェイルオーバーのためのロールベース アプリケーション サービスを追加します。</block>
+  <block id="84ee9fcba3aaf9624f004194039af333" category="list-text">サイレントモードで実行<block ref="d45e719c39bbb431346849ed79ab89c0" prefix=" " category="inline-code"></block>し、ASM ディスク グループ上にCDBとPDBを作成します：</block>
+  <block id="fea1e946fe69a9bcf507e9dc27f0d5ad" category="inline-xref-macro">ステップ 2：スタンバイ init.ora、pfile、および NOMOUNT</block>
+  <block id="da5eff12c94aa839d8f8537cd2ffac5a" category="list-text">アーカイブログを<block ref="7805bd080c8df4b5e04ec773d62b82b2" prefix=" " category="inline-code"></block>にポイントし、プラグイン可能なデータベースの状態を開いて保存します。スタンバイは、<block ref="37b6772cf410210a0cd46975d839d2eb" category="inline-xref-macro-rx"></block>内の一致するアーカイブログ設定を使用します：</block>
+  <block id="4a0e656444f1c3d8132a3a8773f79bf3" category="list-text">Oracle Restart でデータベースが実行されていることを確認します。</block>
+  <block id="44395109e1d586d56e9d9358db149a3f" category="list-text">ロールベース アプリケーション サービスを作成して、アプリケーションが<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block>経由で接続し、Data Guard が有効になっている場合にフェイルオーバーが透過的に行われるようにします：</block>
+  <block id="cfd5313223c6da2cd41e23f0f495d6fd" category="paragraph">Data Guard Brokerが有効になった後、<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block>はPRIMARYでのみ動作します。制御ファイルをASM ディスク グループ全体に多重化し、ワークロードに合わせてメモリサイズを調整します。</block>
+  <block id="0817df07433c23cf32efe1ce9ef92ce3" category="inline-xref-macro">Oracleスタンバイデータベースを作成する</block>
+  <block id="8af79d1f6bceb233474763cdfebafa3f" category="paragraph">スタンバイ保護を確立し、フェイルオーバーに備えるには、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block> の <block ref="4ac2dc133fa70719773cf93322546502" category="inline-xref-macro-rx"></block> に移動します。</block>
+  <block id="4d5e9d88c4697980c64e84b0014cdb21" category="summary">Google Compute Engine 仮想マシンをプロビジョニングして、Google Cloud NetApp Volumes iSCSI ストレージ上で Oracle Database 26ai をホストします。この手順では、プライマリおよびスタンバイデータベースホストと Fast-Start フェールオーバー オブザーバー VM の作成、Oracle Net 用の VPC ファイアウォール ルールの構成、ホスト名解決の設定、OS の準備、および GCNV ストレージ プロビジョニング用の iSCSI イニシエータ名の取得について説明します。</block>
+  <block id="045e5cb7d3337e180f38cff78273fd08" category="doc">Google Cloud NetApp Volumes 用に Google Compute Engine インスタンスをプロビジョニングする</block>
+  <block id="a04870206002296cbb40fb2e9900db62" category="paragraph">ゾーン障害分離のために、同じリージョン内の異なるゾーンに3つのGoogle Compute Engine VMを作成します。Cloud Console、<block ref="7f22bf39aaf5ce5980111c3587bef5b5" prefix=" " category="inline-code"></block>、Terraform、または標準のプロビジョニング ワークフローを使用します。</block>
+  <block id="d6695cb2883af226a6ae6d206a9f8b1f" category="list-text">以下の表に示す仕様で、3つの仮想マシンを作成します。</block>
+  <block id="afe1e7042a54928f3d4f90bbaad1daef" category="paragraph">TCOと持続可能性の観点から、レイテンシーとコンプライアンスのニーズを満たす低炭素地域を優先します（例：<block ref="7460527a94dd1cdca7f80472ca36103e" prefix=" " category="inline-code"></block>対<block ref="68ceb8e3f47e5536a6434f040549ec8b" prefix=" " category="inline-code"></block>）：</block>
+  <block id="d7db4f6bf0cbbc104783c0cdf050ec9b" category="paragraph">レイテンシまたはエグレス（&gt;~200 GiB/月）が重要な場合は Premium ネットワーク ティアを使用し、開発とテストで TCO を低く抑える場合は Standard を使用します。</block>
+  <block id="30027d674d74d43286c3f14ed71ecb06" category="list-text">シールドVM機能を有効にし、ブートディスクの構成を確認します：</block>
+  <block id="a6d40b8f7a4be6526590a395c6ce9006" category="paragraph">3台の仮想マシンすべてで、*Secure Boot*、*vTPM*、および*Integrity Monitoring*を有効にしてください。</block>
+  <block id="6770041224dadc28d3fe05c3a6f2270e" category="paragraph">ブートディスクにはOSのみが格納されています。<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block> Grid/DB ホーム、ステージング、およびすべての ASM データは GCNV iSCSI ボリュームを使用します （<block ref="85dc9105dc139e95d743797ac52a2bdb" category="inline-xref-macro-rx"></block> を参照）</block>
+  <block id="8a90675ecfc878df0994e30298e9a239" category="paragraph">GCEデータディスクを別途接続しないでください<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>。</block>
+  <block id="aff591cf122e27394abc928bf7e1c213" category="section-title">ステップ2：VPC ファイアウォールを TCP 1521 用に構成する</block>
+  <block id="6886a5bf80e28c00699ec160956ecd5d" category="paragraph">Oracle Net redoトランスポートとオブザーバー接続のために、3つのVMすべて間でTCP/1521を許可するVPCファイアウォールルールを作成します。ルールが欠落していると、Data Guardのレプリケーションが失敗します。</block>
+  <block id="850a040db9b50692fbf2aa5b6eb1ca45" category="list-text">3つのVMの内部IPアドレスすべて間でTCP/1521を許可するVPCファイアウォールのイングレスルールを作成します。同じ許可リストを持つVPCファイアウォールルールまたはファイアウォールポリシーを使用します：</block>
+  <block id="52f002a0e23bb118ed580e141d28cfc5" category="paragraph">*Cloud Console：* VPC ネットワーク → ファイアウォール → ルールの作成<block ref="09b7b0b04e727fd655b5aec3c5b9b0c0" prefix=" " category="inline-code"></block>オン<block ref="2027eeee86a22251d3d3ffbc95e965b5" prefix=" " category="inline-code"></block> — Ingress、Allow、sources = 3 つの<block ref="1c2834cd351fe5f23b2e7096f2732eff" prefix=" " category="inline-code"></block> IP、TCP 1521。必要に応じて Egress をミラーリングします。</block>
+  <block id="9879a60b32eb60e727b9e2ec67ac45d1" category="list-text">各仮想マシンからの接続性を検証して、ファイアウォールルールが正しく設定されていることを確認します：</block>
+  <block id="23bd364feefc48f9b639c99e567fb18e" category="cell">ファイアウォールが開いています。グリッドリスナーは<block ref="facbf06d0eebeeb2e334cc52689367a9" category="inline-xref-macro-rx"></block>中に起動します</block>
+  <block id="c3d9d26142a8b9a566c9a39b82edf6e1" category="section-title">ステップ 3: ホスト名、DNS、および<block ref="ad942c725cd0cae65ca4c63717ec464c" prefix=" " category="inline-code"></block></block>
+  <block id="a2ad4e59714344da3f187e71fa5c52f0" category="paragraph">Oracle Net、Data Guard Broker、およびObserverの正引きおよび逆引き名前解決が正しく機能するように、3つのVMすべてでホスト名とDNS解決を設定します。</block>
+  <block id="21c4fcb5e1341edd1170e96cae845b15" category="list-text">ホスト名を設定し、3つのホストすべてに<block ref="ad942c725cd0cae65ca4c63717ec464c" prefix=" " category="inline-code"></block>エントリを追加します。GCEの内部IPアドレス（*Compute Engine → VMインスタンス*リストの_Internal IP_列に表示されます）を置き換えてください。</block>
+  <block id="ad60afff7543d1298dc76df4735a48e7" category="list-text">各ホストからの名前解決を検証します：</block>
+  <block id="96fbb83207680d3581bcfd7cd07962d3" category="section-title">ステップ 4：DB ホストのみで OS を準備する</block>
+  <block id="140d25cdeb48006c80ae2c1245807432" category="paragraph"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>および<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>上のOSをOracle Database 26ai用に準備するには、プリインストールパッケージのインストール、ユーザーとグループの作成、iSCSIおよびマルチパスパッケージのインストール、iSCSIイニシエータの設定を行います。オブザーバーのセットアップについては、<block ref="a2de024b95c16779b8d773a6675f2fae" category="inline-xref-macro-rx"></block>を参照してください。</block>
+  <block id="17d96ddff10e35a44bf713c05cd722f8" category="list-text">Oracle Database のプリインストール パッケージをインストールし、<block ref="ff4a008470319a22d9cf3d14af485977" prefix=" " category="inline-code"></block>ユーザーと ASM グループを作成し、<block ref="a189c633d9995e11bf8607170ec9a4b8" prefix=" " category="inline-code"></block>ユーザーを ASM グループに追加します：</block>
+  <block id="f5d367018f6a2e99ecfb308114d278c8" category="list-text">iSCSI、マルチパス、およびJDKパッケージをインストールし、THPと時刻同期を確認します：</block>
+  <block id="fee3bb7e9a712ab4c9e377c7576b8c0e" category="list-text">SELinux、ファイアウォール、iSCSI イニシエータの設定を行い、再起動します。</block>
+  <block id="fd254b0730e2d4125e66cdc25dc43150" category="section-title">ステップ 5：iSCSI イニシエータ名 IQN を取得する</block>
+  <block id="b4bc4afb04e557acdcd10d88c80852e4" category="paragraph">再起動後、各データベースホストからiSCSIイニシエータ名（IQN）を取得します。これらの IQN を使用して、<block ref="601e168385f9491c7f0d77cdf9fd124d" category="inline-xref-macro-rx"></block> で GCNV ホスト グループを作成します。</block>
+  <block id="745d4bfa75f81102e423a2ece3bde328" category="list-text">IQNを<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>からキャプチャして記録します：</block>
+  <block id="60408ebec1cefec8a1a0b7cb0bbccaf1" category="list-text">繰り返して<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>そのIQNを記録します。ホストごとに1つのホストグループを使用することで、1つのホストの再起動やIQNの再生成が、他のホストのGCNV iSCSIボリュームの可視性に影響を与えないようにします。</block>
+  <block id="1dc8ab10d8dec095224684be050edd7b" category="inline-xref-macro">Google Cloud NetApp Volumes の iSCSI プール、ホスト グループ、およびボリュームをプロビジョニングする</block>
+  <block id="f2b4bf55a54e2212cf895fec21625cd1" category="paragraph">OracleバイナリとASM ディスク グループに共有ストレージを提供するには、<block ref="767937c63de367adc27a40f1d21972ee" category="inline-xref-macro-rx"></block>に移動します。</block>
+  <block id="23024c49ecf1e9145c4516b0d58f8a91" category="summary">Google Compute Engine 上での Oracle Database 26ai の高可用性のために、Google Cloud NetApp Volumes iSCSI ストレージをプロビジョニングします。この手順では、Flex Unified ストレージプールの作成、ホストグループの定義、各データベースホスト用の iSCSI ボリュームの作成、Linux iSCSI とマルチパスの構成、ASM バッキングデバイスのパーティショニング、および /u01 ファイルシステムのマウントについて説明します。</block>
+  <block id="a3c75f3af9428672d9453106d9bd7ddb" category="doc">Oracle Database 26ai 向け Google Cloud NetApp Volumes iSCSI ストレージのプロビジョニング</block>
+  <block id="bfc4eba25274ac8737785ce6295454e1" category="paragraph">Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google Cloud NetApp Volumes iSCSI ブロックストレージをプロビジョニングします。この手順では、GCNV Flex Unified ストレージ プールの作成、ホスト グループの定義、各データベース ホストの iSCSI ボリュームの作成、Linux iSCSI とマルチパスの構成、ASM バッキング デバイスのパーティショニング、および<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>ファイルシステムのマウントについて説明します。</block>
+  <block id="a59c8b15026f316fd45abf7e2e6c1e8a" category="section-title">ステップ 1：GCNV iSCSI プールを作成する</block>
+  <block id="47e4048b7bfac1f824e0517458970ef8" category="paragraph">プライマリホストとスタンバイホストにiSCSIボリュームを提供するために、各データベースゾーンに1つずつ、合計2つのFlex Unifiedストレージプールを作成します。各データベースホストは、自身のローカルゾーンのプールからボリュームを使用します。</block>
+  <block id="c2ca805eeb4003d035f5554b62e78279" category="list-text">Cloud Console を使用して、2つのストレージ プールを作成します。下記の表の仕様を使用して、各ゾーンの作成プロセスを繰り返します。</block>
+  <block id="9b1351a3a4a896daaf728eb3d3bf161a" category="list-text">両方のプールが<block ref="2baa69eafc7204f3bd8648eba580c489" prefix=" " category="inline-code"></block>ステータスになるまで待ってから続行してください。プールのサイズをデータベースのフットプリントに合わせてスケールします（<block ref="62251f099442e38ae7b0eafb65c9d537" category="inline-xref-macro-rx"></block> の値は例です）：</block>
+  <block id="d85dd6eb60b6d164e2700c2e88099eee" category="paragraph">*デフォルトモード（このガイド）：* Flex Unified プールはデフォルトモードを使用します<block ref="fc3ffd95288f0a9c0078286de2bc3467" prefix="(" category="inline-code"></block>)。Cloud Console または<block ref="be461f2f19fe40ccc0c8414ac6aa799f" prefix=" " category="inline-code"></block>でプールと iSCSI ボリュームを作成します。ボリュームのレプリケーション、スナップショット、クローンは、Google Cloud API を使用します（<block ref="30adb597f9aac9f1e1e038efa4b838cb" category="inline-xref-macro-rx"></block>）。</block>
+  <block id="58aed38e9709b4e0e476eb17a3bc3e9e" category="section-title">ステップ 2：ホスト グループを作成する</block>
+  <block id="808817ea1ba1371daebc0d2b613621d1" category="paragraph">データベースホストごとにホストグループを1つ作成することで、各仮想マシンは自身のボリュームのみを参照できるようになります。プライマリホストとスタンバイホストは、独立したストレージを維持するために、GCNV iSCSIボリュームを共有してはなりません。</block>
+  <block id="9ec10b48d5b4b7be1264268059b84369" category="list-text">Cloud Console を使用して<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>のホストグループを作成します：</block>
+  <block id="c7bd7eff78fc35f69c1113f65e43b720" category="list-text">*名前：*<block ref="895d9ad3946d63f2384be29aafa0979d" prefix=" " category="inline-code"></block></block>
+  <block id="33ebd59cd3ab0934670b183ff197704b" category="list-text">*リージョン：*<block ref="7460527a94dd1cdca7f80472ca36103e" prefix=" " category="inline-code"></block></block>
+  <block id="a4d3cce8cb84126e9126322f6761c9d9" category="list-text">*タイプ：* iSCSIイニシエータ</block>
+  <block id="13bb6fa8c9c925197dfbc134f9d01ee0" category="list-text">*OS タイプ：* Linux</block>
+  <block id="e513b772aa92cbc96c4c8b31442cb9b0" category="list-text">*概要：* "Oracleプライマリホスト oracdb1"</block>
+  <block id="ba0dc3067ef6e03478bc295dbc0ce214" category="list-text">*作成*</block>
+  <block id="28fbecd9438ba5efd4a16a28c8994881" category="list-text">プロセスを繰り返して<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>名前<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>と`oracdb2`のIQNを使用します。オブザーバーホストにはGCNVリソースは必要ありません。</block>
+  <block id="8e492d5862ed77b5972ca810dcdba2d4" category="section-title">ステップ3：GCNV iSCSI ボリュームを作成する</block>
+  <block id="a2115e945d88658a6f875a67119c7968" category="paragraph">各データベースホスト用に 5 つの GCNV iSCSI ボリュームを作成します。1 つは<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block>用、4 つは ASM バッキングデバイス用です。各ホストのボリュームは、対応するホストグループとともに、そのホストのローカルゾーンのストレージプール内に作成する必要があります。</block>
+  <block id="eaf3b81ae0cb536ba18709e23829157b" category="list-text"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>の5つのボリュームを<block ref="79d523916802ef5e588f3a0e1f37e882" prefix=" " category="inline-code"></block>でホストグループ<block ref="895d9ad3946d63f2384be29aafa0979d" prefix=" " category="inline-code"></block>を使用して作成します。以下の表の仕様を使用してください。</block>
+  <block id="2b5130c6c36be41225111af0fae148e7" category="list-text">同じ仕様を使用して、<block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>内の<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>用にホストグループ<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>を持つ5つのボリュームを作成します。各プールで、*NetApp Volumes → Volumes → Create* — iSCSI、正しいプールおよびホストグループ、Linuxを使用します。次の情報を記録します：</block>
+  <block id="1681289a8bb75bcd750632a69c0505c8" category="section-title">ステップ4：iSCSIとマルチパスの設定</block>
+  <block id="cc4df7dd426cbb4d49445b122f8f7836" category="paragraph">各データベースホストでiSCSIとdevice-mapper-multipathを設定し、両方のストレージポータルIP経由でGCNVボリュームにアクセスできるようにします。以下の手順を<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>プライマリプールのポータルIPを使用して実行し、次に<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>スタンバイプールのポータルIPを使用して繰り返します。ホストの送信が制限されている場合、各データベースVMからGCNV iSCSIポータルIPへのTCP/3260を許可します（<block ref="a04b868c3996ba61d471613fef41e7d0" category="inline-xref-macro-rx"></block>からのVM間TCP/1521に加えて）。</block>
+  <block id="21aba26bd8b5c09b187087643cc66573" category="list-text">デフォルト設定とブラックリストルールを使用して<block ref="a3938eeca32dce6ca3908d2eae163c75" prefix=" " category="inline-code"></block>を設定する：</block>
+  <block id="29c9608abdca845ef461a3cbeb7d14f5" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>では、<block ref="e206f004cb05d43b06ce54926cb4831e" prefix=" " category="inline-code"></block>エイリアスで同じパターンを使用し、次に：</block>
+  <block id="291964c4b39c04f0f5865052b6a8e84c" category="section-title">ステップ5：ASMデバイスをパーティション分割する</block>
+  <block id="fabe6f6b548aafd1e8e47b335f63e556" category="paragraph">4 つの ASM バッキング デバイス （<block ref="997802bac7f8b4cb6d5cee9adf487d9d" prefix=" " category="inline-code"></block> を除く） をそれぞれ 1 つの GPT パーティションで ASM 消費用にパーティション分割し、グリッド所有権の udev ルールを設定します。各データベースホストで以下の手順を実行します。</block>
+  <block id="09c406305c2329afcc29159daf030b36" category="list-text">4つのASMバッキングデバイスをGPTでパーティション分割し、パーティションを確認します：</block>
+  <block id="cbf6835107b2516e0aa83717b5e643cf" category="list-text">グリッドの所有権を割り当て、変更をトリガーするようにudevルールを設定します。</block>
+  <block id="149fe51890066edf3e7048c0d9c19c40" category="section-title">ステップ6：フォーマットとマウント<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block></block>
+  <block id="3ef564c135175b409510e699136b0d67" category="paragraph"><block ref="5adb925391dcc0e1f89a27100238aa98" prefix=" " category="inline-code"></block> GCNV ボリュームを XFS でフォーマットし、<block ref="816a3ef77b62ade41c3f936c958aa555" prefix=" " category="inline-code"></block> で UUID を使用して永続的にマウントします。<block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block> ファイルシステムには、Grid ホーム、Oracle ホーム、およびステージング ファイルが格納されます。</block>
+  <block id="245fb5da6e86b83e5c79af82a6660102" category="list-text">マルチパスデバイスをXFSでフォーマットし、そのUUIDを取得します。</block>
+  <block id="e486d35004cd5ba3dbb85b77d1e8d75d" category="list-text">UUIDベースのマウントエントリを<block ref="816a3ef77b62ade41c3f936c958aa555" prefix=" " category="inline-code"></block>に追加し、ファイルシステムをマウントします：</block>
+  <block id="e8ffa84c2eb2fc761095bcb0c449a158" category="list-text">GridおよびOracleソフトウェア用に適切な所有権を持つディレクトリ構造を作成します。</block>
+  <block id="d4f630232fcac51c44aca94e3d770333" category="inline-xref-macro">Oracleソフトウェアのインストール</block>
+  <block id="333a89538900dac0136936b6ac745b93" category="paragraph">1回再起動し、<block ref="6b8096f9c08c2db906155b265433bd5b" category="inline-xref-macro-rx"></block> の前に <block ref="a8946fa5f211c5345e3610710e471cb4" prefix=" " category="inline-code"></block> がマウントされることを確認します。</block>
+  <block id="226df30386ced6f6da4fc655d6937847" category="inline-xref-macro">Oracle Grid InfrastructureおよびOracle Databaseソフトウェアをインストールします</block>
+  <block id="43424402bd694bdc2122c1b19a49220d" category="paragraph">Oracle Grid InfrastructureおよびDatabaseバイナリを準備済みのホストにインストールするには、両方のホストで<block ref="d9998690aa11100594e589dd79255281" category="inline-xref-macro-rx"></block>に移動してください。</block>
+  <block id="6f7c56bfe634f2aa5901e908bb200383" category="summary">Google Cloud NetApp Volumes の高可用性 Oracle Database 26ai 向けアーキテクチャについて説明します。iSCSI ブロックストレージ設計、Data Guard 統合、スタンバイ初期化を高速化するためのストレージ レイヤ レプリケーション、およびプラットフォームの責任が含まれます。</block>
+  <block id="fafe9893dc3d400ddb7f78fbd45035e0" category="doc">Google Cloud NetApp Volumes のハイアベイラビリティ Oracle Database 26ai 向けアーキテクチャについて学ぶ</block>
+  <block id="31337c1c294493f53d07d5aead723812" category="paragraph">Google Cloud NetApp Volumes は、Oracle Database 26ai の高可用性アーキテクチャ向けにハイパフォーマンス iSCSI ブロックストレージを提供します。ストレージ レイヤ レプリケーションにより、従来の Oracle RMAN 方式と比較してスタンバイデータベースの初期化が大幅に高速化されます。GCNV と Oracle Data Guard の統合について、参照データ パス、ストレージ トポロジー、および GCNV のブロックストレージと Data Guard の連続レプリケーションの間の責任分担を含めて確認してください。</block>
+  <block id="ebd8431a0b14e9588377860f5d21d80b" category="section-title">アーキテクチャの概要</block>
+  <block id="866d7598089ba877b102e22af2b6fb3d" category="paragraph">このアーキテクチャは、*Google Cloud NetApp Volumes (GCNV)* iSCSI ブロックストレージを使用して、*Oracle Data Guard* により Google Cloud 上の *Oracle Database 26ai* の高可用性を提供します。</block>
+  <block id="3badef172b6123c77ae13693f078a8b2" category="paragraph">GCNVはハイパフォーマンス ブロックストレージを採用し、ストレージ レイヤの*レプリケーション、スナップショット、クローン*を使用してスタンバイ データベースの初期化を高速化します。</block>
+  <block id="85bf520a32d309269ce062e046b6799a" category="paragraph">Data Guard は、*連続レドゥ転送*、ロール管理、および*フェイルオーバー オーケストレーション*（Broker、Fast-Start Failover、Observer）を提供します。</block>
+  <block id="69e3021f145ae373d914382311cdc4f3" category="paragraph">GCNV レプリケーションは、Oracle データベース チャネルを経由する代わりに*ストレージ レイヤ*でデータを移動することで、RMAN アクティブ複製と比較してスタンバイ初期化時間を大幅に短縮します。</block>
+  <block id="ffcc393225653b6c6855869760ab046a" category="paragraph">スタンバイデータベースを初期化するには、*GCNV replicate、snapshot、またはclone*を使用し、その後、Data Guard をアクティブ化して継続的な同期と高可用性を実現します。</block>
+  <block id="4352e2899a93b94e01c4e625fd380630" category="cell">oracdb1 / oracdb2 - 異なるゾーン、それぞれ5つのGCNV iSCSIボリューム</block>
+  <block id="f7ba8a8bb3814a133cb53d13eb8b7bb5" category="cell">/u01 + ASM +DATA、+RECO、+FRA on GCNV (EXTERNAL)</block>
+  <block id="fead91ff3bba2150fe30fe07f0cc0489" category="cell">GCNVの複製/スナップショット/クローン -&gt; Oracleによる最終処理 -&gt; Data Guard</block>
+  <block id="39d92caace618e97995050af7c0eb5b4" category="cell">再起動、物理スタンバイ（マウント済み）、ブローカー、FSFO、オブザーバー（oradg-obs）</block>
+  <block id="e594c7a9deed3e6ffef7a7dcfaef38f1" category="cell">サービス orclapp (ステップ 8.2)</block>
+  <block id="79768a069a539d4f130e672a660bf45f" category="section-title">ゾーニング</block>
+  <block id="cb625c07076e2a0243f8d20580c9f632" category="paragraph">データベースゾーンごとに1つのGCNV Flex Unifiedプールをデプロイし、各ホストに専用ボリュームを割り当てます。起動ディスクはオペレーティングシステム専用に使用してください。</block>
+  <block id="5e55b41a5a0e98ad394b05be23e4b019" category="paragraph">*対象外：* TDE、RAC、NVMe/TCP、OEM、およびActive Data Guard（スタンバイは*マウント*されたままです）。</block>
+  <block id="d0648c5f1dde87e8017c03f5d53c558b" category="section-title">アーキテクチャ参照図</block>
+  <block id="d929ae9a3a43d1b019159891804a8f59" category="paragraph">このソリューション アーキテクチャは、3つの独立したデータパスを提供します。ストレージ レプリケーションとData Guardのリドゥ転送は、別々のパスで行われます。</block>
+  <block id="f536bada3ee28ca0f2b27906855f856b" category="image-alt">GCNVリファレンス アーキテクチャ</block>
+  <block id="8bd96fa7dc48203b8ad29aa39498c93d" category="list-title">ストレージレプリケーションはリドゥレプリケーションとは異なります</block>
+  <block id="804431bf2ef25bf2c374f06e0f761454" category="list-text">パス1は、スタンバイ初期化のためにGCNVレイヤーでデータファイルを移動します。</block>
+  <block id="41661190fdebaaf95c2ca0a95fda74ab" category="list-text">パス2では、切り替え後もデータベースの同期が維持されます。</block>
+  <block id="51287f5154897cbe8b9c1dc390e67bf4" category="list-text">パス3は、Oracle Data Guard BrokerとObserverを介して、ロールの移行と自動フェイルオーバーをオーケストレーションします。</block>
+  <block id="6161da5066155e9ea230fc4859f73b3b" category="paragraph">以下の表は、どのプラットフォーム レイヤがストレージ サービスを提供し、どのレイヤがデータベースの同期とフェイルオーバー制御を提供するかをまとめたものです。</block>
+  <block id="9e521dd2fa97c28cdf12068a3e29b5ad" category="cell">iSCSIボリューム、スナップショット、ボリュームレプリケーション（ベースライン＋増分） - スタンバイ初期化</block>
+  <block id="cb50e71e3e22ae0925dc4cb79ef37778" category="cell">再実行トランスポート、MRP、ブローカー、FSFO - 継続的な同期とフェイルオーバー</block>
+  <block id="8bf5b64a2e7110837a067f3840f58786" category="paragraph">このトポロジーでは、プライマリ、スタンバイ、オブザーバーの役割を別々のゾーンに配置し、各データベースホストを専用のGCNVプールとiSCSIボリュームにマッピングします。</block>
+  <block id="336d5ebc5436534e61d16e63ddfca327" category="cell">-</block>
+  <block id="082dce0d80b1fc5132745cee85d79cea" category="cell">ASM EXTERNAL - データファイル、アーカイブ、FRA</block>
+  <block id="fb3559290ed9ca92cd15eb685c0c44a9" category="paragraph">サンプル<block ref="781e05c5c208b0d55d2b16b06ad7ccbe" prefix=" " category="inline-code"></block>このソリューションでは、OLTPワークロードは通常、<block ref="fe1633c2ac7a622d0b89e58f57e15903" prefix=" " category="inline-code"></block>を使用します。</block>
+  <block id="a7bf129c46b9c579452b1da48596b0ef" category="inline-xref-macro">Google Cloud NetApp Volumes 上の Oracle Database 26ai のデプロイオプションについて説明します</block>
+  <block id="0bf21253d7401a3a7c0cc0397722b6e7" category="paragraph">復旧と可用性の目標に合った展開パスを選択するには、<block ref="d0edd1994d03f0ede6babb0d2f4fb28c" category="inline-xref-macro-rx"></block>にアクセスしてください。</block>
+  <block id="17e5aa40a8d1aa198a5030b21c889d24" category="summary">Google Cloud NetApp Volumes のストレージ レイヤ レプリケーション、スナップショット、またはクローンを使用して、Oracle の物理スタンバイデータベースを作成し、スタンバイの初期化を高速化します。この手順では、リスナーおよびスタンバイの pfile の構成、GCNV レプリケーションを使用したスタンバイボリュームのシード、Oracle インスタンスの最終処理、スタンバイ REDO ログの構築、マネージドリカバリを使用した REDO 適用の有効化、および Oracle Restart へのスタンバイの登録について説明します。</block>
+  <block id="9cbc55f4af2a973258e16e29de5f6aff" category="doc">Google Cloud NetApp Volumes のストレージ レイヤ シードを使用して Oracle スタンバイ データベースを作成する</block>
+  <block id="02dbecb30f856d92900f64948f341a09" category="inline-xref-macro">データガードの最終化</block>
+  <block id="f0dfb0035c22bfcd4991e5980a4125ea" category="inline-xref-macro">Data Guard Broker、Fast-Start Failover、およびObserver</block>
+  <block id="b6151759889d8d4e63fa7fd876d92070" category="paragraph">Google Cloud NetApp Volumes のストレージ レイヤ レプリケーション、スナップショット、またはクローンを使用して Oracle の物理スタンバイデータベースを作成し、従来の RMAN 方式と比較してスタンバイの初期化を高速化します。この手順では、リスナーの設定、スタンバイ pfile の作成、GCNV レプリケーションを使用したスタンバイボリュームのシード処理、Oracle インスタンスの最終処理、および Oracle Restart へのスタンバイの登録について説明します。すべての HA ティアでこれらの手順を実行します。*Prod HA (Data Guard + FSFO)* ティアの場合は、<block ref="079797aa7a726a00a432ed24894bcfa5" category="inline-xref-macro-rx"></block> を設定する前に続けてください。<block ref="eac2261ba3df6678359bbbdea9697dd1" category="inline-xref-macro-rx"></block></block>
+  <block id="2414d153e43459d66ee01c8b1a14a67f" category="section-title">ステップ 1：リスナーと Data Guard パラメーターを設定する</block>
+  <block id="f535698befdaa7696acab2902421f7f8" category="paragraph">両方のデータベースホストでリスナーを構成して、ブローカーに必要な<block ref="996da1043684f5bb8bf08b99859ff595" prefix=" " category="inline-code"></block>サービスを含む Data Guard 接続をサポートします。プライマリデータベース上でパスワードファイルを設定し、アーカイブログのパラメータを構成します。</block>
+  <block id="5a604d7b3860a6091063cb88a4646e23" category="list-text">プライマリリスナーを設定し、環境を確認します<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>：</block>
+  <block id="f1ddbc5f3b32b9277cc57e9ffd88ea3d" category="list-text">スタンバイリスナーを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>に設定して、<block ref="3ad0bd4699c7945297963a438f68d612" prefix=" " category="inline-code"></block>および<block ref="4cf089a242c0730a8cab8c12c7e2a304" prefix=" " category="inline-code"></block>サービスを含めます：</block>
+  <block id="77b864ee65393add1fbd6d0302bb8eee" category="list-text">両方のホストで Oracle Restart を使用してリスナーを再起動し、<block ref="996da1043684f5bb8bf08b99859ff595" prefix=" " category="inline-code"></block>サービスが登録されていることを確認します：</block>
+  <block id="24f1e47adb597affa7f999d524455e54" category="section-title">ステップ2：スタンバイpfileを準備し、NOMOUNTを実行する</block>
+  <block id="c19152bf64e0594a2343817f4b93c706" category="paragraph">スタンバイデータベースインスタンスを準備するには、プライマリからパスワードファイルをコピーし、Data Guard パラメータを含む最小限の init.ora pfile を作成し、インスタンスを NOMOUNT モードで起動します。</block>
+  <block id="f9ab6102452f100576fba775516176c6" category="list-text">IAP を使用してプライマリパスワードファイルをスタンバイホストにコピーし、<block ref="d6dabc84f8422e23c7543fa0791f209b" prefix=" " category="inline-code"></block>：</block>
+  <block id="3faf1e852f51ff894519e2842acb2630" category="list-text">プライマリデータベースから<block ref="dca2cad203c5597e105c9bea028554c2" prefix=" " category="inline-code"></block>パラメータ値をクエリします：</block>
+  <block id="2242fdd3b6f268a4766df98a2acddb67" category="list-text"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>でスタンバイpfileを作成し、パスワードファイルの所有権を設定して、インスタンスをNOMOUNTモードで起動します。前のステップの<block ref="dca2cad203c5597e105c9bea028554c2" prefix=" " category="inline-code"></block>の値を<block ref="e63e42940889bea5eb6ebfd47a5a238b" prefix=" " category="inline-code"></block>に代入します：</block>
+  <block id="76a107200d1144e9f9e1fc846bda5271" category="inline-xref">ステップ3：GCNVを使用してスタンバイストレージを初期化する</block>
+  <block id="c82101dc99164e04ebec1a2238076aac" category="paragraph">スタンバイインスタンスは現在、<block ref="266bdab13632a5bee004675fe1db6e25" category="inline-xref-macro-rx"></block> までデータファイルなしでNOMOUNTモードになっています。</block>
+  <block id="651e4f59b2326917f78e345d6e1e364c" category="paragraph">スタンバイボリュームを<block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>にシードし、それらを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>にアタッチし、ASMディスクグループをマウントして、スタンバイインスタンスをMOUNT状態に確定します。</block>
+  <block id="7a7e9552a853eb74addae95b5b947630" category="paragraph">本番環境へのシードには GCNV レプリケーションを使用し、単発のラボワークフローにはスナップショット シードを使用してください。</block>
+  <block id="fdd247030501ea2f67525014b13059f2" category="section-title">シードパスを選択します</block>
+  <block id="c8158432bf78f6ed39905ccc2bb5a9c1" category="paragraph">環境とリカバリ要件に基づいて、スタンバイシード方式を選択してください。</block>
+  <block id="2d0cf04f750eeb8a0322ece2576a6b01" category="inline-xref">レプリケーションパス：レプリケーションの作成と同期</block>
+  <block id="89d650a2bbce7322ac38d98028d7b005" category="inline-xref">レプリケーションパス：スタンバイボリュームのカットオーバーと接続</block>
+  <block id="d07b1f059a50b0bb274bc2e58e32a021" category="list-text">*本番環境での推奨:* <block ref="767f5ef40d17e4d98943c400088dfdda" category="inline-xref-macro-rx"></block> および <block ref="b306855ec9e3696c0c0bce2af767fb8e" category="inline-xref-macro-rx"></block> のレプリケーションパスを使用してください。</block>
+  <block id="572897596b2812926c390e9bc977394a" category="inline-xref">代替パス：スナップショットからのシード</block>
+  <block id="c1d2204478074806a249ba1b1406e2e3" category="list-text">*ラボ向けの代替案:* <block ref="b73a1ce7b34b35f71257b58c1d917929" category="inline-xref-macro-rx"></block>を使用します。</block>
+  <block id="409e359ecdceda27e0928565723428ef" category="inline-xref">スタンバイASMディスクグループのマウント</block>
+  <block id="95f7935d1f3ec5033ec2e014d1463a4d" category="inline-xref">スタンバイインスタンスを確定する</block>
+  <block id="a4f32ed19b480ae6187635832b8f0e96" category="paragraph">すべてのパスは<block ref="2cdc1fa24cf7b4ef507d8349ebee044e" category="inline-xref-macro-rx"></block>と<block ref="0e90f30aebd18e3ad72a78f40b473490" category="inline-xref-macro-rx"></block>で合流します。</block>
+  <block id="453b5e7870311e4ee80277c6998ee5df" category="section-title">前提条件を確認する</block>
+  <block id="829fb7a23a05375a4c4607e3b13af017" category="paragraph">スタンバイボリュームにシードデータを送信する前に、以下の前提条件を確認してください。</block>
+  <block id="7882a4b556b6996eaf604413a9e602d9" category="inline-xref-macro">ステップ4</block>
+  <block id="0011237e8dc98411a0794ba6dddb9989" category="inline-xref-macro">ステップ5</block>
+  <block id="f5ce4d426c8852e0090ab32842d1cd09" category="inline-xref-macro">ステップ6</block>
+  <block id="81168e54f26bafca4de1dbc4294b0c9a" category="list-text"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、<block ref="91e3ebb0747fad9c69dd24cc94b68125" category="inline-xref-macro-rx"></block>、<block ref="bdd55427576666dbbfbc3bc352e9b76d" category="inline-xref-macro-rx"></block>、および<block ref="37e6431c7ce110527db57cbd28c4705d" category="inline-xref-macro-rx"></block>から iSCSI および ASM ホストのセットアップを完了します。</block>
+  <block id="2db3a5d8b0cbf7abbe0b5c82d4bc8b01" category="list-text">必要に応じてスタンバイプールを作成します。</block>
+  <block id="540645982d75d39ac13543ca309ef7fe" category="section-title">レプリケーションを作成して同期する</block>
+  <block id="2bbdf310657a5897b39ff5eba3192d12" category="paragraph">プライマリボリュームからスタンバイボリュームへのレプリケーション関係を作成し、初期同期が完了するまで待ちます。</block>
+  <block id="ffd3613f024a918f1accde0df1c6fac9" category="paragraph"><block ref="dab686ada5c9477e04c2327657fc8f30" prefix=" " category="inline-code"></block>が<block ref="f5fc70eb39f1f051f786b19ac1ddd1d8" prefix=" " category="inline-code"></block>になり、各レプリケーションの初期同期が完了するまで待ちます。</block>
+  <block id="a5d436cf56aca41a077b7714e16a0a00" category="section-title">切り替えてスタンバイボリュームを接続する</block>
+  <block id="e9ef1887f4a98880939a95fc36fc2735" category="paragraph">プライマリを静止状態にし、最終同期後にレプリケーションを停止し、宛先ボリュームをスタンバイホストグループにアタッチします。</block>
+  <block id="51e976058ef4f929bb95a8b8bc718ee3" category="paragraph">プライマリ側で、書き込みを静止させ、リカバリメタデータを取得します。</block>
+  <block id="423a3d971f37ab90eb5d506c8de84ee3" category="paragraph">最後に1回のレプリケーションサイクルを実行した後、レプリケーションを停止します。</block>
+  <block id="f374ec1c93905bd5b4aaf1af83c4a2d0" category="paragraph">宛先ボリュームを<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>にアタッチします（複製されたLUNはソース名を保持する場合があります）：</block>
+  <block id="98f62d21f2e363a274924434d66a9cc2" category="paragraph">スタンバイ制御ファイルを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>にコピーし、プライマリのバックアップモードを終了します。</block>
+  <block id="c9e06a84e77984aacf55a54bcb2eed11" category="section-title">スナップショットからのシード</block>
+  <block id="141063d9e4262514113ecabd4a319161" category="paragraph">連続レプリケーションが不要な場合の1回限りのラボシードには、このパスを使用してください。</block>
+  <block id="dee8f602ca5b22b38a6ba6c1a61362ea" category="paragraph">一度限りのラボシードの場合、ソーススナップショットを作成し、そのスナップショットからスタンバイボリュームを<block ref="dd70af3bcff9c8357ee70338cabadf23" prefix=" " category="inline-code"></block>（Cloud Console または API）で作成します。作成したボリュームを<block ref="7fc5f45b049a449b87b1f9b25afbc331" prefix=" " category="inline-code"></block>にアタッチし、<block ref="2cdc1fa24cf7b4ef507d8349ebee044e" category="inline-xref-macro-rx"></block>に進みます。</block>
+  <block id="5062c219a41a1e62d4a5b89de2bf378f" category="paragraph">スタンバイホストで、接続されているストレージパスを検出し、データベース リカバリの前に ASM ディスクグループをマウントします。</block>
+  <block id="85dbe0067b89ba6b23ec68f84df2ab98" category="paragraph"><block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で、スタンバイプール iSCSI ポータルにログインし、マルチパスデバイスを再スキャンします。ASM ディスクヘッダーがラボワークフローのプライマリ命名と一致する場合は、プライマリスタイルのエイリアス （例：<block ref="d3e577701c1159d29bb37a6897fe1195" prefix=" " category="inline-code"></block>、<block ref="325b416024d98d67ef0bf8431c889820" prefix=" " category="inline-code"></block>） を使用し、<block ref="89f1b02de5b3851d79f204e14b1a457d" prefix=" " category="inline-code"></block>を設定して、パーティションの所有権が<block ref="1d65b11bd2f8fde5e28c77d544704585" prefix=" " category="inline-code"></block>であることを確認してから、ディスクグループをマウントします：</block>
+  <block id="fe57918cf7fd4b5e939fc02bc1db9d5c" category="paragraph">スタンバイ制御ファイルを復元し、キャプチャしたSCNにリカバリし、物理スタンバイに変換して、マネージドリカバリを開始します。</block>
+  <block id="cb20c53f47572a6f139081a3fac4097b" category="paragraph">この時点で、スタンバイは<block ref="3c4e928996b35449e72e325319777456" prefix=" " category="inline-code"></block>および<block ref="483044c0a27107e78203087cbbf6d45c" prefix=" " category="inline-code"></block>で、管理リカバリが開始された状態になっているはずです。</block>
+  <block id="1fc94f8616e9d2bab5d30049e83dac35" category="paragraph">*ティア別の次のステップ：*</block>
+  <block id="2d0b03db19694339f2494ce8dfca8cba" category="inline-xref">ステップ4：Oracle Restartにスタンバイを登録する</block>
+  <block id="8dcb8d146bd0776284ed42202bbd3eaa" category="list-text">*Prod HA (no Data Guard):* 直接<block ref="d3f6f95d980794c94d7cc20e0654b20c" category="inline-xref-macro-rx"></block>に進みます。</block>
+  <block id="2dcb4701ff1093aba4077d410ccef258" category="inline-xref-macro">Data Guardの最終処理手順</block>
+  <block id="63089ab59bcd6110d6178aae870aac90" category="list-text">*Prod HA (Data Guard + FSFO):* <block ref="d3f6f95d980794c94d7cc20e0654b20c" category="inline-xref-macro-rx"></block>に進み、次に<block ref="759ba41707dbda9716913541cbfe81f9" category="inline-xref-macro-rx"></block>に進みます。</block>
+  <block id="602d812b0f22e4bbdcfb7f72504702f4" category="paragraph">スタンバイデータベースをOracle Restartに登録すると、再起動時にASMディスク グループの自動リカバリ、スタンバイデータベースのマウント、およびマネージドリカバリの再開が自動的に行われます。また、アプリケーション サービスを両方のデータベースリソースに追加します。</block>
+  <block id="b4aa64084b23762bbc4a268d00340641" category="list-text">スタンバイデータベースからspfileの場所を取得し、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>のOracle Restartに登録します。<block ref="39f24d8681d2402426bc0254b28e4ca8" prefix=" " category="inline-code"></block>をクエリから置き換えます（多くの場合、<block ref="c097579d8cb34b312d396304e0b8f487" prefix=" " category="inline-code"></block>の下）：</block>
+  <block id="cae6172db582c1a4b2c0b22c8f2a9cfb" category="list-text"><block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>のプライマリデータベースリソースを確認して更新し、すべての ASM ディスク グループの依存関係を含めます：</block>
+  <block id="03d30a59e10cda908026a7a989f8fa7e" category="list-text">アプリケーション サービスを、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>上のスタンバイ データベース リソース（<block ref="3ad0bd4699c7945297963a438f68d612" prefix="(" category="inline-code"></block>）に追加します。スイッチオーバー後に<block ref="4645c43c671fdeae260367b4f2fb866a" prefix=" " category="inline-code"></block>を利用できるように、両側で<block ref="64dfff6e31b96e0cbc5549861f919993" prefix=" " category="inline-code"></block>を使用します：</block>
+  <block id="725df729ce51a022eed4b241e9c52b34" category="list-text">スタンバイデータベースリソースを確認します<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>：</block>
+  <block id="1695ff58604a8704e51cd1e3217f1412" category="paragraph">*ティア別：*</block>
+  <block id="e6ae64b77e26dc53473993012d32f568" category="list-text">*Prod HA (データガードなし):* ストレージレプリケーションベースのリカバリターゲットを維持するために、スタンバイ初期化が完了し、スタンバイデータベースがバックアップインスタンスとしてOracle Restartに登録されます。</block>
+  <block id="adeaf07df40685af3ae9c238e2a161da" category="inline-xref-macro">Data Guard用のスタンバイデータベースを確定する</block>
+  <block id="39638ee804cf367dcd6bcef025f0339c" category="list-text">*Prod HA (Data Guard + FSFO):* ブローカー管理のスイッチオーバーと高速スタートフェイルオーバーを有効にするには、<block ref="757c842bb998895393353f7db293fc20" category="inline-xref-macro-rx"></block>に進みます。</block>
+  <block id="b44eb97011b8a7976c9cb7f2c6623f80" category="summary">Google Cloud NetApp Volumes 上の Data Guard のスタンバイ データベースを、スタンバイ REDO ログファイルの作成、フラッシュバック データベースの有効化、REDO 転送の有効化、および Data Guard の状態確認によって確定します。この手順は、Prod HA Data Guard および FSFO ティアでのみ必要です。</block>
+  <block id="5f6887c396231667f2b7c08699061d8f" category="doc">Google Cloud NetApp Volumes 上の Data Guard のスタンバイ データベースを確定する</block>
+  <block id="3e1eb215ffad59cd05cfa075b4e100ac" category="paragraph">スタンバイREDOログファイルの作成、フラッシュバックデータベースの有効化、REDO転送の有効化、およびData Guardの状態確認によって、Google Cloud NetApp Volumes上のOracle Data Guardのスタンバイデータベースを確定します。</block>
+  <block id="dd3767c8de3e7a46080f868886d0e863" category="paragraph">*ティア固有：* この手順は、*Prod HA (Data Guard + FSFO)* ティアでのみ必要です。</block>
+  <block id="bc24ca41d95a311d5c09c99a5fad9643" category="section-title">ステップ 1：スタンバイ REDO ログファイルを作成する</block>
+  <block id="2b102a0c42b9a37843198c033810ebb0" category="paragraph">高速スタート・フェイルオーバーをサポートするために、両方のデータベースホストにスタンバイREDOログファイルを作成します。サイズは最大のプライマリオンラインREDOログ以上である必要があり、カウントは（スレッドあたりのオンライングループ）+ 1 と等しくなければなりません。GCNVシード処理後、レプリケートされたパスを修正するために、スタンバイ側でスタンバイREDOログを削除して再作成します。</block>
+  <block id="5af24729757c8513e1afb6e62275b600" category="list-text">プライマリデータベース上にスタンバイREDOログファイルを作成する<block ref="173ad268594dda99be99f9ab53fc66c5" prefix="(" category="inline-code"></block>）：</block>
+  <block id="cb09e18ba25e1f53eb30a64b38d65782" category="list-text">GCNV シード後、スタンバイ データベース上のスタンバイ REDO ログ ファイルを削除して再作成します（<block ref="3ad0bd4699c7945297963a438f68d612" prefix="(" category="inline-code"></block>）。<block ref="b9be7946c3a48c46e42b29df36135b48" prefix=" " category="inline-code"></block> 配下の複製されたパスは、再構築されるまで <block ref="45d3f913b21d3b56afad08bf52beee16" prefix=" " category="inline-code"></block> / <block ref="c729c7564963a242b8612301629b9f19" prefix=" " category="inline-code"></block> を引き起こします：</block>
+  <block id="2c39774cdcfa58a4a81899413826b084" category="section-title">ステップ2：フラッシュバックを有効にしてリカバリを開始する</block>
+  <block id="b3c57d95f6f60026eea8fe233893f4a6" category="paragraph">スタンバイ側でフラッシュバック データベースを有効にして、フェイルオーバー後の自動復旧をサポートし、その後、リアルタイム適用でマネージド リカバリを開始します。MRP がアクティブな間はフラッシュバックを有効にできないため、マネージド リカバリを開始する前にフラッシュバックを有効にする必要があります。</block>
+  <block id="c42d995f62ca1b1f071a1a0d493478fd" category="list-text">スタンバイデータベースをシャットダウンし、MOUNTモードで再起動し、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>でフラッシュバックデータベースを有効にします：</block>
+  <block id="6f15a03e7c88a983f8030f7d05ccc3c4" category="list-text">リアルタイム適用による管理リカバリの開始：</block>
+  <block id="61c224da111ad34fe4326a9f92081451" category="section-title">ステップ3：redo shippingを有効にする</block>
+  <block id="e31ad1284b7618a9c10777ed99b12e64" category="inline-xref-macro">ステップ2</block>
+  <block id="63095ec7ffdc92f2456d081d95fbe1c7" category="paragraph">スタンバイ作成中の<block ref="0089858c7dd22225c3de5be78ce29016" prefix=" " category="inline-code"></block>エラーを抑制するために、スタンバイ初期化手順の<block ref="b6d0020b875b599012ea4cd34f9fe3ba" category="inline-xref-macro-rx"></block>で意図的に<block ref="7f5e3f26a1a530c4cc7f9b80e963e9cc" prefix=" " category="inline-code"></block>に設定されていた<block ref="d0407d9670675ee36b404c4218a54bab" prefix=" " category="inline-code"></block>を有効にすることで、プライマリからスタンバイへのREDO転送を有効にします。</block>
+  <block id="89d7c6b861b00776fefcb746650b1ea7" category="list-text"><block ref="d0407d9670675ee36b404c4218a54bab" prefix=" " category="inline-code"></block>に切り替え<block ref="b332708e4304e13c9b424e7465254954" prefix=" " category="inline-code"></block>、ログスイッチを強制してREDOログの転送を開始します：</block>
+  <block id="abdfef070f285e6e1a448ba9145bde0d" category="list-text">REDOログの転送が正しく機能していることを確認します。</block>
+  <block id="82ed2b5cc83a3346d64c2d575ef1cc03" category="paragraph"><block ref="2224873378f51ce78ccb598214ddcb89" prefix=" " category="inline-code"></block>が<block ref="0089858c7dd22225c3de5be78ce29016" prefix=" " category="inline-code"></block>を示している場合は、プライマリをバウンスします。<block ref="0e3abe2e78e1db915d71acea1a3f07cd" category="inline-xref-macro-rx"></block>の後、DGMGRLを介してトランスポートを管理します。</block>
+  <block id="45b2c712ae0345beb6a955d1cd6b15df" category="section-title">ステップ 4：Data Guard の状態を確認する</block>
+  <block id="d401f016a03e7173a8a2458091e093cf" category="paragraph">プライマリデータベースが READ WRITE モードになっていること、およびスタンバイデータベースがマネージドリカバリでマウントされ、redo ログが適用されていることを確認してください。</block>
+  <block id="39e1dfd87ae73644caeee54afc28b225" category="list-text">プライマリ データベース ロールとオープン モードを確認します<block ref="9514606aa0e81e08de08842f8136911c" prefix=" " category="inline-code"></block>：</block>
+  <block id="e12e0884bb2d1fcbee85ef3650a7ae6a" category="list-text">スタンバイデータベースのロール、オープンモード、および管理リカバリのステータスを<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>で確認します：</block>
+  <block id="ea82a2d45313d220d6fc02442ba226e5" category="list-text">スタンバイが<block ref="483044c0a27107e78203087cbbf6d45c" prefix=" " category="inline-code"></block>を報告しているが apply が実行されていない場合は、<block ref="307e0423cd7859aca914691fcbaacca5" prefix=" " category="inline-code"></block>でマネージドリカバリを再起動します：</block>
+  <block id="1633d94ec878781b382685245be7cd8c" category="paragraph">自動ロール管理とフェイルオーバー保護を有効にするには、<block ref="14429b69a02ca790af421dc86e9d7699" category="inline-xref-macro-rx"></block>に進んでください。</block>
+  <block id="570c034f4a272574e58af2bf9758522c" category="sidebar">Oracle Database 26ai向けGoogle Cloud NetApp Volumes</block>
+  <block id="ab3ccb0be518e752d20f706d36d252c9" category="sidebar">導入ワークフロー</block>
+  <block id="c43a14b15d77a2ca0858f8c596a9f3ff" category="sidebar">Oracle HA 向け Google Cloud NetApp Volumes について</block>
+  <block id="a2627b9fc881a72aff56f8dd68b20ea1" category="sidebar">Oracle HA を使用して Google Cloud NetApp Volumes をデプロイする</block>
+  <block id="1b3c2813631c4b890b70d7b8abe4c245" category="sidebar">Compute Engineインスタンスをプロビジョニングする</block>
 </blocks>

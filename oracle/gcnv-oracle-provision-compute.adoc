@@ -1,0 +1,212 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-provision-compute.html 
+keywords: oracle database, google cloud netapp volumes, gcnv, compute engine, iscsi, virtual machine, oracle linux, iqn 
+summary: Google Compute Engine 仮想マシンをプロビジョニングして、Google Cloud NetApp Volumes iSCSI ストレージ上で Oracle Database 26ai をホストします。この手順では、プライマリおよびスタンバイデータベースホストと Fast-Start フェールオーバー オブザーバー VM の作成、Oracle Net 用の VPC ファイアウォール ルールの構成、ホスト名解決の設定、OS の準備、および GCNV ストレージ プロビジョニング用の iSCSI イニシエータ名の取得について説明します。 
+---
+= Google Cloud NetApp Volumes 用に Google Compute Engine インスタンスをプロビジョニングする
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Compute Engine 仮想マシンをプロビジョニングして、Google Cloud NetApp Volumes iSCSI ストレージ上で Oracle Database 26ai をホストします。この手順では、プライマリおよびスタンバイデータベースホストと Fast-Start フェールオーバー オブザーバー VM の作成、Oracle Net 用の VPC ファイアウォール ルールの構成、ホスト名解決の設定、OS の準備、および GCNV ストレージ プロビジョニング用の iSCSI イニシエータ名の取得について説明します。
+
+
+
+== ステップ1：VMを作成する
+
+ゾーン障害分離のために、同じリージョン内の異なるゾーンに3つのGoogle Compute Engine VMを作成します。Cloud Console、 `gcloud`、Terraform、または標準のプロビジョニング ワークフローを使用します。
+
+. 以下の表に示す仕様で、3つの仮想マシンを作成します。
++
+TCOと持続可能性の観点から、レイテンシーとコンプライアンスのニーズを満たす低炭素地域を優先します（例： `us-west1`対 `us-central1`）：
+
++
+[cols="1,1,1,2,2,2"]
+|===
+| VM | ゾーン | マシンタイプ | ブートディスク | Network | 目的 
+
+
+| `oracdb1` | `us-west1-a` | `n4-highmem-8`（サンプル）または `c4-standard-*` | OL 10、50 GB Hyperdisk Balanced（OSのみ） | `oracle-vpc` / `oracle-subnet`、gVNIC | プライマリDB 
+
+
+| `oracdb2` | `us-west1-b` | プライマリと同じ | OL 10、50 GB Hyperdisk Balanced（OSのみ） | 同じ | スタンバイDB 
+
+
+| `oradg-obs` | `us-west1-c` | `e2-medium` | OL 10、20 GB Hyperdisk Balanced | 同じ | FSFOオブザーバー（Instant Clientのみ） 
+|===
++
+レイテンシまたはエグレス（>~200 GiB/月）が重要な場合は Premium ネットワーク ティアを使用し、開発とテストで TCO を低く抑える場合は Standard を使用します。
+
+. シールドVM機能を有効にし、ブートディスクの構成を確認します：
++
+3台の仮想マシンすべてで、*Secure Boot*、*vTPM*、および*Integrity Monitoring*を有効にしてください。
+
++
+ブートディスクにはOSのみが格納されています。 `/u01` Grid/DB ホーム、ステージング、およびすべての ASM データは GCNV iSCSI ボリュームを使用します （xref:gcnv-oracle-provision-storage.adoc#provision-gcnv-iscsi-volumes[GCNV iSCSI ボリュームをプロビジョニングする] を参照）
+
++
+GCEデータディスクを別途接続しないでください `/u01`。
+
+
+
+
+
+== ステップ2：VPC ファイアウォールを TCP 1521 用に構成する
+
+Oracle Net redoトランスポートとオブザーバー接続のために、3つのVMすべて間でTCP/1521を許可するVPCファイアウォールルールを作成します。ルールが欠落していると、Data Guardのレプリケーションが失敗します。
+
+. 3つのVMの内部IPアドレスすべて間でTCP/1521を許可するVPCファイアウォールのイングレスルールを作成します。同じ許可リストを持つVPCファイアウォールルールまたはファイアウォールポリシーを使用します：
++
+*Cloud Console：* VPC ネットワーク → ファイアウォール → ルールの作成 `allow-oracle-net-dbhosts`オン `oracle-vpc` — Ingress、Allow、sources = 3 つの `/32` IP、TCP 1521。必要に応じて Egress をミラーリングします。
+
+. 各仮想マシンからの接続性を検証して、ファイアウォールルールが正しく設定されていることを確認します：
++
+[source, bash]
+----
+sudo dnf install -y nmap-ncat
+
+for tgt in <oracdb1-ip> <oracdb2-ip> <oradg-obs-ip>; do
+  nc -zv -w 5 "$tgt" 22
+  nc -zv -w 5 "$tgt" 1521
+done
+----
++
+[cols="1,1,3"]
+|===
+| ポート | 想定 | 説明 
+
+
+| `22` | 接続済み | SSHパスが機能します 
+
+
+| `1521` | 接続が拒否されました | ファイアウォールが開いています。グリッドリスナーはxref:gcnv-oracle-install-software.adoc#install-grid-infrastructure[ステップ1：各DBホストにOracle Grid Infrastructure（Oracle Restart）をインストールします]中に起動します 
+
+
+| どちらか | Timeout | ファイアウォールまたはルーティングを修正する 
+|===
++
+3 台の VM すべてから、各ピア IP に向けて実行します。
+
+
+
+
+
+== ステップ 3: ホスト名、DNS、および `/etc/hosts`
+
+Oracle Net、Data Guard Broker、およびObserverの正引きおよび逆引き名前解決が正しく機能するように、3つのVMすべてでホスト名とDNS解決を設定します。
+
+. ホスト名を設定し、3つのホストすべてに `/etc/hosts`エントリを追加します。GCEの内部IPアドレス（*Compute Engine → VMインスタンス*リストの_Internal IP_列に表示されます）を置き換えてください。
++
+[source, bash]
+----
+# Run on each VM, substituting the local short name (oracdb1, oracdb2, oradg-obs)
+sudo hostnamectl set-hostname <this-host>.example.internal
+
+# Run on every VM (same content)
+sudo tee -a /etc/hosts >/dev/null <<EOF
+
+# Oracle DG peers + FSFO Observer
+<oracdb1-ip>    oracdb1.example.internal    oracdb1
+<oracdb2-ip>    oracdb2.example.internal    oracdb2
+<oradg-obs-ip>  oradg-obs.example.internal  oradg-obs
+EOF
+----
+. 各ホストからの名前解決を検証します：
++
+[source, bash]
+----
+ping -c 1 oracdb1 && ping -c 1 oracdb2 && ping -c 1 oradg-obs
+----
+
+
+
+
+== ステップ 4：DB ホストのみで OS を準備する
+
+ `oracdb1`および `oracdb2`上のOSをOracle Database 26ai用に準備するには、プリインストールパッケージのインストール、ユーザーとグループの作成、iSCSIおよびマルチパスパッケージのインストール、iSCSIイニシエータの設定を行います。オブザーバーのセットアップについては、xref:gcnv-oracle-data-guard.adoc#install-instant-client-on-observer[ステップ4：オブザーバーホストにOracle Instant Clientをインストールする]を参照してください。
+
+[NOTE]
+====
+*前提条件：* `yum.oracle.com`へのアウトバウンドHTTPS（プライベートサブネット上のCloud NATまたは内部ミラー）。
+
+====
+. Oracle Database のプリインストール パッケージをインストールし、 `grid`ユーザーと ASM グループを作成し、 `oracle`ユーザーを ASM グループに追加します：
++
+[source, bash]
+----
+# Oracle 26ai preinstall (package name varies by repo)
+sudo dnf install -y oracle-ai-database-preinstall-26ai \
+  || sudo dnf install -y oracle-database-preinstall-26ai \
+  || sudo dnf install -y oracle-database-preinstall-23ai
+
+# grid user + asm groups
+sudo groupadd -g 54327 asmadmin; sudo groupadd -g 54328 asmdba; sudo groupadd -g 54329 asmoper
+sudo useradd -u 54322 -g oinstall -G dba,oper,asmadmin,asmdba,asmoper grid
+sudo passwd -l grid; sudo passwd -l oracle
+sudo usermod -a -G asmdba,asmadmin oracle
+----
+. iSCSI、マルチパス、およびJDKパッケージをインストールし、THPと時刻同期を確認します：
++
+[source, bash]
+----
+sudo dnf install -y iscsi-initiator-utils device-mapper-multipath sg3_utils \
+  java-21-openjdk-headless libxcrypt-compat
+
+# THP and time
+cat /sys/kernel/mm/transparent_hugepage/enabled   # expect [never]
+timedatectl
+chronyc tracking
+----
+. SELinux、ファイアウォール、iSCSI イニシエータの設定を行い、再起動します。
++
+[NOTE]
+====
+*セキュリティ態勢（OL 10）：*以下のコマンドはSELinuxをpermissiveに設定し、 `firewalld`を無効にします。これは最小限のラボ環境の設定です。SELinuxとファイアウォールの強化された設定については、組織のセキュリティベースラインを参照してください。
+
+====
++
+[source, bash]
+----
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config
+sudo systemctl disable --now firewalld
+
+sudo cp -n /etc/iscsi/iscsid.conf /etc/iscsi/iscsid.conf.orig
+sudo sed -i '/^[#[:space:]]*node\.session\.timeo\.replacement_timeout/d' /etc/iscsi/iscsid.conf
+echo "node.session.timeo.replacement_timeout = 120" | sudo tee -a /etc/iscsi/iscsid.conf
+sudo systemctl enable --now iscsid
+
+sudo reboot
+----
+
+
+
+
+== ステップ 5：iSCSI イニシエータ名 IQN を取得する
+
+再起動後、各データベースホストからiSCSIイニシエータ名（IQN）を取得します。これらの IQN を使用して、xref:gcnv-oracle-provision-storage.adoc#create-host-groups[ステップ2：ホストグループを作成する] で GCNV ホスト グループを作成します。
+
+. IQNを `oracdb1`からキャプチャして記録します：
++
+[source, bash]
+----
+sudo cat /etc/iscsi/initiatorname.iscsi
+# InitiatorName=iqn.1994-05.com.redhat:abc123def456
+----
+. 繰り返して `oracdb2`そのIQNを記録します。ホストごとに1つのホストグループを使用することで、1つのホストの再起動やIQNの再生成が、他のホストのGCNV iSCSIボリュームの可視性に影響を与えないようにします。
++
+[NOTE]
+====
+*クローンされた VM：* 両方のホストが同じ IQN を共有している場合は、 `oracdb2`で再生成します（停止 `iscsi`、クリア `/var/lib/iscsi/nodes/*`、新しい `InitiatorName`を `/etc/iscsi/initiatorname.iscsi`に、再起動 `iscsid`）。
+
+====
+
+
+
+
+== 次の手順
+
+OracleバイナリとASM ディスク グループに共有ストレージを提供するには、xref:gcnv-oracle-provision-storage.adoc[Google Cloud NetApp Volumes の iSCSI プール、ホスト グループ、およびボリュームをプロビジョニングする]に移動します。

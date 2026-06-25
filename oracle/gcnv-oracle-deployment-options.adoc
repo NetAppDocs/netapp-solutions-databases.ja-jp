@@ -1,0 +1,149 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-deployment-options.html 
+keywords: oracle database, google cloud netapp volumes, gcnv, deployment options, high availability, disaster recovery, data guard, fsfo 
+summary: Google Cloud NetApp Volumes と Oracle Database 26ai のデプロイオプション（開発とテストから本番環境の高可用性レベルまで）。 
+---
+= Oracle Database 26ai 向け Google Cloud NetApp Volumes の導入オプションについて
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Cloud NetApp Volumes は、開発とテスト環境から、Data Guard と Fast-Start Failover を使用した本番環境向けの高可用性構成まで、複数のデプロイメント階層にわたる Oracle Database 26ai をサポートしています。Google Cloud NetApp Volumes で、デプロイ要件を確認し、HA 階層を比較し、選択したソリューション アーキテクチャのタスクシーケンスを特定します。
+
+
+
+== 導入の要件
+
+Oracle Database 26ai 高可用性向けに Google Cloud NetApp Volumes をプロビジョニングする前に、以下の項目が揃っていることを確認してください：
+
+* Compute Engine、VPC ネットワーク、ファイアウォール構成、IAM、および NetApp Volumes の権限を持つ Google Cloud プロジェクト
++
+[cols="1,2"]
+|===
+| Task | 必要なアクセス 
+
+
+| Compute Engine VM を作成する | Compute Instance Admin（または同等の資格） 
+
+
+| ファイアウォール／ファイアウォールポリシー | ネットワーク管理者または委任されたポリシー管理者 
+
+
+| GCNV プールとボリュームを作成する | NetApp Volumes管理者 
+
+
+| PSAの設定 | ホストプロジェクトのネットワーク管理者 
+
+
+| IAP経由のSSH | IAPで保護されたトンネルユーザー + OSログイン（使用する場合） 
+|===
+* NetApp Volumes APIが有効になっている
+* 対象リージョン用に構成された VPC とサブネット
+* Google Cloud NetApp Volumes 用に構成された Private Services Access（PSA）
+* 必要なすべての仮想マシンに Oracle Linux 10 を使用
+* データベースホストとオブザーバーホストに対して、DNSとホスト名解決が設定されています。
+* Oracle Database 26aiおよびGrid Infrastructure用のOracleインストールメディアとパッチファイルが利用可能
+* Oracle Data Guard、Oracle Restart、およびiSCSIストレージの概念に関する知識
+* すべての仮想マシンで時刻同期が設定されています。
++
+以下のコマンドを使用できます：
+
++
+[source, bash]
+----
+gcloud services enable netapp.googleapis.com
+chronyc tracking
+timedatectl
+----
+
+
+
+
+== デプロイメント構成例
+
+このソリューションでは、以下のデプロイメント構成を使用します。
+
+* 3台のGoogle Compute Engine仮想マシン：
++
+** `oracdb1`プライマリデータベースの場合
+** `oracdb2`スタンバイデータベース用
+** Fast-Start Failover Observer用の`oradg-obs`
+
+
+* データベース ゾーンごとに 1 つの GCNV Flex Unified ストレージ プール
+* データベース ホストごとに 5 つの GCNV iSCSI ボリューム
+* Oracle Data Guard BrokerおよびFast-Start Failoverによる自動フェイルオーバー
+* データベース ホストごとに専用ストレージが割り当てられ、プライマリ ホストとスタンバイ ホストは iSCSI ボリュームを共有しません
+
+
+コマンド内のすべてのサンプル値を、ホスト名、IPアドレス、ゾーン、プロジェクト名、ポータルIP、パスワード、Oracleメディアファイル名など、ご使用の環境の値に置き換えてください。
+
+
+
+== 導入オプション
+
+以下の表は、HA と DR の導入パターンを比較し、自動化によって運用上のメリットが最も大きい箇所を示しています。
+
+[cols="1,1,1,1,1,1,1"]
+|===
+| 環境 | 要件 | 推奨されるアーキテクチャ | HA | DR | Automation | 主なメリット 
+
+
+| 開発/テスト | 最低コスト | 単一インスタンス | × | はい | × | Snapshot クローン 
+
+
+| Prod Basic（再起動） | クラッシュによるダウンタイムを削減 | + Oracle Restart | × | はい | ローカルのみ | 自動再起動 
+
+
+| 本番環境HA（DGなし） | 手動 DR が許容されます | + Snapshot / RMAN | Partial | はい | Partial | GCNV クローンのリカバリ 
+
+
+| 本番環境HA（DG + FSFO） | 真のHA（DBA不要） | Data Guard + FSFO | はい | はい | フル | 真のHAと高速フェイルオーバー 
+|===
+.HA/DR/自動化
+* はい＝ティア目標を達成
+* いいえ = 対象外
+* 部分的＝ストレージレベルまたは手動ステップのみ
+
+
+
+
+== HA階層別のデプロイタスク
+
+xref:gcnv-oracle-deployment.html[デプロイメントワークフロー]は、すべての展開階層に対して、番号付きの手順シーケンスを提供します。すべての階層は、以下に示す基本デプロイメントタスクを完了した後、本番環境の高可用性を実現するための階層固有のタスクを追加します。
+
+*基本展開（全階層）：*
+
+. xref:gcnv-oracle-solution-architecture.html[ソリューション アーキテクチャの確認]
+. 導入オプションと要件を確認する（このページ）
+. xref:gcnv-oracle-access-and-apis.html[アクセスとAPIを確認する]
+. xref:gcnv-oracle-provision-compute.html[Google Compute Engine インスタンスをプロビジョニングする]
+. xref:gcnv-oracle-provision-storage.html[GCNV iSCSI ストレージをプロビジョニングする]
+. xref:gcnv-oracle-install-software.html[Oracle Grid InfrastructureとOracle Database 26aiをインストールする]
+. xref:gcnv-oracle-primary-database.html[プライマリデータベースを作成する]
+. xref:gcnv-oracle-standby-database.html[スタンバイデータベースを作成する]
+
+
+*階層固有のタスク（本番環境 HA のみ）：*
+
+[cols="1,2"]
+|===
+| 階層 | 導入手順 
+
+
+| 開発とテストおよび本番環境ベーシック（再起動）ティア | ベース展開の手順 1 から手順 7 までのみ完了してください。スタンバイデータベースは不要です。 
+
+
+| 本番環境HA（Data Guardなし） | 基本デプロイメントのステップ 1 からステップ 8 までを完了してください。 
+
+
+| 本番環境の高可用性（Data Guard + FSFO） | すべての基本展開手順を完了してから、以下を追加します。+ 手順 9：xref:gcnv-oracle-standby-finalize-dg.html[Data Guard用のスタンバイデータベースを確定する] + 手順 10：xref:gcnv-oracle-data-guard.html[Data Guard BrokerとFast-Startフェールオーバーの設定] 
+|===
+
+
+== 次の手順
+
+デプロイ前に環境を準備するには、xref:gcnv-oracle-access-and-apis.html[Google Cloud NetApp Volumes 上の Oracle Database 26ai へのアクセスと API]に進んでください。

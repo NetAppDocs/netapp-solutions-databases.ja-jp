@@ -1,0 +1,31 @@
+---
+section: gcnv-oracle
+title: Oracle Database 26ai向けGoogle Cloud NetApp Volumes
+entries:
+- title: 導入ワークフロー
+  url: "/oracle/gcnv-oracle-deployment.html"
+- title: Oracle HA 向け Google Cloud NetApp Volumes について
+  entries:
+  - title: ソリューションアーキテクチャ
+    url: "/oracle/gcnv-oracle-solution-architecture.html"
+  - title: 導入オプション
+    url: "/oracle/gcnv-oracle-deployment-options.html"
+  - title: アクセスとAPI
+    url: "/oracle/gcnv-oracle-access-and-apis.html"
+- title: Oracle HA を使用して Google Cloud NetApp Volumes をデプロイする
+  pdf-filename: Oracle HA を使用して Google Cloud NetApp Volumes をデプロイする
+  entries:
+  - title: Compute Engineインスタンスをプロビジョニングする
+    url: "/oracle/gcnv-oracle-provision-compute.html"
+  - title: GCNV iSCSI ストレージをプロビジョニングする
+    url: "/oracle/gcnv-oracle-provision-storage.html"
+  - title: Oracleソフトウェアをインストールする
+    url: "/oracle/gcnv-oracle-install-software.html"
+  - title: プライマリデータベースを作成する
+    url: "/oracle/gcnv-oracle-primary-database.html"
+  - title: スタンバイデータベースを作成する
+    url: "/oracle/gcnv-oracle-standby-database.html"
+  - title: Data Guard用のスタンバイデータベースを確定する
+    url: "/oracle/gcnv-oracle-standby-finalize-dg.html"
+  - title: Data Guard Broker、FSFO、およびObserverを構成する
+    url: "/oracle/gcnv-oracle-data-guard.html"

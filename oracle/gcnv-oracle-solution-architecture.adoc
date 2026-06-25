@@ -1,0 +1,138 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-solution-architecture.html 
+keywords: oracle database, google cloud netapp volumes, gcnv, iscsi, data guard, fsfo, architecture, topology, standby initialization 
+summary: Google Cloud NetApp Volumes の高可用性 Oracle Database 26ai 向けアーキテクチャについて説明します。iSCSI ブロックストレージ設計、Data Guard 統合、スタンバイ初期化を高速化するためのストレージ レイヤ レプリケーション、およびプラットフォームの責任が含まれます。 
+---
+= Google Cloud NetApp Volumes のハイアベイラビリティ Oracle Database 26ai 向けアーキテクチャについて学ぶ
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Cloud NetApp Volumes は、Oracle Database 26ai の高可用性アーキテクチャ向けにハイパフォーマンス iSCSI ブロックストレージを提供します。ストレージ レイヤ レプリケーションにより、従来の Oracle RMAN 方式と比較してスタンバイデータベースの初期化が大幅に高速化されます。GCNV と Oracle Data Guard の統合について、参照データ パス、ストレージ トポロジー、および GCNV のブロックストレージと Data Guard の連続レプリケーションの間の責任分担を含めて確認してください。
+
+
+
+== アーキテクチャの概要
+
+このアーキテクチャは、*Google Cloud NetApp Volumes (GCNV)* iSCSI ブロックストレージを使用して、*Oracle Data Guard* により Google Cloud 上の *Oracle Database 26ai* の高可用性を提供します。
+
+GCNVはハイパフォーマンス ブロックストレージを採用し、ストレージ レイヤの*レプリケーション、スナップショット、クローン*を使用してスタンバイ データベースの初期化を高速化します。
+
+Data Guard は、*連続レドゥ転送*、ロール管理、および*フェイルオーバー オーケストレーション*（Broker、Fast-Start Failover、Observer）を提供します。
+
+[cols="1,3"]
+|===
+| レイヤ | ロール 
+
+
+| GCNV | ブロック ストレージ、スタンバイ初期化、ストレージ レプリケーション 
+
+
+| Data Guard | 継続的な同期、REDO の適用、スイッチオーバー、FSFO 
+|===
+GCNV レプリケーションは、Oracle データベース チャネルを経由する代わりに*ストレージ レイヤ*でデータを移動することで、RMAN アクティブ複製と比較してスタンバイ初期化時間を大幅に短縮します。
+
+スタンバイデータベースを初期化するには、*GCNV replicate、snapshot、またはclone*を使用し、その後、Data Guard をアクティブ化して継続的な同期と高可用性を実現します。
+
+[cols="1,3"]
+|===
+| コンポーネント | 詳細 
+
+
+| DBホスト | oracdb1 / oracdb2 - 異なるゾーン、それぞれ5つのGCNV iSCSIボリューム 
+
+
+| ストレージ | /u01 + ASM +DATA、+RECO、+FRA on GCNV (EXTERNAL) 
+
+
+| スタンバイ初期化 | GCNVの複製/スナップショット/クローン -> Oracleによる最終処理 -> Data Guard 
+
+
+| HA | 再起動、物理スタンバイ（マウント済み）、ブローカー、FSFO、オブザーバー（oradg-obs） 
+
+
+| アプリ | サービス orclapp (ステップ 8.2) 
+|===
+
+
+=== ゾーニング
+
+データベースゾーンごとに1つのGCNV Flex Unifiedプールをデプロイし、各ホストに専用ボリュームを割り当てます。起動ディスクはオペレーティングシステム専用に使用してください。
+
+*対象外：* TDE、RAC、NVMe/TCP、OEM、およびActive Data Guard（スタンバイは*マウント*されたままです）。
+
+
+
+== アーキテクチャ参照図
+
+このソリューション アーキテクチャは、3つの独立したデータパスを提供します。ストレージ レプリケーションとData Guardのリドゥ転送は、別々のパスで行われます。
+
+image::gcnv-oracle-26ai-ha.png[GCNVリファレンス アーキテクチャ]
+
+.ストレージレプリケーションはリドゥレプリケーションとは異なります
+* パス1は、スタンバイ初期化のためにGCNVレイヤーでデータファイルを移動します。
+* パス2では、切り替え後もデータベースの同期が維持されます。
+* パス3は、Oracle Data Guard BrokerとObserverを介して、ロールの移行と自動フェイルオーバーをオーケストレーションします。
+
+
+
+
+== プラットフォームロール
+
+以下の表は、どのプラットフォーム レイヤがストレージ サービスを提供し、どのレイヤがデータベースの同期とフェイルオーバー制御を提供するかをまとめたものです。
+
+[cols="1,3"]
+|===
+| プラットフォーム | 提供 
+
+
+| GCNV | iSCSIボリューム、スナップショット、ボリュームレプリケーション（ベースライン＋増分） - スタンバイ初期化 
+
+
+| Data Guard | 再実行トランスポート、MRP、ブローカー、FSFO - 継続的な同期とフェイルオーバー 
+|===
+GCNV レプリケーションは、まずベースラインコピーを実行し、その後、ポリシーごとにブロックの増分更新を実行します。スタンバイが初期化された後、Data Guard はリドゥ適用と FSFO を所有します。
+
+
+
+== トポロジとストレージ
+
+このトポロジーでは、プライマリ、スタンバイ、オブザーバーの役割を別々のゾーンに配置し、各データベースホストを専用のGCNVプールとiSCSIボリュームにマッピングします。
+
+[cols="1,1,1,1,2"]
+|===
+| ロール | VM | ゾーン | GCNVプール | ボリューム（ホストあたり） 
+
+
+| プライマリ | `oracdb1` | `us-west1-a` | `oracle-pool-a` | `ora_<host>_u01`、 `ora_<host>_data_01/02`、 `ora_<host>_arch_01`、 `ora_<host>_fra_01` 
+
+
+| Standby | `oracdb2` | `us-west1-b` | `oracle-pool-b` | 同じ命名パターン 
+
+
+| オブザーバー | `oradg-obs` | `us-west1-c` | - | ブートディスクのみ 
+|===
+[cols="1,1,2"]
+|===
+| ストレージ | バッキング | 用途 
+
+
+| OS | GCE ブート ディスク | OSのみ 
+
+
+| `/u01` | GCNV iSCSI | グリッド/DBホーム、ステージング（XFS） 
+
+
+| `+DATA` / `+RECO` / `+FRA` | GCNV iSCSI | ASM EXTERNAL - データファイル、アーカイブ、FRA 
+|===
+.マシンタイプ
+サンプル `n4-highmem-8`このソリューションでは、OLTPワークロードは通常、 `c4-standard-*`を使用します。
+
+
+
+== 次の手順
+
+復旧と可用性の目標に合った展開パスを選択するには、xref:gcnv-oracle-deployment-options.adoc[Google Cloud NetApp Volumes 上の Oracle Database 26ai のデプロイオプションについて説明します]にアクセスしてください。

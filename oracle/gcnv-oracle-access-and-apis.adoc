@@ -1,0 +1,58 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-access-and-apis.html 
+keywords: oracle database, google cloud netapp volumes, gcnv, access, api, permissions, psa, iap, networking 
+summary: Oracle Database 26ai の高可用性を導入する前に、Google Cloud NetApp Volumes に必要なアクセス権限、API の有効化、ネットワークの前提条件、および時刻同期を確認してください。 
+---
+= Oracle Database 26ai 向け Google Cloud NetApp Volumes のアクセスと API を確認する
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Compute Engine 上で Oracle Database 26ai の高可用性を実現するために GCNV iSCSI ストレージをプロビジョニングする前に、Google Cloud NetApp Volumes のアクセス、API の有効化、ネットワークの前提条件、および時刻同期を確認してください。
+
+
+
+== アクセスとAPI
+
+ホストとストレージ プロビジョニングを開始する前に、このチェックリストを使用して権限とプラットフォームの準備状況を確認します。
+
+* GCP ロールは、Compute Engine VM、VPC ファイアウォール （またはファイアウォール ポリシー）、NetApp ボリューム、および PSA ネットワーキング （該当する場合は、共有 VPC ホストプロジェクトの承認を含む） に割り当てられます。
+* *NetApp Volumes API* が有効になっています（Cloud Console -> APIs & Services、または以下のコマンド）。
+* VPCとサブネットは、GCNVの*PSA範囲*で構成されています： https://cloud.google.com/netapp/volumes/docs/get-started/configure-access/networking["NetApp Volumes のネットワークを構成する"]。
+* 3台の仮想マシンすべてで時刻が同期されています（以下のコマンドを参照）。
++
+[source, bash]
+----
+gcloud services enable netapp.googleapis.com
+chronyc tracking
+timedatectl
+----
+
+
+[cols="1,2"]
+|===
+| Task | 必要なアクセス 
+
+
+| Compute Engine VM を作成する | Compute Instance Admin（または同等の資格） 
+
+
+| ファイアウォール／ファイアウォールポリシー | ネットワーク管理者または委任されたポリシー管理者 
+
+
+| GCNV プールとボリュームを作成する | NetApp Volumes管理者 
+
+
+| PSAの設定 | ホストプロジェクトのネットワーク管理者 
+
+
+| IAP経由のSSH | IAPで保護されたトンネルユーザー + OSログイン（使用する場合） 
+|===
+
+
+== 次の手順
+
+Oracleホストインフラストラクチャを高可用性用にプロビジョニングするには、xref:gcnv-oracle-provision-compute.adoc[Oracle Database 26ai 用の Google Compute Engine インスタンスのプロビジョニング]に進みます。

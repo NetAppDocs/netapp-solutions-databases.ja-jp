@@ -1,10 +1,10 @@
 ---
 sidebar: sidebar 
 permalink: dbops/hybrid-dbops-snapcenter-devtest.html 
-summary: パブリック クラウドの俊敏性、価値実現までの時間、コスト削減はすべて、企業がデータベース アプリケーションの開発とテスト作業にパブリック クラウドを採用する上で意味のある価値提案です。これを急いで実現するには、 SnapCenterより優れたツールはありません。 SnapCenter は、オンプレミスの運用データベースを保護できるだけでなく、追加のストレージをほとんど消費せずに、パブリック クラウドでのアプリケーション開発やコード テスト用のコピーを迅速に複製することもできます。ツールを使用した手順ごとの詳細を以下に示します。 
-keywords: hybrid cloud, database, solutions, dev/test, workflow 
+summary: パブリッククラウドの俊敏性、価値実現までの時間、そしてコスト削減は、データベースアプリケーションの開発とテストにパブリッククラウドを採用する企業にとって、いずれも重要な価値提案となります。 
+keywords: hybrid cloud, database, solutions, devtest, workflow 
 ---
-= クラウドへの開発/テストのバーストのワークフロー
+= クラウドへの開発とテストバーストのワークフロー
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

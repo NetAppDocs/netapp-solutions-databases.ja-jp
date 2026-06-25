@@ -1,0 +1,388 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-standby-database.html 
+keywords: oracle database, standby database, data guard, gcnv replication, iscsi, asm, oracle restart, managed recovery, physical standby 
+summary: Google Cloud NetApp Volumes のストレージ レイヤ レプリケーション、スナップショット、またはクローンを使用して、Oracle の物理スタンバイデータベースを作成し、スタンバイの初期化を高速化します。この手順では、リスナーおよびスタンバイの pfile の構成、GCNV レプリケーションを使用したスタンバイボリュームのシード、Oracle インスタンスの最終処理、スタンバイ REDO ログの構築、マネージドリカバリを使用した REDO 適用の有効化、および Oracle Restart へのスタンバイの登録について説明します。 
+---
+= Google Cloud NetApp Volumes のストレージ レイヤ シードを使用して Oracle スタンバイ データベースを作成する
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Cloud NetApp Volumes のストレージ レイヤ レプリケーション、スナップショット、またはクローンを使用して Oracle の物理スタンバイデータベースを作成し、従来の RMAN 方式と比較してスタンバイの初期化を高速化します。この手順では、リスナーの設定、スタンバイ pfile の作成、GCNV レプリケーションを使用したスタンバイボリュームのシード処理、Oracle インスタンスの最終処理、および Oracle Restart へのスタンバイの登録について説明します。すべての HA ティアでこれらの手順を実行します。*Prod HA (Data Guard + FSFO)* ティアの場合は、xref:gcnv-oracle-standby-finalize-dg.adoc[データガードの最終化] を設定する前に続けてください。xref:gcnv-oracle-data-guard.adoc[Data Guard Broker、Fast-Start Failover、およびObserver]
+
+
+
+== ステップ 1：リスナーと Data Guard パラメーターを設定する
+
+両方のデータベースホストでリスナーを構成して、ブローカーに必要な `_DGMGRL`サービスを含む Data Guard 接続をサポートします。プライマリデータベース上でパスワードファイルを設定し、アーカイブログのパラメータを構成します。
+
+. プライマリリスナーを設定し、環境を確認します `oracdb1`：
++
+[source, bash]
+----
+sudo su - oracle
+. ~/.bash_profile        # ORACLE_SID=orcl, ORACLE_HOME set
+----
+. スタンバイリスナーを `oracdb2`に設定して、 `orcls`および `orcls_DGMGRL`サービスを含めます：
++
+[source, bash]
+----
+GRID_HOME=/u01/app/26ai/grid
+sudo -u grid tee "$GRID_HOME/network/admin/listener.ora" >/dev/null <<'EOF'
+LISTENER =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = oracdb2.example.internal)(PORT = 1521)))
+
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC = (GLOBAL_DBNAME = orcls)        (ORACLE_HOME = /u01/app/oracle/product/26ai/db_1) (SID_NAME = orcls))
+    (SID_DESC = (GLOBAL_DBNAME = orcls_DGMGRL) (ORACLE_HOME = /u01/app/oracle/product/26ai/db_1) (SID_NAME = orcls)))
+EOF
+----
+. 両方のホストで Oracle Restart を使用してリスナーを再起動し、 `_DGMGRL`サービスが登録されていることを確認します：
++
+[source, bash]
+----
+sudo -u grid bash -c '
+export GRID_HOME=/u01/app/26ai/grid
+export ORACLE_HOME=$GRID_HOME
+$GRID_HOME/bin/srvctl stop listener
+$GRID_HOME/bin/srvctl start listener
+$GRID_HOME/bin/lsnrctl status
+'
+----
++
+`lsnrctl status`をリストする必要があります `<SID>`および `<SID>_DGMGRL`。
+
+
+
+
+
+== ステップ2：スタンバイpfileを準備し、NOMOUNTを実行する
+
+スタンバイデータベースインスタンスを準備するには、プライマリからパスワードファイルをコピーし、Data Guard パラメータを含む最小限の init.ora pfile を作成し、インスタンスを NOMOUNT モードで起動します。
+
+. IAP を使用してプライマリパスワードファイルをスタンバイホストにコピーし、 `gcloud compute scp`：
++
+[source, bash]
+----
+PRIMARY_ZONE=us-west1-a       # zone of oracdb1
+STANDBY_ZONE=us-west1-b       # zone of oracdb2
+
+gcloud compute scp \
+  oracdb1:/u01/app/oracle/product/26ai/db_1/dbs/orapworcl ./orapworcl \
+  --zone=$PRIMARY_ZONE --tunnel-through-iap
+
+gcloud compute scp \
+  ./orapworcl oracdb2:/u01/app/oracle/product/26ai/db_1/dbs/orapworcls \
+  --zone=$STANDBY_ZONE --tunnel-through-iap
+----
+. プライマリデータベースから `compatible`パラメータ値をクエリします：
++
+[source, bash]
+----
+# On oracdb1
+sudo -u oracle sqlplus -s / as sysdba \
+  <<<"SELECT value FROM v\$parameter WHERE name='compatible';"
+----
+.  `oracdb2`でスタンバイpfileを作成し、パスワードファイルの所有権を設定して、インスタンスをNOMOUNTモードで起動します。前のステップの `compatible`の値を `<COPY_FROM_PRIMARY>`に代入します：
++
+[source, bash]
+----
+sudo -u oracle mkdir -p /u01/app/oracle/admin/orcls/adump
+sudo chown oracle:oinstall /u01/app/oracle/product/26ai/db_1/dbs/orapworcls
+sudo chmod 0600 /u01/app/oracle/product/26ai/db_1/dbs/orapworcls
+
+sudo -u oracle tee /u01/app/oracle/product/26ai/db_1/dbs/initorcls.ora >/dev/null <<'EOF'
+*.db_name='orcl'
+*.db_unique_name='orcls'
+*.audit_file_dest='/u01/app/oracle/admin/orcls/adump'
+*.diagnostic_dest='/u01/app/oracle'
+*.compatible='<COPY_FROM_PRIMARY>'
+*.sga_target=3072m
+*.pga_aggregate_target=1024m
+*.processes=320
+*.remote_login_passwordfile='EXCLUSIVE'
+*.standby_file_management='AUTO'
+*.fal_server='orcl'
+*.log_archive_config='DG_CONFIG=(orcl,orcls)'
+*.log_archive_dest_1='LOCATION=+RECO VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=orcls'
+*.log_archive_dest_2='SERVICE=orcl AFFIRM SYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=orcl'
+*.log_archive_dest_state_2='DEFER'
+*.log_archive_format='%t_%s_%r.arc'
+*.dg_broker_start=TRUE
+*.undo_tablespace='UNDOTBS1'
+*.open_cursors=300
+*.db_create_file_dest='+DATA'
+*.db_create_online_log_dest_1='+DATA'
+*.db_recovery_file_dest='+FRA'
+*.db_recovery_file_dest_size=25000m
+EOF
+
+echo "orcls:/u01/app/oracle/product/26ai/db_1:N" | sudo tee -a /etc/oratab
+
+sudo -u oracle bash -c '
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export ORACLE_SID=orcls
+sqlplus / as sysdba <<SQL
+STARTUP NOMOUNT PFILE=/u01/app/oracle/product/26ai/db_1/dbs/initorcls.ora;
+EXIT
+SQL
+'
+----
++
+スタンバイインスタンスは現在、<<gcnv-standby-initialization,ステップ3：GCNVを使用してスタンバイストレージを初期化する>> までデータファイルなしでNOMOUNTモードになっています。
+
+
+
+
+
+== ステップ3：GCNVを使用してスタンバイストレージを初期化する
+
+スタンバイボリュームを `oracle-pool-b`にシードし、それらを `oracdb2`にアタッチし、ASMディスクグループをマウントして、スタンバイインスタンスをMOUNT状態に確定します。
+
+本番環境へのシードには GCNV レプリケーションを使用し、単発のラボワークフローにはスナップショット シードを使用してください。
+
+
+
+=== シードパスを選択します
+
+環境とリカバリ要件に基づいて、スタンバイシード方式を選択してください。
+
+* *本番環境での推奨:* <<create-volume-replications,レプリケーションパス：レプリケーションの作成と同期>> および <<cutover-quiesce-stop-repl-attach,レプリケーションパス：スタンバイボリュームのカットオーバーと接続>> のレプリケーションパスを使用してください。
+* *ラボ向けの代替案:* <<snapshot-seed,代替パス：スナップショットからのシード>>を使用します。
+
+
+すべてのパスは<<standby-iscsi-and-asm-before-rman,スタンバイASMディスクグループのマウント>>と<<oracle-finalize,スタンバイインスタンスを確定する>>で合流します。
+
+
+
+=== 前提条件を確認する
+
+スタンバイボリュームにシードデータを送信する前に、以下の前提条件を確認してください。
+
+* `gcloud netapp`ボリューム レプリケーションに対応しています。
+* 異なる場所にある2つの*デフォルトモード*プール(`oracle-pool-a` `oracle-pool-b`）。
+* プライマリ プール上のソース ボリュームが `oracdb1-hg`に接続され、レプリケーションによって宛先ボリュームが作成されます。
+* レプリケーションは、DB VMからではなく、Cloud Shellまたはワークステーションから実行してください。
+*  `oracdb2`で、xref:gcnv-oracle-provision-storage.adoc#configure-iscsi-and-multipath[ステップ4]、xref:gcnv-oracle-provision-storage.adoc#partition-asm-backing-devices[ステップ5]、およびxref:gcnv-oracle-provision-storage.adoc#format-and-mount-u01[ステップ6]から iSCSI および ASM ホストのセットアップを完了します。
++
+[source, bash]
+----
+export PROJECT=<your-gcp-project>
+export LOC_A=us-west1-a
+export LOC_B=us-west1-b
+export DEST_POOL="projects/${PROJECT}/locations/${LOC_B}/storagePools/oracle-pool-b"
+----
+* 必要に応じてスタンバイプールを作成します。
++
+[source, bash]
+----
+gcloud netapp storage-pools create oracle-pool-b \
+  --project="${PROJECT}" --location="${LOC_B}" \
+  --service-level=flex --type=unified --mode=default \
+  --capacity=1024 --network=name=<your-vpc>
+----
+
+
+
+
+=== レプリケーションを作成して同期する
+
+プライマリボリュームからスタンバイボリュームへのレプリケーション関係を作成し、初期同期が完了するまで待ちます。
+
+[source, bash]
+----
+gcloud netapp volumes replications create repl-oracdb2-data \
+  --project="${PROJECT}" --location="${LOC_A}" --volume=oracdb1_data \
+  --replication-schedule=EVERY_10_MINUTES \
+  --destination-volume-parameters="storage_pool=${DEST_POOL},volume_id=oracdb2_data,share_name=oracdb2_data"
+
+gcloud netapp volumes replications create repl-oracdb2-reco \
+  --project="${PROJECT}" --location="${LOC_A}" --volume=oracdb1_reco \
+  --replication-schedule=EVERY_10_MINUTES \
+  --destination-volume-parameters="storage_pool=${DEST_POOL},volume_id=oracdb2_reco,share_name=oracdb2_reco"
+----
++
+
+ `mirrorState`が `MIRRORED`になり、各レプリケーションの初期同期が完了するまで待ちます。
+
+
+
+=== 切り替えてスタンバイボリュームを接続する
+
+プライマリを静止状態にし、最終同期後にレプリケーションを停止し、宛先ボリュームをスタンバイホストグループにアタッチします。
+
+プライマリ側で、書き込みを静止させ、リカバリメタデータを取得します。
+
+[source]
+----
+ALTER DATABASE BEGIN BACKUP;
+SELECT CURRENT_SCN FROM V$DATABASE;
+ALTER DATABASE CREATE STANDBY CONTROLFILE AS '/tmp/orcls_stby.ctl';
+----
+最後に1回のレプリケーションサイクルを実行した後、レプリケーションを停止します。
+
+[source, bash]
+----
+gcloud netapp volumes replications stop repl-oracdb2-data \
+  --project="${PROJECT}" --location="${LOC_A}" --volume=oracdb1_data --force
+
+gcloud netapp volumes replications stop repl-oracdb2-reco \
+  --project="${PROJECT}" --location="${LOC_A}" --volume=oracdb1_reco --force
+----
+宛先ボリュームを `oracdb2-hg`にアタッチします（複製されたLUNはソース名を保持する場合があります）：
+
+[source, bash]
+----
+HG=$(gcloud netapp host-groups describe oracdb2-hg --project="${PROJECT}" \
+  --location=us-west1 --format='value(name)')
+
+gcloud netapp volumes update oracdb2_data --project="${PROJECT}" --location="${LOC_B}" \
+  --block-devices="name=oracdb1_data_lun,host-groups=${HG},os-type=LINUX"
+----
+スタンバイ制御ファイルを `oracdb2`にコピーし、プライマリのバックアップモードを終了します。
+
+[source]
+----
+ALTER DATABASE END BACKUP;
+----
+
+
+=== スナップショットからのシード
+
+連続レプリケーションが不要な場合の1回限りのラボシードには、このパスを使用してください。
+
+一度限りのラボシードの場合、ソーススナップショットを作成し、そのスナップショットからスタンバイボリュームを `oracle-pool-b`（Cloud Console または API）で作成します。作成したボリュームを `oracdb2-hg`にアタッチし、<<standby-iscsi-and-asm-before-rman,スタンバイASMディスクグループのマウント>>に進みます。
+
+
+
+=== スタンバイASMディスクグループのマウント
+
+スタンバイホストで、接続されているストレージパスを検出し、データベース リカバリの前に ASM ディスクグループをマウントします。
+
+ `oracdb2`で、スタンバイプール iSCSI ポータルにログインし、マルチパスデバイスを再スキャンします。ASM ディスクヘッダーがラボワークフローのプライマリ命名と一致する場合は、プライマリスタイルのエイリアス （例： `ora_oracdb1_data_01`、 `ora_oracdb1_arch_01`） を使用し、 `asm_diskstring='/dev/mapper/ora_oracdb1_*p*'`を設定して、パーティションの所有権が `grid:asmadmin`であることを確認してから、ディスクグループをマウントします：
+
+[source]
+----
+ALTER DISKGROUP DATA MOUNT FORCE;
+ALTER DISKGROUP RECO MOUNT FORCE;
+ALTER DISKGROUP FRA MOUNT FORCE;
+----
+
+
+=== スタンバイインスタンスを確定する
+
+スタンバイ制御ファイルを復元し、キャプチャしたSCNにリカバリし、物理スタンバイに変換して、マネージドリカバリを開始します。
+
+[source]
+----
+STARTUP NOMOUNT;
+RESTORE STANDBY CONTROLFILE FROM '/tmp/orcls_stby.ctl';
+ALTER DATABASE MOUNT;
+RECOVER DATABASE UNTIL SCN <quiesce_scn>;
+ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+----
+この時点で、スタンバイは `PHYSICAL STANDBY`および `MOUNTED`で、管理リカバリが開始された状態になっているはずです。
+
+*ティア別の次のステップ：*
+
+* *Prod HA (no Data Guard):* 直接<<register-standby-with-oracle-restart,ステップ4：Oracle Restartにスタンバイを登録する>>に進みます。
+* *Prod HA (Data Guard + FSFO):* <<register-standby-with-oracle-restart,ステップ4：Oracle Restartにスタンバイを登録する>>に進み、次にxref:gcnv-oracle-standby-finalize-dg.adoc[Data Guardの最終処理手順]に進みます。
+
+
+
+
+== ステップ4：Oracle Restartにスタンバイを登録する
+
+スタンバイデータベースをOracle Restartに登録すると、再起動時にASMディスク グループの自動リカバリ、スタンバイデータベースのマウント、およびマネージドリカバリの再開が自動的に行われます。また、アプリケーション サービスを両方のデータベースリソースに追加します。
+
+. スタンバイデータベースからspfileの場所を取得し、 `oracdb2`のOracle Restartに登録します。 `<STANDBY_SPFILE_PATH>`をクエリから置き換えます（多くの場合、 `+DATA`の下）：
++
+[source, bash]
+----
+sudo -u oracle bash -c '
+export ORACLE_SID=orcls
+sqlplus -s / as sysdba <<< "SHOW PARAMETER spfile;"
+'
+
+sudo -u oracle bash -c '
+export GRID_HOME=/u01/app/26ai/grid
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+
+srvctl add database \
+  -db orcls \
+  -dbname orcl \
+  -oraclehome /u01/app/oracle/product/26ai/db_1 \
+  -spfile <STANDBY_SPFILE_PATH> \
+  -pwfile /u01/app/oracle/product/26ai/db_1/dbs/orapworcls \
+  -role PHYSICAL_STANDBY \
+  -startoption MOUNT \
+  -stopoption IMMEDIATE \
+  -diskgroup DATA,RECO,FRA
+
+srvctl config database -db orcls
+srvctl status database -db orcls
+'
+----
+.  `oracdb1`のプライマリデータベースリソースを確認して更新し、すべての ASM ディスク グループの依存関係を含めます：
++
+[source, bash]
+----
+sudo -u oracle bash -c '
+export GRID_HOME=/u01/app/26ai/grid
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+srvctl config database -db orcl
+srvctl modify database -db orcl -diskgroup DATA,RECO,FRA
+srvctl config database -db orcl
+'
+----
+. アプリケーション サービスを、 `oracdb2`上のスタンバイ データベース リソース（(`orcls`）に追加します。スイッチオーバー後に `orclapp`を利用できるように、両側で `role PRIMARY`を使用します：
++
+[source, bash]
+----
+sudo -u oracle bash -c '
+export GRID_HOME=/u01/app/26ai/grid
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+
+srvctl add service \
+  -db orcls \
+  -service orclapp \
+  -pdb orclpdb \
+  -role PRIMARY \
+  -policy AUTOMATIC
+
+srvctl config service -db orcls -service orclapp
+'
+----
+. スタンバイデータベースリソースを確認します `oracdb2`：
++
+[source, bash]
+----
+sudo -u oracle bash -c '
+export GRID_HOME=/u01/app/26ai/grid
+export ORACLE_HOME=/u01/app/oracle/product/26ai/db_1
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+srvctl status database -db orcls
+'
+----
+
+
+
+
+== 次の手順
+
+*ティア別：*
+
+* *Prod HA (データガードなし):* ストレージレプリケーションベースのリカバリターゲットを維持するために、スタンバイ初期化が完了し、スタンバイデータベースがバックアップインスタンスとしてOracle Restartに登録されます。
+* *Prod HA (Data Guard + FSFO):* ブローカー管理のスイッチオーバーと高速スタートフェイルオーバーを有効にするには、xref:gcnv-oracle-standby-finalize-dg.adoc[Data Guard用のスタンバイデータベースを確定する]に進みます。
+

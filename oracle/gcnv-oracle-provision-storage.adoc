@@ -1,0 +1,293 @@
+---
+sidebar: sidebar 
+permalink: oracle/gcnv-oracle-provision-storage.html 
+keywords: oracle database, google cloud netapp volumes, gcnv, iscsi, multipath, asm, storage pool, host group, iSCSI initiator 
+summary: Google Compute Engine 上での Oracle Database 26ai の高可用性のために、Google Cloud NetApp Volumes iSCSI ストレージをプロビジョニングします。この手順では、Flex Unified ストレージプールの作成、ホストグループの定義、各データベースホスト用の iSCSI ボリュームの作成、Linux iSCSI とマルチパスの構成、ASM バッキングデバイスのパーティショニング、および /u01 ファイルシステムのマウントについて説明します。 
+---
+= Oracle Database 26ai 向け Google Cloud NetApp Volumes iSCSI ストレージのプロビジョニング
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google Cloud NetApp Volumes iSCSI ブロックストレージをプロビジョニングします。この手順では、GCNV Flex Unified ストレージ プールの作成、ホスト グループの定義、各データベース ホストの iSCSI ボリュームの作成、Linux iSCSI とマルチパスの構成、ASM バッキング デバイスのパーティショニング、および `/u01`ファイルシステムのマウントについて説明します。
+
+
+
+== ステップ 1：GCNV iSCSI プールを作成する
+
+プライマリホストとスタンバイホストにiSCSIボリュームを提供するために、各データベースゾーンに1つずつ、合計2つのFlex Unifiedストレージプールを作成します。各データベースホストは、自身のローカルゾーンのプールからボリュームを使用します。
+
+. Cloud Console を使用して、2つのストレージ プールを作成します。下記の表の仕様を使用して、各ゾーンの作成プロセスを繰り返します。
++
+[cols="1,1,2"]
+|===
+| プール名 | ゾーン | 使用者 
+
+
+| `oracle-pool-a` | `us-west1-a` | `oracdb1`（プライマリ） 
+
+
+| `oracle-pool-b` | `us-west1-b` | `oracdb2`（スタンバイ） 
+|===
++
+*NetApp Volumes → Storage pools → Create* （各プールに対して）：
+
++
+** *サービスレベル：* Flex（Premiumではありません）
+** *タイプ：* 統合型
+** *ゾーン：*データベースVMゾーンに一致します(`us-west1-a`/ `us-west1-b`）
+** *PSA:* に接続 `oracle-vpc`
+** *容量：*ワークロードに合わせてサイズが設定されます。リドゥ、バックアップ、またはリストアがデフォルトの余裕を超える場合（製品制限ごとにプールあたり最大5120 MiB/sまたは160K IOPS）、カスタムプロビジョニングされたスループット/IOPSを使用します。
+
+
+. 両方のプールが `READY`ステータスになるまで待ってから続行してください。プールのサイズをデータベースのフットプリントに合わせてスケールします（<<create-gcnv-iscsi-volumes,ステップ3：GCNV iSCSIボリュームを作成する>> の値は例です）：
++
+[NOTE]
+====
+*デフォルトモード（このガイド）：* Flex Unified プールはデフォルトモードを使用します(`--mode=default`)。Cloud Console または `gcloud netapp`でプールと iSCSI ボリュームを作成します。ボリュームのレプリケーション、スナップショット、クローンは、Google Cloud API を使用します（xref:gcnv-oracle-standby-database.adoc#gcnv-standby-initialization[ステップ3：GCNVスタンバイの初期化]）。
+
+====
+
+
+
+
+== ステップ 2：ホスト グループを作成する
+
+データベースホストごとにホストグループを1つ作成することで、各仮想マシンは自身のボリュームのみを参照できるようになります。プライマリホストとスタンバイホストは、独立したストレージを維持するために、GCNV iSCSIボリュームを共有してはなりません。
+
+. Cloud Console を使用して `oracdb1`のホストグループを作成します：
++
+*NetApp Volumes → ホストグループ → 作成*
+
++
+** *名前：* `oracdb1-hg`
+** *リージョン：* `us-west1`
+** *タイプ：* iSCSIイニシエータ
+** *OS タイプ：* Linux
+** *ホスト：* `oracdb1`からIQNを貼り付けます（ `/etc/iscsi/initiatorname.iscsi`の値）
+** *概要：* "Oracleプライマリホスト oracdb1"
+** *作成*
+
+
+. プロセスを繰り返して `oracdb2`名前 `oracdb2-hg`と`oracdb2`のIQNを使用します。オブザーバーホストにはGCNVリソースは必要ありません。
+
+
+
+
+== ステップ3：GCNV iSCSI ボリュームを作成する
+
+各データベースホスト用に 5 つの GCNV iSCSI ボリュームを作成します。1 つは `/u01`用、4 つは ASM バッキングデバイス用です。各ホストのボリュームは、対応するホストグループとともに、そのホストのローカルゾーンのストレージプール内に作成する必要があります。
+
+.  `oracdb1`の5つのボリュームを `oracle-pool-a`でホストグループ `oracdb1-hg`を使用して作成します。以下の表の仕様を使用してください。
++
+[cols="2,1,3,2"]
+|===
+| GCNV iSCSI ボリューム | サイズ | 用途 | マルチパス エイリアス 
+
+
+| `ora_<host>_u01` | 100 GiB | `/u01` GCNV iSCSI ボリューム — Grid/Oracle ホーム、ステージング | `/dev/mapper/ora_<host>_u01` 
+
+
+| `ora_<host>_data_01` | 50 GiB | ASM `+DATA` | `/dev/mapper/ora_<host>_data_01` 
+
+
+| `ora_<host>_data_02` | 50 GiB | ASM `+DATA` （ストライプ） | `/dev/mapper/ora_<host>_data_02` 
+
+
+| `ora_<host>_arch_01` | 100 GiB | ASM `+RECO` | `/dev/mapper/ora_<host>_arch_01` 
+
+
+| `ora_<host>_fra_01` | 100 GiB | ASM `+FRA` | `/dev/mapper/ora_<host>_fra_01` 
+|===
++
+ボリューム名：英字、数字、アンダースコアのみ使用可能（ハイフンは不可）。
+
++
+[NOTE]
+====
+*最小限のレイアウト（検証のみ）：* ホストあたり2つのLUN(`*_data` `*_reco`）と `arch_01p1`→`+RECO`および `arch_01p2`→`+FRA`はラボでの使用には適しています。本番環境では<<create-gcnv-iscsi-volumes,ステップ3：GCNV iSCSIボリュームを作成する>>あたり5つのボリュームを使用します。
+
+====
+. 同じ仕様を使用して、 `oracle-pool-b`内の `oracdb2`用にホストグループ `oracdb2-hg`を持つ5つのボリュームを作成します。各プールで、*NetApp Volumes → Volumes → Create* — iSCSI、正しいプールおよびホストグループ、Linuxを使用します。次の情報を記録します：
++
+** iSCSI ポータル IP → `<ISCSI_PORTAL_1>`、 `<ISCSI_PORTAL_2>`（ `oracdb1` 上のプライマリプールポータル、 `oracdb2` 上のスタンバイプールポータル。両者は異なる場合があります）
+** クラウドコンソールからのボリュームシリアル：ホストで検出されたWWIDで使用<<configure-iscsi-and-multipath,ステップ4：Google Cloud NetApp Volumes iSCSIボリューム用にLinux iSCSIとマルチパスを設定する>>
+
+
+
+
+
+
+== ステップ4：iSCSIとマルチパスの設定
+
+各データベースホストでiSCSIとdevice-mapper-multipathを設定し、両方のストレージポータルIP経由でGCNVボリュームにアクセスできるようにします。以下の手順を `oracdb1`プライマリプールのポータルIPを使用して実行し、次に `oracdb2`スタンバイプールのポータルIPを使用して繰り返します。ホストの送信が制限されている場合、各データベースVMからGCNV iSCSIポータルIPへのTCP/3260を許可します（xref:gcnv-oracle-provision-compute.adoc#vpc-firewall-allow-1521[ステップ2：VPCファイアウォール — 3つのゾーンすべてでTCP/1521を許可リストに追加する]からのVM間TCP/1521に加えて）。
+
+. ターゲットを検出し、ログインして、ノードの起動状態を維持する：
++
+[source, bash]
+----
+sudo iscsiadm --mode discovery --op update --type sendtargets --portal <ISCSI_PORTAL_1>
+sudo iscsiadm --mode discovery --op update --type sendtargets --portal <ISCSI_PORTAL_2>
+sudo iscsiadm --mode node --op update --name node.startup --value automatic
+sudo iscsiadm --mode node -l all
+sudo systemctl enable --now iscsid iscsi multipathd
+sudo iscsiadm --mode session         # expect 10 sessions (5 GCNV iSCSI volumes × 2 portals)
+sudo lsblk -o NAME,SIZE,WWN,VENDOR,MODEL
+----
++
+再起動後、Oracle を起動する前に再度確認してください：
+
++
+[source, bash]
+----
+sudo iscsiadm --mode session
+sudo multipath -ll
+----
+. デフォルト設定とブラックリストルールを使用して `device-mapper-multipath`を設定する：
++
+[source, bash]
+----
+sudo tee /etc/multipath.conf >/dev/null <<'EOF'
+defaults {
+    find_multipaths     yes
+    user_friendly_names yes
+}
+blacklist {
+    devnode "^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*"
+    devnode "^hd[a-z]"
+    devnode "^cciss.*"
+}
+EOF
+
+sudo systemctl enable --now multipathd
+sudo multipath -ll
+----
+. ホストが検出した WWID エイリアスを `/etc/multipath.conf`に追加します（推測しないでください — `multipath.conf`はシェル変数を展開*しません*）。WWID を検出：
++
+[source, bash]
+----
+sudo multipath -ll
+for dev in /dev/sd*; do
+  [ -b "$dev" ] || continue
+  printf '%s: ' "$dev"
+  sudo /usr/lib/udev/scsi_id --whitelisted --device="$dev" 2>/dev/null || true
+  echo
+done
+----
++
+そのホストの具体的なエイリアスを `/etc/multipath.conf`に追加し、次に `sudo systemctl restart multipathd`を実行します。
+
++
+ `oracdb1`で、次を追加します。
+
++
+[source]
+----
+multipaths {
+    multipath { wwid <host-discovered-wwid-for-u01>      alias ora_oracdb1_u01     }
+    multipath { wwid <host-discovered-wwid-for-data-01>  alias ora_oracdb1_data_01 }
+    multipath { wwid <host-discovered-wwid-for-data-02>  alias ora_oracdb1_data_02 }
+    multipath { wwid <host-discovered-wwid-for-arch-01>  alias ora_oracdb1_arch_01 }
+    multipath { wwid <host-discovered-wwid-for-fra-01>   alias ora_oracdb1_fra_01  }
+}
+----
++
+ `oracdb2`では、 `ora_oracdb2_*`エイリアスで同じパターンを使用し、次に：
+
++
+[source, bash]
+----
+sudo systemctl restart multipathd
+ls -l /dev/mapper/ora_$(hostname -s)_*
+----
+
+
+
+
+== ステップ5：ASMデバイスをパーティション分割する
+
+4 つの ASM バッキング デバイス （ `u01` を除く） をそれぞれ 1 つの GPT パーティションで ASM 消費用にパーティション分割し、グリッド所有権の udev ルールを設定します。各データベースホストで以下の手順を実行します。
+
+. 4つのASMバッキングデバイスをGPTでパーティション分割し、パーティションを確認します：
++
+[source, bash]
+----
+HOST=$(hostname -s)        # oracdb1 on the primary, oracdb2 on the standby
+for dev in /dev/mapper/ora_${HOST}_data_01 \
+           /dev/mapper/ora_${HOST}_data_02 \
+           /dev/mapper/ora_${HOST}_arch_01 \
+           /dev/mapper/ora_${HOST}_fra_01; do
+  sudo parted -s "$dev" mklabel gpt
+  sudo parted -s "$dev" mkpart primary 0% 100%
+done
+sudo partprobe
+sudo systemctl reload multipathd
+ls /dev/mapper/ora_${HOST}_*p1     # expect 4 partitions
+----
+. グリッドの所有権を割り当て、変更をトリガーするようにudevルールを設定します。
++
+[source, bash]
+----
+HOST=$(hostname -s)
+sudo tee /etc/udev/rules.d/99-oracle-asm.rules >/dev/null <<'EOF'
+KERNEL=="dm-*", ENV{DM_UUID}=="part?-mpath-*", ENV{DM_NAME}=="ora_oracdb*_*p?", \
+    OWNER="grid", GROUP="asmadmin", MODE="0660"
+EOF
+
+sudo udevadm control --reload-rules
+for part in /dev/mapper/ora_${HOST}_*p1; do
+  dm=$(readlink -f "$part" | xargs basename)
+  sudo udevadm trigger --action=change --name-match="/dev/${dm}"
+done
+sudo udevadm settle
+ls -lL /dev/mapper/ora_${HOST}_*p1    # grid:asmadmin 0660
+----
+
+
+
+
+== ステップ6：フォーマットとマウント `/u01`
+
+ `ora_<host>_u01` GCNV ボリュームを XFS でフォーマットし、 `/etc/fstab` で UUID を使用して永続的にマウントします。 `/u01` ファイルシステムには、Grid ホーム、Oracle ホーム、およびステージング ファイルが格納されます。
+
+. マルチパスデバイスをXFSでフォーマットし、そのUUIDを取得します。
++
+[source, bash]
+----
+HOST=$(hostname -s)
+U01_DEV=/dev/mapper/ora_${HOST}_u01
+ls -l "$U01_DEV"
+
+sudo mkfs.xfs -f "$U01_DEV"
+U01_UUID=$(sudo blkid -s UUID -o value "$U01_DEV")
+----
+. UUIDベースのマウントエントリを `/etc/fstab`に追加し、ファイルシステムをマウントします：
++
+[source, bash]
+----
+sudo mkdir -p /u01
+echo "UUID=${U01_UUID} /u01 xfs defaults,_netdev,nofail,x-systemd.requires=iscsi.service,x-systemd.requires=multipathd.service,x-systemd.after=iscsi.service,x-systemd.after=multipathd.service 0 0" | sudo tee -a /etc/fstab
+sudo mount -a
+----
+. GridおよびOracleソフトウェア用に適切な所有権を持つディレクトリ構造を作成します。
++
+[source, bash]
+----
+sudo mkdir -p /u01/app/oraInventory /u01/app/26ai/grid /u01/app/grid \
+  /u01/app/oracle/product/26ai/db_1 /u01/stage
+sudo chown -R grid:oinstall /u01/app/oraInventory /u01/app/26ai /u01/app/grid
+sudo chown -R oracle:oinstall /u01/app/oracle /u01/stage
+sudo chmod -R 775 /u01/app /u01/stage
+----
++
+1回再起動し、xref:gcnv-oracle-install-software.adoc[Oracleソフトウェアのインストール] の前に  `/u01` がマウントされることを確認します。
+
+
+
+
+
+== 次の手順
+
+Oracle Grid InfrastructureおよびDatabaseバイナリを準備済みのホストにインストールするには、両方のホストでxref:gcnv-oracle-install-software.adoc[Oracle Grid InfrastructureおよびOracle Databaseソフトウェアをインストールします]に移動してください。

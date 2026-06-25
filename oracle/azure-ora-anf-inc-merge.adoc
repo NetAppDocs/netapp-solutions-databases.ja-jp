@@ -20,6 +20,7 @@ summary: このソリューションは、 Azure NetApp Files容量プールの 
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Recovery Manager (RMAN) バックアップ ツールを使用して Oracle 内の非常に大規模なデータベース (VLDB) をリカバリすることは、非常に困難な作業になる可能性があります。障害発生時にバックアップ メディアからデータベースを復元するプロセスには時間がかかり、データベースの回復が遅れ、サービス レベル アグリーメント (SLA) に重大な影響を及ぼす可能性があります。ただし、バージョン 10g 以降、Oracle では RMAN 機能が導入され、ユーザーは DB サーバー ホストにある追加のディスク ストレージに Oracle データベース データ ファイルのステージングされたイメージ コピーを作成できるようになりました。これらのイメージ コピーは、RMAN を使用して毎日増分更新できます。障害が発生した場合、データベース管理者 (DBA) は、Oracle データベースを障害の発生したメディアからイメージ コピーに迅速に切り替えることができるため、データベース メディアを完全に復元する必要がなくなります。その結果、必要なデータベース ストレージが 2 倍になるというコストはかかりますが、SLA は大幅に改善されます。
@@ -35,6 +36,7 @@ VLDB の SLA を重視し、Oracle データベースを Azure などのパブ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ VLDB の SLA を重視し、Oracle データベースを Azure などのパブ�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある Microsoft ANF 容量プール ストレージと Azure VM コンピューティング環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:azure-ora-anf-vldb-architecture.png["この画像は、ANF を使用した Azure パブリック クラウドでの Oracle VLDB 増分マージ実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -90,6 +95,7 @@ image:azure-ora-anf-vldb-architecture.png["この画像は、ANF を使用した
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *RMAN 増分マージ用の Oracle VLDB ストレージ レイアウト。*当社のテストと検証では、Oracle 増分バックアップおよびマージ用の NFS ボリュームは、ボリュームあたり 100 TiB、合計容量制限が 1000 TiB の単一の ANF 容量プールから割り当てられます。しきい値を超える展開では、複数のボリュームと ANF 容量プールを複数の NFS マウント ポイントと並列に連結して、より高い容量を提供できます。
@@ -102,6 +108,7 @@ image:azure-ora-anf-vldb-architecture.png["この画像は、ANF を使用した
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 Oracle VLDB が既に VNet 内の Azure クラウド環境にデプロイされているものと想定されます。  Azure での Oracle の展開に関してヘルプが必要な場合は、次の技術レポートを参照してください。
@@ -114,6 +121,7 @@ Oracle VLDB は、ANF ストレージまたは Azure クラウド エコシス�
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -131,6 +139,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[provision-and-export-nfs-volume-to-be-mounted-on-primary-oracle-vldb-server]]
 === プライマリ Oracle VLDB サーバーにマウントされる NFS ボリュームをプロビジョニングしてエクスポートします。
 
 [%collapsible%open]
@@ -183,6 +192,7 @@ sudo chown oracle:oinstall /nfsanf
 ====
 
 
+[[setup-oracle-rman-incremental-merge-to-image-copy-on-anf]]
 === ANF 上のイメージ コピーに Oracle RMAN 増分マージを設定する
 
 [%collapsible%open]
@@ -810,6 +820,7 @@ total 399482176
 ====
 
 
+[[switch-oracle-vldb-to-image-copy-for-quick-recovery]]
 === 迅速なリカバリのためにOracle VLDBをイメージコピーに切り替える
 
 [%collapsible%open]
@@ -1092,6 +1103,7 @@ SQL>
 ====
 
 
+[[oracle-vldb-recovery-from-image-copy-to-a-standby-db-server]]
 === イメージコピーからスタンバイDBサーバーへのOracle VLDBリカバリ
 
 [%collapsible%open]
@@ -1863,6 +1875,7 @@ SQL>
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

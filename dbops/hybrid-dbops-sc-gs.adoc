@@ -18,6 +18,7 @@ keywords: introduction, workflow
 
 
 
+[[on-premises]]
 == オンプレミス
 
 * SnapCenterでデータベース管理者ユーザーを設定する
@@ -33,6 +34,7 @@ keywords: introduction, workflow
 
 
 
+[[aws-public-cloud]]
 == AWSパブリッククラウド
 
 * 飛行前点検

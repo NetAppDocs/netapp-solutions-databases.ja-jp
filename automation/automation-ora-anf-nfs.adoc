@@ -20,6 +20,7 @@ summary: このソリューションは、NFS プロトコルを使用したプ�
 
 
 
+[[purpose]]
 == 目的
 
 パフォーマンスが重視され、レイテンシが重視される Oracle ワークロードをクラウドで実行するのは難しい場合があります。  Azure NetApp Files (ANF) を使用すると、企業の基幹業務 (LOB) およびストレージ プロフェッショナルは、コードを変更することなく、要求の厳しい Oracle ワークロードを簡単に移行して実行できます。  Azure NetApp Files は、オンプレミスから Azure への Oracle データベースの新規展開や移行 (リフト アンド シフト) など、さまざまなシナリオで基盤となる共有ファイル ストレージ サービスとして広く使用されています。
@@ -34,6 +35,7 @@ summary: このソリューションは、NFS プロトコルを使用したプ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ summary: このソリューションは、NFS プロトコルを使用したプ�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -104,6 +109,7 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 |===
 
 
+[[oracle-database-configuration-in-the-lab-environment]]
 === ラボ環境での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -123,6 +129,7 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *Oracle データベースのストレージ レイアウト。*この自動化された Oracle デプロイメントでは、デフォルトで Oracle バイナリ、データ、およびログをホストするために、データベースごとに 3 つのデータベース ボリュームをプロビジョニングします。ボリュームは、NFS 経由で Oracle DB サーバーに /u01 - バイナリ、/u02 - データ、/u03 - ログとしてマウントされます。冗長性のために、/u02 および /u03 マウント ポイントにデュアル制御ファイルが構成されています。
@@ -134,12 +141,14 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、NFS 経由で Azure VM に直接マウントされたデータベース ボリュームを使用して、 Azure NetApp Filesで Oracle 19c を自動化してデータベースを移行するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -198,6 +207,7 @@ video::d1c859b6-e45a-44c7-8361-b10f012fc89b[panopto,width=360]
 ====
 
 
+[[automation-parameter-files]]
 === 自動化パラメータファイル
 
 [%collapsible%open]
@@ -214,6 +224,7 @@ Ansible プレイブックは、事前定義されたパラメータを使用し
 ====
 
 
+[[parameter-files-configuration]]
 === パラメータファイルの構成
 
 [%collapsible%open]
@@ -292,6 +303,7 @@ nfs_lif: 172.30.136.68
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -356,6 +368,7 @@ ansible-playbook -i hosts 5-destroy.yml -u azureuser -e @vars/vars.yml
 ====
 
 
+[[post-execution-validation]]
 === 実行後の検証
 
 [%collapsible%open]
@@ -593,6 +606,7 @@ image:automation-ora-anf-nfs-em-001.png["この画像はOracle Enterprise Manage
 ====
 
 
+[[migrate-oracle-database-to-azure]]
 === Oracle データベースを Azure に移行する
 
 [%collapsible%open]
@@ -602,6 +616,7 @@ image:automation-ora-anf-nfs-em-001.png["この画像はOracle Enterprise Manage
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 [%collapsible%open]
@@ -611,6 +626,7 @@ NetApp は、Azure クラウドに展開された Oracle データベースを�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

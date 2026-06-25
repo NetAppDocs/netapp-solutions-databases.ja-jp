@@ -15,6 +15,7 @@ Google Compute Engine 上で Oracle Database 26ai の高可用性を実現する
 
 
 
+[[access-and-apis]]
 == アクセスとAPI
 
 ホストとストレージ プロビジョニングを開始する前に、このチェックリストを使用して権限とプラットフォームの準備状況を確認します。
@@ -53,6 +54,7 @@ timedatectl
 |===
 
 
+[[whats-next]]
 == 次の手順
 
 Oracleホストインフラストラクチャを高可用性用にプロビジョニングするには、xref:gcnv-oracle-provision-compute.adoc[Oracle Database 26ai 用の Google Compute Engine インスタンスのプロビジョニング]に進みます。

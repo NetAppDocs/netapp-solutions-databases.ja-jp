@@ -24,10 +24,12 @@ Swingbench Sales Order Entry (SOE) モジュールを使用して OLTP タイプ
 
 
 
+[[test-environment-setup]]
 == テスト環境のセットアップ
 
 
 
+[[compute]]
 === コンピューティング
 
 8vCPU、32G RAM、10Gps のネットワーク帯域幅を備えた EC2 M5 インスタンスをデプロイしました。
@@ -36,6 +38,7 @@ image:aws-ora-fsx-ec2-inst-010.png["入出力ダイアログまたは書かれ�
 
 
 
+[[fsx-storage]]
 === FSxストレージ
 
 次のように、3 つのデータベース ボリュームを作成し、EC2 インスタンスに NFS を使用してボリュームをマウントしました。
@@ -53,6 +56,7 @@ FSx ファイル システムは、80,000 IOPS 容量と 2GiBps I/O スループ
 
 
 
+[[oracle-configuration]]
 === Oracle構成
 
 Oracle バージョン 19c と RU パッチ 19.8 をインストールしました。サーバー上で dNFS が有効になりました。
@@ -63,6 +67,7 @@ image:aws-ora-fsx-ec2-inst-011.png["入出力ダイアログまたは書かれ�
 
 
 
+[[swingbench-configuration]]
 === スイングベンチ構成
 
 8vCPU と 32G RAM を搭載した Windows ホストに Swingbench 2.6 (最新バージョン) を導入しました。ベンチマークには SOE plsql テスト モジュール バージョン 2 を使用しました。デフォルトの負荷プロファイルは、実際の OLTP トランザクション ワークロードをシミュレートするために 80/20 の読み取り/書き込み比率を提供します。
@@ -77,6 +82,7 @@ image:aws-ora-fsx-ec2-swin-001.png["入出力ダイアログまたは書かれ�
 
 
 
+[[test-results-analysis]]
 == テスト結果の分析
 
 各テスト実行の Swingbench 結果をキャプチャし、パフォーマンス分析用の対応する Oracle AWR レポートを取得しました。

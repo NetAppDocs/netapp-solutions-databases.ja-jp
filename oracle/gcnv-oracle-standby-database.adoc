@@ -15,6 +15,8 @@ Google Cloud NetApp Volumes のストレージ レイヤ レプリケーショ�
 
 
 
+[[step-1-configure-listener-and-data-guard-parameters]]
+[[primary-sys-password-and-dg-params]]
 == ステップ 1：リスナーと Data Guard パラメーターを設定する
 
 両方のデータベースホストでリスナーを構成して、ブローカーに必要な `_DGMGRL`サービスを含む Data Guard 接続をサポートします。プライマリデータベース上でパスワードファイルを設定し、アーカイブログのパラメータを構成します。
@@ -61,6 +63,8 @@ $GRID_HOME/bin/lsnrctl status
 
 
 
+[[step-2-prepare-standby-pfile-and-nomount]]
+[[standby-init-ora-and-nomount]]
 == ステップ2：スタンバイpfileを準備し、NOMOUNTを実行する
 
 スタンバイデータベースインスタンスを準備するには、プライマリからパスワードファイルをコピーし、Data Guard パラメータを含む最小限の init.ora pfile を作成し、インスタンスを NOMOUNT モードで起動します。
@@ -140,6 +144,8 @@ SQL
 
 
 
+[[step-3-initialize-standby-storage-with-gcnv]]
+[[gcnv-standby-initialization]]
 == ステップ3：GCNVを使用してスタンバイストレージを初期化する
 
 スタンバイボリュームを `oracle-pool-b`にシードし、それらを `oracdb2`にアタッチし、ASMディスクグループをマウントして、スタンバイインスタンスをMOUNT状態に確定します。
@@ -148,6 +154,7 @@ SQL
 
 
 
+[[choose-the-seeding-path]]
 === シードパスを選択します
 
 環境とリカバリ要件に基づいて、スタンバイシード方式を選択してください。
@@ -160,6 +167,8 @@ SQL
 
 
 
+[[check-prerequisites]]
+[[gcnv-seed-prereqs]]
 === 前提条件を確認する
 
 スタンバイボリュームにシードデータを送信する前に、以下の前提条件を確認してください。
@@ -190,6 +199,8 @@ gcloud netapp storage-pools create oracle-pool-b \
 
 
 
+[[create-and-sync-replications]]
+[[create-volume-replications]]
 === レプリケーションを作成して同期する
 
 プライマリボリュームからスタンバイボリュームへのレプリケーション関係を作成し、初期同期が完了するまで待ちます。
@@ -212,6 +223,8 @@ gcloud netapp volumes replications create repl-oracdb2-reco \
 
 
 
+[[cut-over-and-attach-standby-volumes]]
+[[cutover-quiesce-stop-repl-attach]]
 === 切り替えてスタンバイボリュームを接続する
 
 プライマリを静止状態にし、最終同期後にレプリケーションを停止し、宛先ボリュームをスタンバイホストグループにアタッチします。
@@ -252,6 +265,8 @@ ALTER DATABASE END BACKUP;
 ----
 
 
+[[seed-from-snapshot]]
+[[snapshot-seed]]
 === スナップショットからのシード
 
 連続レプリケーションが不要な場合の1回限りのラボシードには、このパスを使用してください。
@@ -260,6 +275,8 @@ ALTER DATABASE END BACKUP;
 
 
 
+[[mount-standby-asm-disk-groups]]
+[[standby-iscsi-and-asm-before-rman]]
 === スタンバイASMディスクグループのマウント
 
 スタンバイホストで、接続されているストレージパスを検出し、データベース リカバリの前に ASM ディスクグループをマウントします。
@@ -274,6 +291,8 @@ ALTER DISKGROUP FRA MOUNT FORCE;
 ----
 
 
+[[finalize-the-standby-instance]]
+[[oracle-finalize]]
 === スタンバイインスタンスを確定する
 
 スタンバイ制御ファイルを復元し、キャプチャしたSCNにリカバリし、物理スタンバイに変換して、マネージドリカバリを開始します。
@@ -299,6 +318,8 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
 
 
 
+[[step-4-register-standby-with-oracle-restart]]
+[[register-standby-with-oracle-restart]]
 == ステップ4：Oracle Restartにスタンバイを登録する
 
 スタンバイデータベースをOracle Restartに登録すると、再起動時にASMディスク グループの自動リカバリ、スタンバイデータベースのマウント、およびマネージドリカバリの再開が自動的に行われます。また、アプリケーション サービスを両方のデータベースリソースに追加します。
@@ -379,6 +400,7 @@ srvctl status database -db orcls
 
 
 
+[[whats-next]]
 == 次の手順
 
 *ティア別：*

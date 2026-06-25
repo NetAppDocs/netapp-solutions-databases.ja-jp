@@ -18,6 +18,7 @@ summary: 'このソリューションでは、Microsoft Azure NetApp Files (ANF)
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Data Guard は、プライマリ データベースとスタンバイ データベースのレプリケーション構成におけるエンタープライズ データの高可用性、データ保護、および災害復旧を保証します。  Oracle Active Data Guard により、プライマリ データベースからスタンバイ データベースへのデータ レプリケーションがアクティブな状態でも、ユーザーはスタンバイ データベースにアクセスできるようになります。 Data Guard は、Oracle Database Enterprise Edition の機能です。別途ライセンスは必要ありません。一方、Active Data Guard は Oracle Database Enterprise Edition オプションであるため、別途ライセンスが必要です。 Active Data Guard セットアップでは、複数のスタンバイ データベースがプライマリ データベースからデータ レプリケーションを受信できます。ただし、追加のスタンバイ データベースごとに、Active Data Guard ライセンスと、プライマリ データベースのサイズと同じ追加のストレージが必要になります。運用コストはすぐに増加します。
@@ -33,6 +34,7 @@ Oracle データベース運用のコストを削減することに熱心で、A
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -45,18 +47,21 @@ Oracle データベース運用のコストを削減することに熱心で、A
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、実際のユーザー展開環境と一致しない可能性のある Azure クラウド ラボ設定で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:azure-ora-anf-data-guard-architecture.png["この画像は、ANF 上の Azure クラウドにおける Oracle Data Guard 実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -91,6 +96,7 @@ image:azure-ora-anf-data-guard-architecture.png["この画像は、ANF 上の Az
 |===
 
 
+[[oracle-data-guard-configuration-with-hypothetical-ny-to-la-dr-setup]]
 === 仮想的なニューヨークからロサンゼルスへの DR セットアップによる Oracle Data Guard 構成
 
 [cols="33%, 33%, 33%"]
@@ -110,6 +116,7 @@ image:azure-ora-anf-data-guard-architecture.png["この画像は、ANF 上の Az
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *スタンバイ データベース クローン。*プライマリ データベースからトランザクション ログを受け取って適用しながら、フィジカル スタンバイ データベースを複製して DB VM にマウントし、DEV、TEST、レポートなどの他のワークロードをサポートできます。クローンには薄いクローンと厚いクローンがあります。現時点では、ANF はスタンバイ データベースの完全なコピーであるシック クローンのみをサポートしています。 ANF シン クローン オプションはまもなくリリースされる予定です。データベース ボリュームのシン クローン コピーでは、スタンバイ データベースの同じ DB ボリュームを共有し、コピー オン ライト テクノロジーを利用して書き込み IO を処理します。したがって、クローンのストレージ効率は非常に高く、新しい書き込み IO に対して最小限かつ増分的な新しいストレージ割り当てで、他の多くのユースケースに使用できます。これにより、Active Data Guard のストレージ フットプリントが大幅に削減され、ストレージ コストが大幅に削減されます。  NetApp、Oracle のパフォーマンスを高いレベルで維持するために、データベースがプライマリ ストレージからスタンバイ ANF ストレージに切り替わる場合、 FlexCloneアクティビティを最小限に抑えることを推奨しています。
@@ -123,6 +130,7 @@ image:azure-ora-anf-data-guard-architecture.png["この画像は、ANF 上の Az
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 Oracle Data Guard をセットアップするための開始点として、プライマリ Oracle データベースが既に VNet 内の Azure クラウド環境にデプロイされているものと想定されます。理想的には、プライマリ データベースは、NFS マウントを使用して ANF ストレージにデプロイされます。  Oracle データベース ストレージ用に 3 つの NFS マウント ポイントが作成されます。Oracle バイナリ ファイル用のマウント /u01、Oracle データ ファイルと制御ファイル用のマウント /u02、Oracle の現在のログ ファイルとアーカイブ ログ ファイル、および冗長制御ファイル用のマウント /u03 です。
@@ -131,6 +139,7 @@ Oracle Data Guard をセットアップするための開始点として、プ�
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -170,6 +179,7 @@ Vnet ゲートウェイの接続ステータス:image:azure-ora-anf-dg-vnet-003.
 ====
 
 
+[[prepare-the-primary-database-for-data-guard]]
 === Data Guard用のプライマリデータベースを準備する
 
 [%collapsible%open]
@@ -480,6 +490,7 @@ log_archive_dest_21                  string
 ====
 
 
+[[prepare-standby-database-and-activate-data-guard]]
 === スタンバイデータベースを準備し、Data Guardをアクティブ化する
 
 [%collapsible%open]
@@ -842,6 +853,7 @@ SQL>
 ====
 
 
+[[setup-data-guard-broker]]
 === Data Guard Brokerのセットアップ
 
 [%collapsible%open]
@@ -939,6 +951,7 @@ DGMGRL>
 ====
 
 
+[[clone-standby-database-for-other-use-cases]]
 === 他のユースケース用にスタンバイ データベースをクローンする
 
 [%collapsible%open]
@@ -1139,6 +1152,7 @@ net
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

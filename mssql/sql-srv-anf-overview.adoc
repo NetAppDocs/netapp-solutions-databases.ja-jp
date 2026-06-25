@@ -24,6 +24,7 @@ IT 組織は絶え間ない変化に直面しています。ガートナーは�
 
 
 
+[[use-case]]
 == ユースケース
 
 SQL Server 資産を Azure に移行し、SQL Server を Azure Data Factory、Azure IoT Hub、Azure Machine Learning などの Azure の幅広いサービスとしてのプラットフォーム (PaaS) 機能と統合すると、デジタル変革をサポートする大きなビジネス価値が生まれます。クラウドを導入すると、それぞれの事業部門は、CAPEX モデルや従来のプライベート クラウド モデルに依存するよりも、生産性と新機能や拡張機能のより迅速な提供 (DevTest ユース ケース) に集中できるようになります。このドキュメントでは、Azure Virtual Machines を活用して、Azure NetApp Filesに SQL Server Always On 可用性グループ (AOAG) をリアルタイムで展開する方法について説明します。

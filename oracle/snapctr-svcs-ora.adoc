@@ -20,6 +20,7 @@ summary: このソリューションは、Azure クラウドのBlueXPコンソ�
 
 
 
+[[purpose]]
 == 目的
 
 SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを通じて利用できる従来のSnapCenterデータベース管理 UI ツールの SaaS バージョンです。これは、 NetAppクラウド ストレージ上で実行される Oracle や HANA などのデータベース向けのNetAppクラウド バックアップおよびデータ保護サービスの不可欠な部分です。この SaaS ベースのサービスは、通常 Windows ドメイン環境で動作する Windows サーバーを必要とする従来のSnapCenterスタンドアロン サーバーの展開を簡素化します。
@@ -35,6 +36,7 @@ SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは、次の対象者を対象としています。
@@ -47,12 +49,14 @@ SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx および EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:snapctr-svcs-architecture.png["この画像は、 BlueXPコンソール内のアプリケーションのBlueXP backup and recoveryの詳細を示しており、これには管理する UI、コネクタ、リソースが含まれます。"]
@@ -61,6 +65,7 @@ image:snapctr-svcs-architecture.png["この画像は、 BlueXPコンソール内
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 *ハードウェア*
@@ -96,6 +101,7 @@ image:snapctr-svcs-architecture.png["この画像は、 BlueXPコンソール内
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *コネクタはデータベースおよび FSx と同じ VPC にデプロイされます。*可能であれば、コネクタを同じ AWS VPC にデプロイして、FSx ストレージと EC2 コンピューティングインスタンスへの接続を可能にする必要があります。
@@ -107,6 +113,7 @@ image:snapctr-svcs-architecture.png["この画像は、 BlueXPコンソール内
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 クラウドネイティブ アプリケーション データの保護に役立つ、より広範な範囲を網羅したNetAppドキュメントが用意されています。このドキュメントの目的は、 Amazon FSx ONTAPおよび EC2 コンピューティングインスタンスにデプロイされた Oracle データベースを保護するために、 BlueXPコンソールを使用してSnapCenterサービスのデプロイに関する手順を段階的に提供することです。このドキュメントでは、より一般的な手順では不足している可能性のある特定の詳細について説明します。
@@ -121,6 +128,7 @@ image:snapctr-svcs-architecture.png["この画像は、 BlueXPコンソール内
 video::4b0fd212-7641-46b8-9e55-b01200f9383a[panopto]
 
 
+[[prerequisites-for-snapcenter-service-deployment]]
 === SnapCenterサービスの展開の前提条件
 
 [%collapsible%open]
@@ -136,6 +144,7 @@ video::4b0fd212-7641-46b8-9e55-b01200f9383a[panopto]
 ====
 
 
+[[onboarding-to-bluexp-preparation]]
 === BlueXPへのオンボーディングの準備
 
 [%collapsible%open]
@@ -154,6 +163,7 @@ image:snapctr-svcs-connector-001-policy.png["GUI でこの手順を示すスク�
 ====
 
 
+[[deploy-a-connector-for-snapcenter-services]]
 === SnapCenterサービス用のコネクタを展開する
 
 [%collapsible%open]
@@ -202,6 +212,7 @@ image:snapctr-svcs-connector-010-review.png["GUI でこの手順を示すスク�
 ====
 
 
+[[define-a-credential-in-bluexp-for-aws-resources-access]]
 === BlueXPでAWSリソースへのアクセスのための認証情報を定義する
 
 [%collapsible%open]
@@ -240,6 +251,7 @@ image:snapctr-svcs-credential-007-aws.png["GUI でこの手順を示すスクリ
 ====
 
 
+[[snapcenter-services-setup]]
 === SnapCenterサービスのセットアップ
 
 [%collapsible%open]
@@ -323,6 +335,7 @@ image:snapctr-svcs-setup-017.png["GUI でこの手順を示すスクリーンシ
 ====
 
 
+[[oracle-database-backup]]
 === Oracleデータベースのバックアップ
 
 [%collapsible%open]
@@ -365,6 +378,7 @@ image:snapctr-svcs-bkup-007.png["GUI でこの手順を示すスクリーンシ�
 ====
 
 
+[[oracle-database-restore-and-recovery]]
 === Oracleデータベースの復元と回復
 
 [%collapsible%open]
@@ -394,6 +408,7 @@ image:snapctr-svcs-restore-004.png["GUI でこの手順を示すスクリーン�
 ====
 
 
+[[oracle-database-clone]]
 === Oracle データベースクローン
 
 [%collapsible%open]
@@ -435,6 +450,7 @@ image:snapctr-svcs-clone-008-db.png["入出力ダイアログまたは書かれ�
 ====
 
 
+[[additional-information]]
 == 追加情報
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

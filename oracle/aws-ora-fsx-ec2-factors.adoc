@@ -20,6 +20,7 @@ keywords: HA, DR, database, Oracle, RDS, AWS, SnapCenter
 
 
 
+[[vm-performance]]
 == VMパフォーマンス
 
 パブリック クラウド内のリレーショナル データベースのパフォーマンスを最適化するには、適切な VM サイズを選択することが重要です。パフォーマンスを向上させるために、 NetApp、データベース ワークロード向けに最適化された Oracle デプロイメント用の EC2 M5 シリーズ インスタンスの使用を推奨しています。同じインスタンス タイプは、AWS の Oracle 用 RDS インスタンスにも使用されます。
@@ -30,6 +31,7 @@ keywords: HA, DR, database, Oracle, RDS, AWS, SnapCenter
 
 
 
+[[storage-layout-and-settings]]
 == ストレージレイアウトと設定
 
 NetApp は次のストレージ レイアウトを推奨します。
@@ -54,6 +56,7 @@ image:aws-ora-fsx-ec2-stor-013.png["入出力ダイアログまたは書かれ�
 
 
 
+[[nfs-configuration]]
 == NFSの設定
 
 最も一般的なオペレーティング システムである Linux には、ネイティブ NFS 機能が含まれています。  Oracle は、Oracle にネイティブに統合された Direct NFS (dNFS) クライアントを提供します。  Oracle は 20 年以上にわたって NFSv3 をサポートしています。dNFS は、Oracle のすべてのバージョンで NFSv3 と連携してサポートされています。  NFSv4 は、NFSv4 標準に準拠するすべての OS でサポートされています。NFSv4 の dNFS サポートには、Oracle 12.1.0.2 以上が必要です。 NFSv4.1 には特定の OS サポートが必要です。サポートされている OS については、 NetApp Interoperability Matrix Tool (IMT) を参照してください。NFSv4.1 の dNFS サポートには、Oracle バージョン 19.3.0.0 以上が必要です。
@@ -82,6 +85,7 @@ NOTE: dNFS を使用する前に、Oracle Doc 1495104.1 に記載されている
 
 
 
+[[high-availability]]
 == 高可用性
 
 ソリューション アーキテクチャに示されているように、HA はストレージ レベルのレプリケーションに基づいて構築されます。したがって、Oracle の起動と可用性は、コンピューティングとストレージをどれだけ迅速に起動して回復できるかに左右されます。次の重要な要素を参照してください。

@@ -20,6 +20,7 @@ keywords: database, Oracle, Azure, Azure NetApp Files
 
 
 
+[[vm-type-and-sizing]]
 == VMの種類とサイズ
 
 パブリック クラウド内のリレーショナル データベースのパフォーマンスを最適化するには、適切な VM タイプとサイズを選択することが重要です。  Azure 仮想マシンは、Oracle データベース ワークロードをホストするために使用できるさまざまなコンピューティング インスタンスを提供します。 Microsoftのドキュメントを参照してくださいlink:https://docs.microsoft.com/en-us/azure/virtual-machines/sizes["Azure の仮想マシンのサイズ"^]さまざまな種類の Azure 仮想マシンとそのサイズについて説明します。一般的に、 NetApp、小規模および中規模の Oracle データベースの展開には汎用 Azure 仮想マシンを使用することを推奨しています。大規模な Oracle データベースを展開する場合は、メモリが最適化された Azure VM が適しています。使用可能な RAM が増えると、より大きな Oracle SGA またはスマート フラッシュ キャッシュを構成して物理 I/O を削減できるため、データベースのパフォーマンスが向上します。
@@ -34,6 +35,7 @@ Azure NetApp Files は、 Azure 仮想マシンに接続された NFS マウン�
 
 
 
+[[azure-netapp-files-performance]]
 == Azure NetApp Files のパフォーマンス
 
 Azure NetApp Filesボリュームは、顧客がAzure NetApp Filesストレージ アカウントでプロビジョニングする必要がある容量プールから割り当てられます。各容量プールは次のように割り当てられます。
@@ -46,6 +48,7 @@ Azure NetApp Filesボリュームは、顧客がAzure NetApp Filesストレー�
 
 
 
+[[1-service-levels-for-azure-netapp-files]]
 === 1.Azure NetApp Filesのサービス レベル
 
 Azure NetApp Files は、Ultra、Premium、Standard の 3 つのサービス レベルをサポートしています。
@@ -57,6 +60,7 @@ Azure NetApp Files は、Ultra、Premium、Standard の 3 つのサービス レ
 
 
 
+[[2-capacity-pool-and-quality-of-service]]
 === 2.容量プールとサービス品質
 
 必要な各サービス レベルには、プロビジョニングされた容量に関連するコストがあり、プロビジョニングされたスペースの全体的な最大スループットを定義するサービス品質 (QoS) レベルが含まれます。
@@ -67,6 +71,7 @@ Azure NetApp Files は、Ultra、Premium、Standard の 3 つのサービス レ
 
 
 
+[[3-calculate-the-service-level-at-a-database-volume]]
 === 3.データベースボリュームでのサービスレベルを計算する
 
 Oracle データベース ボリュームのスループット制限は、ボリュームが属する容量プールのサービス レベルとボリュームに割り当てられたクォータという要素の組み合わせによって決まります。
@@ -83,6 +88,7 @@ image:db-ora-azure-anf-factors-001.png["この画像は、総スループット�
 
 
 
+[[storage-layout-and-settings]]
 == ストレージレイアウトと設定
 
 NetApp は次のストレージ レイアウトを推奨します。
@@ -99,6 +105,7 @@ image:db-ora-azure-anf-factors-003.png["この画像は、それぞれ 2 つの�
 
 
 
+[[nfs-configuration]]
 == NFSの設定
 
 最も一般的なオペレーティング システムである Linux には、ネイティブ NFS 機能が含まれています。  Oracle は、Oracle にネイティブに統合された Direct NFS (dNFS) クライアントを提供します。  Oracle dNFS は OS キャッシュをバイパスし、並列処理を可能にしてデータベースのパフォーマンスを向上させます。  Oracle は 20 年以上にわたって NFSv3 をサポートしており、NFSv4 は Oracle 12.1.0.2 以降でサポートされています。

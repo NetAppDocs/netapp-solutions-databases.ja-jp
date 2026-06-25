@@ -20,6 +20,7 @@ summary: このソリューションは、FSx ONTAP上の NFS マウントを使
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Recovery Manager (RMAN) バックアップ ツールを使用して Oracle 内の非常に大規模なデータベース (VLDB) をリカバリすることは、非常に困難な作業になる可能性があります。障害発生時にバックアップ メディアからデータベースを復元するプロセスには時間がかかり、データベースの回復が遅れ、サービス レベル アグリーメント (SLA) に重大な影響を及ぼす可能性があります。ただし、バージョン 10g 以降、Oracle では RMAN 機能が導入され、ユーザーは DB サーバー ホストにある追加のディスク ストレージに Oracle データベース データ ファイルのステージングされたイメージ コピーを作成できるようになりました。これらのイメージ コピーは、RMAN を使用して毎日増分更新できます。障害が発生した場合、データベース管理者 (DBA) は、Oracle データベースを障害の発生したメディアからイメージ コピーに迅速に切り替えることができるため、データベース メディアを完全に復元する必要がなくなります。その結果、必要なデータベース ストレージが 2 倍になるというコストはかかりますが、SLA は大幅に改善されます。
@@ -37,6 +38,7 @@ VLDB の SLA を重視し、Oracle データベースを AWS などのパブリ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -49,18 +51,21 @@ VLDB の SLA を重視し、Oracle データベースを AWS などのパブリ�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx ONTAPおよび EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-ec2-vldb-architecture.png["この画像は、 FSx ONTAPを使用した AWS パブリッククラウドでの Oracle VLDB 増分マージ実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -92,6 +97,7 @@ image:aws-ora-fsx-ec2-vldb-architecture.png["この画像は、 FSx ONTAPを使�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *RMAN 増分マージ用の Oracle VLDB ストレージ レイアウト。*当社のテストと検証では、Oracle 増分バックアップおよびマージ用の NFS ボリュームは、4GBps のスループット、160,000 の raw SSD IOPS、および 192TiB の容量制限を持つ単一の FSx ファイル システムから割り当てられています。しきい値を超える展開の場合、複数の FSx ファイル システムを複数の NFS マウント ポイントと並列に連結して、より高い容量を提供できます。
@@ -106,6 +112,7 @@ image:aws-ora-fsx-ec2-vldb-architecture.png["この画像は、 FSx ONTAPを使�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 Oracle VLDB がすでに VPC 内の AWS EC2 環境にデプロイされていることを前提としています。  AWS での Oracle の導入に関してサポートが必要な場合は、次の技術レポートを参照してください。
@@ -119,6 +126,7 @@ Oracle VLDB は、FSx ONTAPまたは AWS EC2 エコシステム内の任意の�
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -141,6 +149,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[provision-and-export-nfs-volume-to-be-mounted-to-ec2-db-instance-host]]
 === EC2 DB インスタンスホストにマウントする NFS ボリュームをプロビジョニングしてエクスポートします。
 
 [%collapsible%open]
@@ -200,6 +209,7 @@ sudo chown oracle:oinstall /nfsfsxn
 ====
 
 
+[[setup-oracle-rman-incremental-merge-to-image-copy-on-fsx]]
 === FSx 上のイメージコピーに Oracle RMAN 増分マージを設定する
 
 [%collapsible%open]
@@ -637,6 +647,7 @@ total 70585148
 ====
 
 
+[[switch-oracle-db-to-image-copy-for-quick-recovery]]
 === 迅速なリカバリのためにOracle DBをイメージコピーに切り替える
 
 [%collapsible%open]
@@ -920,6 +931,7 @@ SQL>
 ====
 
 
+[[oracle-db-recovery-from-image-copy-to-different-ec2-db-instance-host]]
 === イメージコピーから別の EC2 DB インスタンスホストへの Oracle DB リカバリ
 
 [%collapsible%open]
@@ -1661,6 +1673,7 @@ Update the Oracle init file from primary databse init file backup that is restor
 ====
 
 
+[[clone-oracle-standby-image-copy-for-other-use-cases]]
 === 他のユースケース用に Oracle スタンバイ イメージ コピーをクローンする
 
 [%collapsible%open]
@@ -2464,6 +2477,7 @@ NOTE: エラーが発生した場合 `RMAN-06571: datafile 1 does not have recov
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

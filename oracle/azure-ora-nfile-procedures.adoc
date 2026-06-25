@@ -18,12 +18,14 @@ keywords: AWS, Oracle, RDS, HA, DR, database
 
 
 
+[[deploy-an-azure-vm-with-anf-for-oracle-via-azure-portal-console]]
 == Azure ポータル コンソール経由で Oracle 用 ANF を備えた Azure VM をデプロイする
 
 Azure を初めて使用する場合は、まず Azure アカウント環境を設定する必要があります。これには、Azure Active Directory を使用するために組織をサインアップすることが含まれます。次のセクションでは、これらの手順の概要を説明します。詳細については、リンクされた Azure 固有のドキュメントを参照してください。
 
 
 
+[[create-and-consume-azure-resources]]
 === Azure リソースの作成と使用
 
 Azure 環境がセットアップされ、アカウントが作成されてサブスクリプションに関連付けられたら、そのアカウントを使用して Azure Portal にログインし、Oracle を実行するために必要なリソースを作成できます。
@@ -118,18 +120,21 @@ image:db-ora-azure-anf-vols-005.png["ボリューム作成画面の確認と作�
 
 
 
+[[install-and-configure-oracle-on-azure-vm-with-anf]]
 == ANF を使用して Azure VM に Oracle をインストールして構成する
 
 NetAppソリューション チームは、Azure に Oracle をスムーズに導入できるように、Ansible ベースの自動化ツールキットを多数作成しました。  Azure VM に Oracle をデプロイするには、次の手順に従います。
 
 
 
+[[set-up-an-ansible-controller]]
 === Ansibleコントローラーを設定する
 
 Ansibleコントローラーをまだ設定していない場合は、link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]には、Ansible コントローラーの設定方法に関する詳細な手順が記載されています。
 
 
 
+[[obtain-oracle-deployment-automation-toolkit]]
 === Oracle 導入自動化ツールキットを入手する
 
 Ansible コントローラにログインするために使用するユーザー ID で、ホーム ディレクトリに Oracle デプロイメント ツールキットのコピーを複製します。
@@ -140,6 +145,7 @@ git clone https://github.com/NetApp-Automation/na_oracle19c_deploy.git
 ----
 
 
+[[execute-the-toolkit-with-your-configuration]]
 === 設定に従ってツールキットを実行する
 
 参照link:../automation/cli-automation.html#cli-deployment-oracle-19c-database["CLI デプロイメント Oracle 19c データベース"^]CLI を使用してプレイブックを実行します。  CLI ではなく Azure コンソールからデータベース ボリュームを作成する場合は、グローバル VARS ファイルの変数構成のONTAP部分を無視できます。
@@ -149,12 +155,14 @@ NOTE: ツールキットのデフォルトでは、Oracle 19c と RU 19.8 がデ
 
 
 
+[[set-up-azacsnap-backup-tool-for-app-consistent-snapshots-for-oracle]]
 == Oracle のアプリ整合性スナップショット用の AzAcSnap バックアップ ツールを設定する
 
 Azure アプリケーション整合性スナップショット ツール (AzAcSnap) は、ストレージ スナップショットを作成する前に、サード パーティ データベースをアプリケーション整合性のある状態にするために必要なすべてのオーケストレーションを処理することで、サード パーティ データベースのデータ保護を可能にするコマンド ライン ツールです。その後、これらのデータベースを動作可能な状態に戻します。 NetApp、データベース サーバー ホストにツールをインストールすることをお勧めします。次のインストールおよび構成手順を参照してください。
 
 
 
+[[install-azacsnap-tool]]
 === AzAcSnapツールをインストールする
 
 . 最新バージョンを入手するlink:https://aka.ms/azacsnapinstaller["AzArcSnapインストーラー"^]。
@@ -169,6 +177,7 @@ Azure アプリケーション整合性スナップショット ツール (AzAcS
 
 
 
+[[configure-oracle-connectivity]]
 === Oracle接続を構成する
 
 スナップショット ツールは Oracle データベースと通信し、バックアップ モードを有効または無効にするには適切な権限を持つデータベース ユーザーが必要です。
@@ -296,6 +305,7 @@ SQL>
 
 
 
+[[configure-anf-connectivity]]
 === ANF接続を構成する
 
 このセクションでは、Azure NetApp Files (VM を使用) との通信を有効にする方法について説明します。
@@ -345,6 +355,7 @@ NOTE: JSON ファイルの形式が上記のとおりであることを確認し
 
 
 
+[[complete-the-setup-of-azacsnap-tool]]
 === AzAcSnapツールのセットアップを完了する
 
 スナップショット ツールを構成およびテストするには、次の手順に従います。テストが成功したら、データベースの一貫性のある最初のストレージ スナップショットを実行できます。

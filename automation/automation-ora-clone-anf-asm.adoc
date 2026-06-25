@@ -20,6 +20,7 @@ summary: このソリューションは、ASM 構成のAzure NetApp Filesスト�
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Data Guard 構成内のフィジカル スタンバイ Oracle データベースのクローンを他のユース ケースに活用すると、複数の目的を達成できます。開発または UAT の目的で運用データベースの書き込み可能なコピーを提供します。したがって、レポートの短い遅延 (10 ～ 15 分) が許容される場合は、高額な Active Data Guard ライセンス コストを削減できます。特にシンクローンがオプションである場合は、ストレージコストを節約できます。この Ansible ベースの自動化ツールキットにより、ユーザーはスケジュールに従って Oracle データベースをセットアップ、クローン作成、およびクローン更新して、ライフサイクル管理を合理化できます。このツールキットは、Azure NetApp Filesストレージを使用して Azure パブリック クラウドにデプロイされた Oracle データベースと、Data Guard 構成で構成された Oracle データベースに適用されます。
@@ -32,6 +33,7 @@ Oracle Data Guard 構成内のフィジカル スタンバイ Oracle データ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -43,6 +45,7 @@ Oracle Data Guard 構成内のフィジカル スタンバイ Oracle データ�
 
 
 
+[[license]]
 == ライセンス
 
 このGitHubリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://github.com/NetApp/na_ora_hadr_failover_resync/blob/master/LICENSE.TXT["ライセンスファイル"^] 。
@@ -52,10 +55,12 @@ NOTE: この GitHub リポジトリのコンテンツを使用した派生作品
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -83,6 +88,7 @@ NOTE: 簡素化のため、クローン先の Oracle サーバーは、Oracle �
 ====
 
 
+[[download-the-toolkit]]
 === ツールキットをダウンロードする
 
 [%collapsible%open]
@@ -97,6 +103,7 @@ NOTE: 現時点では、このツールキットにアクセスできるのは�
 ====
 
 
+[[ansible-source-and-target-hosts-file-configuration]]
 === Ansibleのソースおよびターゲットホストファイルの構成
 
 [%collapsible%open]
@@ -118,6 +125,7 @@ localhost ansible_connection=local
 ====
 
 
+[[global-variables-configuration]]
 === グローバル変数の設定
 
 [%collapsible%open]
@@ -194,6 +202,7 @@ sys_pwd: "xxxxxxxx"
 ====
 
 
+[[host-variables-configuration]]
 === ホスト変数の設定
 
 [%collapsible%open]
@@ -217,6 +226,7 @@ asm_sid: +ASM
 ====
 
 
+[[additional-clone-target-oracle-server-configuration]]
 === 追加のクローンターゲットOracleサーバー構成
 
 [%collapsible%open]
@@ -240,6 +250,7 @@ alias asm='export ORACLE_HOME=$GRID_HOME;export PATH=$PATH:$GRID_HOME/bin;export
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -273,6 +284,7 @@ NOTE: ツールキットの実行はさまざまな段階で一時停止され�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]

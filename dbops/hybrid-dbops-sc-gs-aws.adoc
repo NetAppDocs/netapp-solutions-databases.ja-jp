@@ -18,6 +18,7 @@ keywords: AWS, cloud volumes ontap, cloud manager, deploy
 
 
 
+[[aws-public-cloud]]
 == AWSパブリッククラウド
 
 
@@ -25,6 +26,7 @@ NOTE: 理解しやすくするために、AWS でのデプロイメントに基�
 
 
 
+[[1-pre-flight-check]]
 === 1.飛行前点検
 
 展開前に、次の段階での展開を可能にするインフラストラクチャが整っていることを確認してください。これには次のものが含まれます。
@@ -38,6 +40,7 @@ NOTE: 理解しやすくするために、AWS でのデプロイメントに基�
 
 
 
+[[2-steps-to-deploy-cloud-manager-and-cloud-volumes-ontap-in-aws]]
 === 2.AWS に Cloud Manager とCloud Volumes ONTAPを導入する手順
 
 
@@ -292,6 +295,7 @@ image:cloud-central-replication-013.png["入出力ダイアログまたは書か
 
 
 
+[[3-deploy-ec2-compute-instance-for-database-workload]]
 === 3.データベースワークロード用の EC2 コンピューティングインスタンスをデプロイする
 
 AWS には、さまざまなワークロード向けに事前構成された EC2 コンピューティングインスタンスがあります。インスタンス タイプの選択によって、CPU コアの数、メモリ容量、ストレージのタイプと容量、ネットワーク パフォーマンスが決まります。これらのユースケースでは、OS パーティションを除いて、データベース ワークロードを実行するためのメイン ストレージは、CVO または FSx ONTAPストレージ エンジンから割り当てられます。したがって、考慮すべき主な要素は、CPU コア、メモリ、およびネットワーク パフォーマンス レベルの選択です。一般的な AWS EC2 インスタンスタイプについては、以下を参照してください。 https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#InstanceTypes:["EC2インスタンスタイプ"] 。

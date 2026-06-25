@@ -20,6 +20,7 @@ summary: このソリューションは、NFS プロトコルを使用したプ�
 
 
 
+[[purpose]]
 == 目的
 
 NetApp SnapCenter softwareは、アプリケーション、データベース、ファイル システム全体のデータ保護を安全に調整および管理するための使いやすいエンタープライズ プラットフォームです。ストレージ システム上のアクティビティを監視および制御する機能を犠牲にすることなく、これらのタスクをアプリケーション所有者にオフロードすることで、バックアップ、復元、およびクローンのライフサイクル管理を簡素化します。ストレージベースのデータ管理を活用することで、パフォーマンスと可用性が向上し、テストと開発の時間が短縮されます。
@@ -34,6 +35,7 @@ TR-4987では、link:../automation/automation-ora-anf-nfs.html["NFS を使用し
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ TR-4987では、link:../automation/automation-ora-anf-nfs.html["NFS を使用し
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -104,6 +109,7 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 |===
 
 
+[[oracle-database-configuration-in-the-lab-environment]]
 === ラボ環境での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -123,6 +129,7 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * * SnapCenter の展開。* SnapCenter は、Windows ドメインまたはワークグループ環境に展開できます。ドメインベースの展開の場合、ドメイン ユーザー アカウントはドメイン管理者アカウントである必要があります。または、ドメイン ユーザーはSnapCenterホスティング サーバーのローカル管理者グループに属している必要があります。
@@ -134,12 +141,14 @@ image:automation-ora-anf-nfs-architecture.png["この画像は、iSCSI と ASM �
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、Azure クラウドのAzure NetApp FilesでのSnapCenterの展開、構成、および Oracle データベースのバックアップ、回復、クローン作成の手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -194,6 +203,7 @@ video::960fb370-c6e0-4406-b6d5-b110014130e8[panopto,width=360]
 ====
 
 
+[[snapcenter-installation-and-setup]]
 === SnapCenterのインストールとセットアップ
 
 [%collapsible%open]
@@ -247,6 +257,7 @@ image:snapctr-ora-azure-anf-setup-005.png["この画像はSnapCenterサーバー
 ====
 
 
+[[database-backup]]
 === データベース バックアップ
 
 [%collapsible%open]
@@ -306,6 +317,7 @@ image:snapctr-ora-azure-anf-bkup-013.png["このイメージはSnapCenterサー�
 ====
 
 
+[[database-recovery]]
 === データベースの復旧
 
 [%collapsible%open]
@@ -349,6 +361,7 @@ image:snapctr-ora-azure-anf-restore-008.png["このイメージは、 SnapCenter
 ====
 
 
+[[database-clone]]
 === データベース クローン
 
 [%collapsible%open]
@@ -516,6 +529,7 @@ SQL> alter pluggable database all open;
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

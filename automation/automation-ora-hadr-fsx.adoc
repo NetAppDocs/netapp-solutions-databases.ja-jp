@@ -20,6 +20,7 @@ NetAppソリューションエンジニアリングチーム
 
 
 
+[[purpose]]
 == 目的
 
 このツールキットは、FSx ONTAPストレージと EC2 コンピューティングインスタンスを使用して AWS クラウドにデプロイされた Oracle データベースの高可用性および災害復旧 (HR/DR) 環境のセットアップと管理のタスクを自動化します。
@@ -36,6 +37,7 @@ NetAppソリューションエンジニアリングチーム
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -48,6 +50,7 @@ NetAppソリューションエンジニアリングチーム
 
 
 
+[[license]]
 == ライセンス
 
 このGitHubリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://github.com/NetApp/na_ora_hadr_failover_resync/blob/master/LICENSE.TXT["ライセンスファイル"^] 。
@@ -57,10 +60,12 @@ NOTE: この GitHub リポジトリのコンテンツを使用した派生作品
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -86,6 +91,7 @@ AWS EC2 Instance
 ====
 
 
+[[download-the-toolkit]]
 === ツールキットをダウンロードする
 
 [%collapsible%open]
@@ -97,6 +103,7 @@ git clone https://github.com/NetApp/na_ora_hadr_failover_resync.git
 ====
 
 
+[[global-variables-configuration]]
 === グローバル変数の設定
 
 [%collapsible%open]
@@ -127,6 +134,7 @@ Linux and DB specific global variables - keep it as is.
 ====
 
 
+[[host-variables-configuration]]
 === ホスト変数の設定
 
 [%collapsible%open]
@@ -151,6 +159,7 @@ Linux - define host specific variables at Linux level
 ====
 
 
+[[db-server-host-file-configuration]]
 === DBサーバーのホストファイル構成
 
 [%collapsible%open]
@@ -166,6 +175,7 @@ AWS EC2 インスタンスは、デフォルトでホスト名の命名に IP �
 ====
 
 
+[[playbook-execution-executed-in-sequence]]
 === プレイブックの実行 - 順番に実行
 
 [%collapsible%open]
@@ -222,6 +232,7 @@ ansible-playbook -i hosts ontap_ora_resync.yml -u ec2-user --private-key db2.pem
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]

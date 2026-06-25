@@ -18,6 +18,7 @@ summary: このページでは、 NetApp ONTAPストレージに Oracle19c を�
 
 
 
+[[awxtower]]
 == AWX/タワー
 
 AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホスト名) のインベントリの作成、資格情報の作成、 NetApp Automation Github から Ansible コードを取得するプロジェクトの構成、自動化を起動するジョブ テンプレートの設定についてガイドされます。
@@ -29,6 +30,7 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 
 
 
+[[cli-via-the-ansible-control-host]]
 == Ansible コントロールホスト経由の CLI
 
 . LinuxホストをAnsible制御ホストとして使用できるように構成するlink:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/getting-started.html["詳しい手順についてはここをクリックしてください"^]
@@ -41,6 +43,7 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 
 
 
+[[requirements]]
 == 要件
 
 [cols="3, 9"]
@@ -82,6 +85,7 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 |===
 
 
+[[automation-details]]
 == 自動化の詳細
 
 この自動デプロイメントは、3 つの個別のロールで構成される単一の Ansible プレイブックを使用して設計されています。ロールは、 ONTAP、Linux、および Oracle 構成用です。次の表は、自動化されるタスクを示しています。
@@ -158,12 +162,14 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 |===
 
 
+[[default-parameters]]
 == デフォルトパラメータ
 
 自動化を簡素化するために、多くの必須 Oracle デプロイメント パラメータをデフォルト値で事前に設定してあります。通常、ほとんどの展開ではデフォルトのパラメータを変更する必要はありません。より上級のユーザーは、注意しながらデフォルトのパラメータを変更できます。デフォルトのパラメータは、defaults ディレクトリの下の各ロール フォルダにあります。
 
 
 
+[[deployment-instructions]]
 == 展開手順
 
 始める前に、次のOracleインストールファイルとパッチファイルをダウンロードし、 `/tmp/archive`デプロイされる各 DB サーバー上のすべてのユーザーが読み取り、書き込み、実行にアクセスできるディレクトリ。自動化タスクは、Oracle のインストールと構成のために、特定のディレクトリ内で指定されたインストール ファイルを検索します。
@@ -176,6 +182,7 @@ p6880880_190000_Linux-x86-64.zip -- opatch version 12.2.0.1.23
 ----
 
 
+[[license]]
 == ライセンス
 
 Github リポジトリに記載されているライセンス情報を読む必要があります。このリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたはここに記載されたライセンスの条件に同意したことになります。link:https://github.com/NetApp-Automation/na_oracle19c_deploy/blob/master/LICENSE.TXT["ここをクリックしてください。"^] 。

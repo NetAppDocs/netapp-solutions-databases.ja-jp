@@ -20,6 +20,7 @@ summary: 'このソリューションでは、NFS プロトコルを介してデ
 
 
 
+[[purpose]]
 == 目的
 
 パブリック クラウドで Oracle を自己管理して実行しようとする多くの顧客は、いくつかの課題を克服する必要があります。こうした課題の 1 つは、Oracle データベースの高可用性を実現することです。従来、Oracle の顧客は、複数のクラスタ ノードでのアクティブ/アクティブ トランザクションのサポートに、「Real Application Cluster」または RAC と呼ばれる Oracle データベース機能に依存しています。 1 つのノードに障害が発生しても、アプリケーションの処理が停止することはありません。残念ながら、Oracle RAC 実装は、AWS EC2 などの多くの一般的なパブリッククラウドではすぐには利用できず、サポートもされていません。  RHEL とAmazon FSx ONTAPに組み込まれている Pacemaker クラスタリング (PCS) を活用することで、お客様は、Oracle RAC ライセンスコストをかけずに、コンピューティングとストレージの両方でアクティブ/パッシブクラスタリングのための実行可能な代替手段を実現し、AWS クラウドでミッションクリティカルな Oracle データベースワークロードをサポートできます。
@@ -34,6 +35,7 @@ summary: 'このソリューションでは、NFS プロトコルを介してデ
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ summary: 'このソリューションでは、NFS プロトコルを介してデ
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-ec2-pcs-architecture.png["この画像は、Pacemaker Clustering と FSx ONTAPを使用した AWS EC2 での Oracle HA の詳細な図を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -98,6 +103,7 @@ image:aws-ora-fsx-ec2-pcs-architecture.png["この画像は、Pacemaker Clusteri
 |===
 
 
+[[oracle-database-activepassive-configuration-in-the-aws-ec2fsx-lab-environment]]
 === AWS EC2/FSx ラボ環境での Oracle データベースのアクティブ/パッシブ構成
 
 [cols="33%, 33%, 33%"]
@@ -117,6 +123,7 @@ image:aws-ora-fsx-ec2-pcs-architecture.png["この画像は、Pacemaker Clusteri
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * * Amazon FSx ONTAP HA。* Amazon FSx ONTAPは、デフォルトで、単一または複数のアベイラビリティーゾーン内のストレージ コントローラーの HA ペアにプロビジョニングされます。ミッションクリティカルなデータベース ワークロードに対して、アクティブ/パッシブ方式でストレージ冗長性を提供します。ストレージのフェイルオーバーはエンド ユーザーに対して透過的です。ストレージのフェイルオーバーが発生した場合、ユーザーの介入は必要ありません。
@@ -131,12 +138,14 @@ image:aws-ora-fsx-ec2-pcs-architecture.png["この画像は、Pacemaker Clusteri
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、データベースストレージ保護のために Pacemaker クラスタリングとAmazon FSx ONTAPを使用して AWS EC2 に Oracle データベース HA を展開および構成するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -155,6 +164,7 @@ Ansible コントローラーと EC2 インスタンス DB VM 間の ssh 公開/
 ====
 
 
+[[provision-ec2-instances-and-amazon-fsx-ontap-storage-cluster]]
 === EC2インスタンスとAmazon FSx ONTAPストレージクラスターのプロビジョニング
 
 [%collapsible%open]
@@ -251,6 +261,7 @@ terraform apply main.plan
 ====
 
 
+[[pacemaker-cluster-setup]]
 === Pacemaker クラスターのセットアップ
 
 [%collapsible%open]
@@ -484,6 +495,7 @@ Daemon Status:
 ====
 
 
+[[pacemaker-cluster-fencing-configuration]]
 === Pacemaker クラスタフェンシング構成
 
 [%collapsible%open]
@@ -597,6 +609,7 @@ NOTE: 実行する `pcs stonith refresh`停止した stonith フェンス エー
 ====
 
 
+[[deploy-oracle-database-in-pcs-cluster]]
 === PCSクラスタにOracleデータベースを導入する
 
 [%collapsible%open]
@@ -1024,6 +1037,7 @@ The command completed successfully
 ====
 
 
+[[configure-oracle-resources-for-pcs-management]]
 === PCS管理用のOracleリソースを構成する
 
 [%collapsible%open]
@@ -1380,6 +1394,7 @@ Daemon Status:
 ====
 
 
+[[post-deployment-ha-validation]]
 === 導入後のHA検証
 
 [%collapsible%open]
@@ -1814,6 +1829,7 @@ SQL>
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 [%collapsible%open]
@@ -1823,6 +1839,7 @@ NetApp は、AWS EC2 およびAmazon FSx ONTAPに導入された Oracle デー�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

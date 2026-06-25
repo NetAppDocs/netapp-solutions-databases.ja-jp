@@ -20,6 +20,7 @@ summary: このソリューションは、iSCSI プロトコルを使用した A
 
 
 
+[[purpose]]
 == 目的
 
 ASM (Automatic Storage Management) は、多くの Oracle インストールで採用されている一般的な Oracle ストレージ ボリューム マネージャです。これは、Oracle が推奨するストレージ管理ソリューションでもあります。従来のボリューム マネージャーおよびファイル システムに代わる手段を提供します。 Oracle バージョン 11g 以降、ASM はデータベースではなくグリッド インフラストラクチャにパッケージ化されています。そのため、RAC を使用せずに Oracle ASM をストレージ管理に利用するには、Oracle Restart とも呼ばれるスタンドアロン サーバーに Oracle Grid Infrastructure をインストールする必要があります。そうすることで、Oracle データベースの導入がさらに複雑になります。ただし、名前が示すように、Oracle が再起動モードでデプロイされると、障害が発生した Oracle サービスはグリッド インフラストラクチャによって自動的に再起動されるか、またはユーザーの介入なしにホストの再起動後に再起動されるため、ある程度の高可用性または HA 機能が提供されます。
@@ -35,6 +36,7 @@ ASM (Automatic Storage Management) は、多くの Oracle インストールで�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ ASM (Automatic Storage Management) は、多くの Oracle インストールで�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx および EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-ec2-iscsi-asm-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -93,6 +98,7 @@ image:aws-ora-fsx-ec2-iscsi-asm-architecture.png["この画像は、iSCSI と AS
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *EC2 コンピューティングインスタンス。*これらのテストと検証では、Oracle データベース コンピューティング インスタンスに AWS EC2 t2.xlarge インスタンス タイプを使用しました。 NetApp、データベース ワークロードに最適化されているため、本番環境での Oracle のコンピューティング インスタンスとして M5 タイプの EC2 インスタンスを使用することを推奨しています。実際のワークロード要件に基づいて、vCPU の数と RAM の量に応じて EC2 インスタンスのサイズを適切に設定する必要があります。
@@ -106,12 +112,14 @@ image:aws-ora-fsx-ec2-iscsi-asm-architecture.png["この画像は、iSCSI と AS
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、段階的な展開手順について説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -134,6 +142,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[ec2-instance-kernel-configuration]]
 === EC2インスタンスのカーネル構成
 
 [%collapsible%open]
@@ -275,6 +284,7 @@ systemctl disable firewalld
 ====
 
 
+[[provision-and-map-database-volumes-and-luns-to-the-ec2-instance-host]]
 === データベースボリュームとLUNをEC2インスタンスホストにプロビジョニングしてマッピングする
 
 [%collapsible%open]
@@ -367,6 +377,7 @@ svm_ora    /vol/ora_01_logs/ora_01_logs_02           ora_01        6  iscsi
 ====
 
 
+[[database-storage-configuration]]
 === データベースストレージ構成
 
 [%collapsible%open]
@@ -638,6 +649,7 @@ systemctl restart multipathd
 ====
 
 
+[[oracle-grid-infrastructure-installation]]
 === Oracle グリッド インフラストラクチャのインストール
 
 [%collapsible%open]
@@ -816,6 +828,7 @@ ASMCMD-9526: The AFD state is 'LOADED' and filtering is 'ENABLED' on host 'ip-17
 ====
 
 
+[[oracle-database-installation]]
 === Oracleデータベースのインストール
 
 [%collapsible%open]
@@ -1060,18 +1073,21 @@ alter database open;
 ====
 
 
+[[automated-deployment-option]]
 === 自動展開オプション
 
 参照link:../automation/automation-ora-aws-fsx-iscsi.html["TR-4986: iSCSI を使用したAmazon FSx ONTAPでの簡素化された自動化された Oracle デプロイメント"^]詳細については。
 
 
 
+[[oracle-database-backup-restore-and-clone-with-snapcenter-service]]
 == SnapCenterサービスによる Oracle データベースのバックアップ、リストア、クローン作成
 
 見るlink:snapctr-svcs-ora.html["Oracle向けSnapCenterサービス"^]NetApp BlueXPコンソールを使用した Oracle データベースのバックアップ、リストア、およびクローン作成の詳細については、こちらをご覧ください。
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

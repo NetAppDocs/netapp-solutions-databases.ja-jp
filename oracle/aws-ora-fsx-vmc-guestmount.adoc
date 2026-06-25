@@ -20,6 +20,7 @@ summary: このソリューションは、プライマリ データベース ス
 
 
 
+[[purpose]]
 == 目的
 
 企業は数十年にわたってプライベート データ センターで Oracle on VMware を実行してきました。  VMware Cloud (VMC) on AWS は、VMware のエンタープライズ クラスの Software-Defined Data Center (SDDC) ソフトウェアを AWS クラウドの専用の柔軟なベアメタル インフラストラクチャに導入するためのプッシュ ボタン ソリューションを提供します。 AWS FSx ONTAP は、VMC SDDC にプレミアムストレージとデータファブリックを提供し、AWS サービスへの最適化されたアクセスにより、vSphere ベースのプライベート、パブリック、ハイブリッド クラウド環境全体で Oracle などのビジネスクリティカルなアプリケーションを実行できるようにします。既存または新規の Oracle ワークロードのいずれであっても、VMC on AWS は、すべてのプラットフォーム管理と最適化を VMware に委ねながら、AWS クラウドのすべての利点を備えた、使い慣れた簡素化された自己管理型の Oracle 環境を VMware 上に提供します。
@@ -35,6 +36,7 @@ summary: このソリューションは、プライマリ データベース ス
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ summary: このソリューションは、プライマリ データベース ス
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS 上の VMC を使用したラボ環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-vmc-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -105,6 +110,7 @@ image:aws-ora-fsx-vmc-architecture.png["この画像は、iSCSI と ASM を使�
 |===
 
 
+[[oracle-database-configuration-in-vmc-on-aws]]
 === VMC on AWS での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -130,6 +136,7 @@ image:aws-ora-fsx-vmc-architecture.png["この画像は、iSCSI と ASM を使�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *FSx から VMC への接続。* VMware Cloud on AWS に SDDC を展開すると、AWS アカウントと組織専用の VPC 内に SDDC が作成され、VMware によって管理されます。また、SDDC を、顧客 AWS アカウントと呼ばれる、自分に属する AWS アカウントに接続する必要があります。この接続により、SDDC は顧客アカウントに属する AWS サービスにアクセスできるようになります。  FSx ONTAPは、お客様のアカウントに導入される AWS サービスです。  VMC SDDC が顧客アカウントに接続されると、FSx ストレージは VMC SDDC 内の仮想マシンで直接ゲストマウントできるようになります。
@@ -143,12 +150,14 @@ image:aws-ora-fsx-vmc-architecture.png["この画像は、iSCSI と ASM を使�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、Oracle ASM をデータベース ボリューム マネージャーとして使用し、単一ノードの再起動構成で DB VM に FSx ONTAPストレージを直接マウントして、VMC on AWS に Oracle 19c を展開するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -176,6 +185,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[db-vm-kernel-configuration]]
 === DB VMカーネル構成
 
 [%collapsible%open]
@@ -396,6 +406,7 @@ chmod 440 /etc/sudoers
 ====
 
 
+[[provision-and-map-fsx-ontap-luns-to-the-db-vm]]
 === FSx ONTAP LUN を DB VM にプロビジョニングしてマッピングする
 
 [%collapsible%open]
@@ -528,6 +539,7 @@ nim        /vol/ora_02_logs/ora_02_u03_02            ora_02        6  iscsi
 ====
 
 
+[[db-vm-storage-configuration]]
 === DB VM ストレージ構成
 
 [%collapsible%open]
@@ -821,6 +833,7 @@ systemctl restart multipathd
 ====
 
 
+[[oracle-grid-infrastructure-installation]]
 === Oracle グリッド インフラストラクチャのインストール
 
 [%collapsible%open]
@@ -1082,6 +1095,7 @@ CRS-4638: Oracle High Availability Services is online
 ====
 
 
+[[oracle-database-installation]]
 === Oracleデータベースのインストール
 
 [%collapsible%open]
@@ -1469,6 +1483,7 @@ alter database open;
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 
@@ -1891,6 +1906,7 @@ SQL>
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

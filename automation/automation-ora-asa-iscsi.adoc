@@ -20,6 +20,7 @@ summary: このソリューションは、iSCSI プロトコルを使用した�
 
 
 
+[[purpose]]
 == 目的
 
 NetApp ASAシステムは、SAN インフラストラクチャに最新のソリューションを提供します。これらは大規模に簡素化され、データベースなどのビジネスクリティカルなアプリケーションを高速化し、データが常に利用可能（稼働率 99.9999%）であることを保証し、TCO と二酸化炭素排出量を削減します。  NetApp ASAシステムには、最もパフォーマンスが要求されるアプリケーション向けに設計された A シリーズ モデルと、コスト効率に優れた大容量の導入向けに最適化された C シリーズ モデルが含まれます。  ASA A シリーズと C シリーズのシステムを組み合わせることで、優れたパフォーマンスを実現し、顧客エクスペリエンスを向上させて結果が出るまでの時間を短縮し、ビジネスクリティカルなデータの可用性、保護、セキュリティを維持し、業界で最も効果的な保証に支えられたあらゆるワークロードに対してより効果的な容量を提供します。
@@ -35,6 +36,7 @@ NetApp ASAシステムは、SAN インフラストラクチャに最新のソリ
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ NetApp ASAシステムは、SAN インフラストラクチャに最新のソリ
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:automation-ora-asa-iscsi-architecture.png["この画像は、iSCSI と ASM を使用したNetApp ASAシステムでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -102,6 +107,7 @@ image:automation-ora-asa-iscsi-architecture.png["この画像は、iSCSI と ASM
 |===
 
 
+[[oracle-database-configuration-in-the-lab-environment]]
 === ラボ環境での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -121,6 +127,7 @@ image:automation-ora-asa-iscsi-architecture.png["この画像は、iSCSI と ASM
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *Oracle データベースのストレージ レイアウト。*この自動化された Oracle デプロイメントでは、デフォルトで Oracle バイナリ、データ、およびログをホストするための 4 つのデータベース ボリュームをプロビジョニングします。次に、データ LUN とログ LUN から 2 つの ASM ディスク グループを作成します。  +DATA asm ディスク グループ内では、各ASA A400クラスタ ノードのボリュームに 2 つのデータ LUN をプロビジョニングします。  +LOGS asm ディスク グループ内で、単一のASA A400ノード上のログ ボリュームに 2 つの LUN を作成します。  ONTAPボリューム内に複数の LUN を配置すると、一般的にパフォーマンスが向上します。
@@ -132,12 +139,14 @@ image:automation-ora-asa-iscsi-architecture.png["この画像は、iSCSI と ASM
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、データベース ボリューム マネージャーとして Oracle ASM を使用して、単一ノードの再起動構成で、iSCSI 経由でデータベース LUN を DB VM に直接マウントし、 NetApp ASA A400で Oracle 19c を自動化して保護するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -176,6 +185,7 @@ video::79095731-6b02-41d5-9fa1-b0c00100d055[panopto,width=360]
 ====
 
 
+[[automation-parameter-files]]
 === 自動化パラメータファイル
 
 [%collapsible%open]
@@ -192,6 +202,7 @@ Ansible プレイブックは、事前定義されたパラメータを使用し
 ====
 
 
+[[parameter-files-configuration]]
 === パラメータファイルの構成
 
 [%collapsible%open]
@@ -287,6 +298,7 @@ memory_limit: 8192
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -362,6 +374,7 @@ ansible-playbook -i hosts 5-destroy.yml -u admin -e @vars/vars.yml
 ====
 
 
+[[post-execution-validation]]
 === 実行後の検証
 
 [%collapsible%open]
@@ -496,6 +509,7 @@ image:automation-ora-asa-em-003.png["この画像はOracle Enterprise Manager Ex
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 [%collapsible%open]
@@ -505,6 +519,7 @@ TR-4979を参照してくださいlink:../oracle/aws-ora-fsx-vmc-guestmount.html
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

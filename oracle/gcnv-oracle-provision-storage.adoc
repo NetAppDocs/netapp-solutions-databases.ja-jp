@@ -15,6 +15,8 @@ Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google C
 
 
 
+[[step-1-create-gcnv-iscsi-pools]]
+[[provision-gcnv-iscsi-volumes]]
 == ステップ 1：GCNV iSCSI プールを作成する
 
 プライマリホストとスタンバイホストにiSCSIボリュームを提供するために、各データベースゾーンに1つずつ、合計2つのFlex Unifiedストレージプールを作成します。各データベースホストは、自身のローカルゾーンのプールからボリュームを使用します。
@@ -53,6 +55,8 @@ Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google C
 
 
 
+[[step-2-create-host-groups]]
+[[create-host-groups]]
 == ステップ 2：ホスト グループを作成する
 
 データベースホストごとにホストグループを1つ作成することで、各仮想マシンは自身のボリュームのみを参照できるようになります。プライマリホストとスタンバイホストは、独立したストレージを維持するために、GCNV iSCSIボリュームを共有してはなりません。
@@ -76,6 +80,8 @@ Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google C
 
 
 
+[[step-3-create-gcnv-iscsi-volumes]]
+[[create-gcnv-iscsi-volumes]]
 == ステップ3：GCNV iSCSI ボリュームを作成する
 
 各データベースホスト用に 5 つの GCNV iSCSI ボリュームを作成します。1 つは `/u01`用、4 つは ASM バッキングデバイス用です。各ホストのボリュームは、対応するホストグループとともに、そのホストのローカルゾーンのストレージプール内に作成する必要があります。
@@ -120,6 +126,8 @@ Google Compute Engine 上の Oracle Database 26ai 高可用性向けに Google C
 
 
 
+[[step-4-configure-iscsi-and-multipath]]
+[[configure-iscsi-and-multipath]]
 == ステップ4：iSCSIとマルチパスの設定
 
 各データベースホストでiSCSIとdevice-mapper-multipathを設定し、両方のストレージポータルIP経由でGCNVボリュームにアクセスできるようにします。以下の手順を `oracdb1`プライマリプールのポータルIPを使用して実行し、次に `oracdb2`スタンバイプールのポータルIPを使用して繰り返します。ホストの送信が制限されている場合、各データベースVMからGCNV iSCSIポータルIPへのTCP/3260を許可します（xref:gcnv-oracle-provision-compute.adoc#vpc-firewall-allow-1521[ステップ2：VPCファイアウォール — 3つのゾーンすべてでTCP/1521を許可リストに追加する]からのVM間TCP/1521に加えて）。
@@ -206,6 +214,8 @@ ls -l /dev/mapper/ora_$(hostname -s)_*
 
 
 
+[[step-5-partition-asm-devices]]
+[[partition-asm-backing-devices]]
 == ステップ5：ASMデバイスをパーティション分割する
 
 4 つの ASM バッキング デバイス （ `u01` を除く） をそれぞれ 1 つの GPT パーティションで ASM 消費用にパーティション分割し、グリッド所有権の udev ルールを設定します。各データベースホストで以下の手順を実行します。
@@ -248,6 +258,8 @@ ls -lL /dev/mapper/ora_${HOST}_*p1    # grid:asmadmin 0660
 
 
 
+[[step-6-format-and-mount-u01]]
+[[format-and-mount-u01]]
 == ステップ6：フォーマットとマウント `/u01`
 
  `ora_<host>_u01` GCNV ボリュームを XFS でフォーマットし、 `/etc/fstab` で UUID を使用して永続的にマウントします。 `/u01` ファイルシステムには、Grid ホーム、Oracle ホーム、およびステージング ファイルが格納されます。
@@ -288,6 +300,7 @@ sudo chmod -R 775 /u01/app /u01/stage
 
 
 
+[[whats-next]]
 == 次の手順
 
 Oracle Grid InfrastructureおよびDatabaseバイナリを準備済みのホストにインストールするには、両方のホストでxref:gcnv-oracle-install-software.adoc[Oracle Grid InfrastructureおよびOracle Databaseソフトウェアをインストールします]に移動してください。

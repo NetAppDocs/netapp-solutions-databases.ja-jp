@@ -17,6 +17,8 @@ summary: Google Cloud NetApp Volumes 上の Data Guard のスタンバイ デー
 
 
 
+[[step-1-create-standby-redo-log-files]]
+[[standby-redo-log-files]]
 == ステップ 1：スタンバイ REDO ログファイルを作成する
 
 高速スタート・フェイルオーバーをサポートするために、両方のデータベースホストにスタンバイREDOログファイルを作成します。サイズは最大のプライマリオンラインREDOログ以上である必要があり、カウントは（スレッドあたりのオンライングループ）+ 1 と等しくなければなりません。GCNVシード処理後、レプリケートされたパスを修正するために、スタンバイ側でスタンバイREDOログを削除して再作成します。
@@ -46,6 +48,8 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT
 
 
 
+[[step-2-enable-flashback-and-start-recovery]]
+[[enable-flashback-on-standby]]
 == ステップ2：フラッシュバックを有効にしてリカバリを開始する
 
 スタンバイ側でフラッシュバック データベースを有効にして、フェイルオーバー後の自動復旧をサポートし、その後、リアルタイム適用でマネージド リカバリを開始します。MRP がアクティブな間はフラッシュバックを有効にできないため、マネージド リカバリを開始する前にフラッシュバックを有効にする必要があります。
@@ -85,6 +89,8 @@ SQL'
 
 
 
+[[step-3-enable-redo-shipping]]
+[[enable-redo-shipping-on-primary]]
 == ステップ3：redo shippingを有効にする
 
 スタンバイ作成中の `ORA-12154`エラーを抑制するために、スタンバイ初期化手順のxref:gcnv-oracle-standby-database.adoc#standby-init-ora-and-nomount[ステップ2]で意図的に `DEFER`に設定されていた `LOG_ARCHIVE_DEST_STATE_2`を有効にすることで、プライマリからスタンバイへのREDO転送を有効にします。
@@ -121,6 +127,8 @@ SQL'
 
 
 
+[[step-4-verify-data-guard-state]]
+[[verify-target-dg-state]]
 == ステップ 4：Data Guard の状態を確認する
 
 プライマリデータベースが READ WRITE モードになっていること、およびスタンバイデータベースがマネージドリカバリでマウントされ、redo ログが適用されていることを確認してください。
@@ -175,6 +183,7 @@ SQL'
 
 
 
+[[whats-next]]
 == 次の手順
 
 自動ロール管理とフェイルオーバー保護を有効にするには、xref:gcnv-oracle-data-guard.adoc[Oracle Data Guard Broker、Fast-Start Failover、およびObserverを設定する]に進んでください。

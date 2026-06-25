@@ -20,6 +20,7 @@ summary: このソリューションでは、AWS FSx ONTAP をスタンバイサ
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Data Guard は、プライマリ データベースとスタンバイ データベースのレプリケーション構成におけるエンタープライズ データの高可用性、データ保護、および災害復旧を保証します。  Oracle Active Data Guard により、プライマリ データベースからスタンバイ データベースへのデータ レプリケーションがアクティブな状態でも、ユーザーはスタンバイ データベースにアクセスできるようになります。 Data Guard は、Oracle Database Enterprise Edition の機能です。別途ライセンスは必要ありません。一方、Active Data Guard は Oracle Database Enterprise Edition オプションであるため、別途ライセンスが必要です。 Active Data Guard セットアップでは、複数のスタンバイ データベースがプライマリ データベースからデータ レプリケーションを受信できます。ただし、追加のスタンバイ データベースごとに、Active Data Guard ライセンスと、プライマリ データベースのサイズと同じ追加のストレージが必要になります。運用コストはすぐに増加します。
@@ -34,6 +35,7 @@ Oracle データベース運用のコストを削減することに熱心で、A
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ Oracle データベース運用のコストを削減することに熱心で、A
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx ONTAPおよび EC2 ラボ環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-data-guard-architecture.png["この画像は、 FSx ONTAPを使用した AWS での Oracle Data Guard 実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -89,6 +94,7 @@ image:aws-ora-fsx-data-guard-architecture.png["この画像は、 FSx ONTAPを�
 |===
 
 
+[[oracle-data-guard-configuration-with-hypothetical-ny-to-la-dr-setup]]
 === 仮想的なニューヨークからロサンゼルスへの DR セットアップによる Oracle Data Guard 構成
 
 [cols="33%, 33%, 33%"]
@@ -108,6 +114,7 @@ image:aws-ora-fsx-data-guard-architecture.png["この画像は、 FSx ONTAPを�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *Oracle スタンバイ データベースFlexClone の仕組み。* AWS FSx ONTAP FlexClone は、書き込み可能な同じスタンバイデータベースボリュームの共有コピーを提供します。ボリュームのコピーは、実際には、クローン上で新しい書き込みが開始されるまで、元のデータ ブロックにリンクするポインタです。その後、 ONTAP は新しい書き込み用に新しいストレージ ブロックを割り当てます。すべての読み取り IO は、アクティブなレプリケーションの下で元のデータ ブロックによって処理されます。したがって、クローンのストレージ効率は非常に高く、新しい書き込み IO に対して最小限かつ増分的な新しいストレージ割り当てで、他の多くのユースケースに使用できます。これにより、Active Data Guard のストレージ フットプリントが大幅に削減され、ストレージ コストが大幅に削減されます。  NetApp、Oracle のパフォーマンスを高いレベルで維持するために、データベースがプライマリ ストレージからスタンバイ FSx ストレージに切り替わる場合、 FlexCloneアクティビティを最小限に抑えることを推奨しています。
@@ -122,6 +129,7 @@ image:aws-ora-fsx-data-guard-architecture.png["この画像は、 FSx ONTAPを�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 Data Guard をセットアップするための開始点として、VPC 内の AWS EC2 環境にプライマリ Oracle データベースがすでにデプロイされているものと想定されます。プライマリ データベースは、ストレージ管理用に Oracle ASM を使用して展開されます。  Oracle データファイル、ログファイル、制御ファイルなどのために、2 つの ASM ディスク グループ (+DATA と +LOGS) が作成されます。ASM を使用した AWS での Oracle のデプロイメントの詳細については、次の技術レポートを参照してください。
@@ -135,6 +143,7 @@ Data Guard をセットアップするための開始点として、VPC 内の A
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -158,6 +167,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[prepare-the-primary-database-for-data-guard]]
 === Data Guard用のプライマリデータベースを準備する
 
 [%collapsible%open]
@@ -402,6 +412,7 @@ srvctl start database -d db1
 ====
 
 
+[[prepare-standby-database-and-activate-data-guard]]
 === スタンバイデータベースを準備し、Data Guardをアクティブ化する
 
 [%collapsible%open]
@@ -702,6 +713,7 @@ SQL>
 ====
 
 
+[[setup-data-guard-broker]]
 === Data Guard Brokerのセットアップ
 
 [%collapsible%open]
@@ -797,6 +809,7 @@ DGMGRL>
 ====
 
 
+[[clone-standby-database-for-other-use-cases]]
 === 他のユースケース用にスタンバイ データベースをクローンする
 
 [%collapsible%open]
@@ -986,6 +999,7 @@ SQL>
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

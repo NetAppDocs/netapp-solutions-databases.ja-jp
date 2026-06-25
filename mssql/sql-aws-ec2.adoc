@@ -18,6 +18,7 @@ summary:
 
 
 
+[[introduction]]
 == はじめに
 
 オンプレミスからクラウドへアプリケーションを移行したいと考えている企業の多くは、オンプレミスのストレージ システムとクラウド ストレージ サービスが提供する機能の違いによって移行作業が妨げられていることに気づいています。このギャップにより、Microsoft SQL Server などのエンタープライズ アプリケーションの移行がさらに困難になりました。特に、堅牢なスナップショット、ストレージ効率機能、高可用性、信頼性、一貫したパフォーマンスなど、エンタープライズ アプリケーションの実行に必要なサービスにギャップがあるため、顧客は設計上のトレードオフを余儀なくされたり、アプリケーションの移行を断念したりしていました。  FSx ONTAPを使用すると、お客様は妥協する必要がなくなります。  FSx ONTAPは、AWS によって販売、サポート、課金、および完全に管理されるネイティブ (ファーストパーティ) AWS サービスです。  NetApp ONTAPのパワーを活用して、 NetApp が30 年にわたりオンプレミスで提供してきたのと同じエンタープライズ グレードのストレージおよびデータ管理機能を、AWS のマネージド サービスとして提供します。
@@ -26,6 +27,7 @@ EC2 インスタンス上の SQL Server を使用すると、データベース�
 
 
 
+[[benefits-of-using-amazon-fsx-ontap-with-sql-server]]
 == Amazon FSx ONTAP をSQL Server で使用するメリット
 
 Amazon FSx ONTAP は、AWS での SQL Server のデプロイメントに最適なファイルストレージです。利点は次のとおりです。
@@ -47,12 +49,14 @@ Amazon FSx ONTAP は、AWS での SQL Server のデプロイメントに最適�
 
 
 
+[[before-you-begin]]
 == 開始する前に
 
 Amazon FSx ONTAPと EC2 インスタンス上の SQL Server を組み合わせることで、今日の最も厳しいアプリケーション要件を満たすエンタープライズレベルのデータベース ストレージ設計を作成できます。両方のテクノロジを最適化するには、SQL Server の I/O パターンと特性を理解することが重要です。SQL Serverデータベース用の適切に設計されたストレージ レイアウトは、SQL ServerのパフォーマンスとSQL Serverインフラの管理をサポートします。適切なストレージ レイアウトにより、初期導入を成功させることができ、ビジネスの成長に合わせて環境をスムーズに拡張することもできます。
 
 
 
+[[prerequisites]]
 === 前提条件
 
 このドキュメントの手順を完了する前に、次の前提条件を満たしている必要があります。
@@ -133,6 +137,7 @@ NOTE: 最小限の停止も許容できない SQL サーバーなどのミッシ
 ====
 
 
+[[configure-storage-for-sql-server-and-deploy-snapcenter-for-backup-restore-and-clone-operations]]
 == SQL Server のストレージを構成し、バックアップ、復元、クローン操作のために Snapcenter を展開します。
 
 SnapCenterを使用して SQL サーバー操作を実行するには、まず SQL サーバー用のボリュームと LUN を作成する必要があります。
@@ -565,6 +570,7 @@ image:sql-awsec2-027.png["入出力ダイアログまたは書かれたコンテ
 video::27f28284-433d-4273-8748-b01200fb3cd7[panopto]
 
 
+[[appendices]]
 == 付録
 
 .付録 A: Cloud Formation テンプレートで使用する YAML ファイル
@@ -701,6 +707,7 @@ Remove-Item -Path $MyInvocation.MyCommand.Source
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 * Amazon FSx ONTAP

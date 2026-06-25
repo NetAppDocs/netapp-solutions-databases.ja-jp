@@ -20,6 +20,7 @@ summary: このソリューションは、AzureクラウドのANF上のOracle展
 
 
 
+[[purpose]]
 == 目的
 
 既存の Oracle ワークロードを、オンプレミスからパブリック クラウドなど、あるプラットフォームから別のプラットフォームに移動する場合には、パフォーマンスとサービス レベルの要件を満たすように、ターゲット プラットフォームのコンピューティングとストレージのサイズを設定する必要があります。このドキュメントでは、その目標を達成するためのシンプルなツールキットを紹介します。
@@ -34,6 +35,7 @@ summary: このソリューションは、AzureクラウドのANF上のOracle展
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -45,6 +47,7 @@ summary: このソリューションは、AzureクラウドのANF上のOracle展
 
 
 
+[[license]]
 == ライセンス
 
 このツールキットリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://netapp.sharepoint.com/sites/CIEBuilt-OnsTeam-DatabasesandApps/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FCIEBuilt%2DOnsTeam%2DDatabasesandApps%2FShared%20Documents%2FDatabases%20and%20Apps%2FDatabase%20Solutions%2FDB%20Sizing%20Toolkits%2FOracle%20Sizing%20Guidance%20for%20ANF%2FLICENSE%2ETXT&parent=%2Fsites%2FCIEBuilt%2DOnsTeam%2DDatabasesandApps%2FShared%20Documents%2FDatabases%20and%20Apps%2FDatabase%20Solutions%2FDB%20Sizing%20Toolkits%2FOracle%20Sizing%20Guidance%20for%20ANF["ライセンスファイル"^] 。
@@ -54,10 +57,12 @@ NOTE: このツールキット リポジトリのコンテンツを使用した�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -71,6 +76,7 @@ NOTE: このツールキット リポジトリのコンテンツを使用した�
 ====
 
 
+[[download-the-toolkit]]
 === ツールキットをダウンロードする
 
 [%collapsible%open]
@@ -80,6 +86,7 @@ NOTE: このツールキット リポジトリのコンテンツを使用した�
 ====
 
 
+[[how-to-use-the-toolkit]]
 === ツールキットの使い方は？
 
 [%collapsible%open]
@@ -95,6 +102,7 @@ NOTE: このツールキット リポジトリのコンテンツを使用した�
 ====
 
 
+[[toolkit-usage-demonstration]]
 === ツールキットの使用デモンストレーション
 
 [%collapsible%open]

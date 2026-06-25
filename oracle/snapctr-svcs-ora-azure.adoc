@@ -20,6 +20,7 @@ summary: このソリューションは、 BlueXPコンソールを使用してN
 
 
 
+[[purpose]]
 == 目的
 
 SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを通じて利用できる従来のSnapCenterデータベース管理 UI ツールの SaaS バージョンです。これは、Azure NetApp Files上で実行される Oracle や HANA などのデータベース向けのNetAppクラウド バックアップ、データ保護サービスの不可欠な部分です。この SaaS ベースのサービスは、通常 Windows ドメイン環境で動作する Windows サーバーを必要とする従来のSnapCenterスタンドアロン サーバーの展開を簡素化します。
@@ -35,6 +36,7 @@ SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは、次の対象者を対象としています。
@@ -47,12 +49,14 @@ SnapCenterサービスは、 NetApp BlueXPクラウド管理コンソールを�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:snapctr-svcs-azure-architect.png["この画像は、 BlueXPコンソール内のアプリケーションのBlueXP backup and recoveryの詳細を示しており、これには管理する UI、コネクタ、リソースが含まれます。"]
@@ -61,6 +65,7 @@ image:snapctr-svcs-azure-architect.png["この画像は、 BlueXPコンソール
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 *ハードウェア*
@@ -93,6 +98,7 @@ image:snapctr-svcs-azure-architect.png["この画像は、 BlueXPコンソール
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *コネクタは、データベースおよびAzure NetApp Filesと同じ仮想ネットワーク/サブネットにデプロイされます。*可能であれば、コネクタを同じ Azure 仮想ネットワークとリソース グループにデプロイして、 Azure NetApp Filesストレージと Azure コンピューティング インスタンスへの接続を有効にする必要があります。
@@ -104,6 +110,7 @@ image:snapctr-svcs-azure-architect.png["この画像は、 BlueXPコンソール
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 クラウドネイティブ アプリケーション データの保護に役立つ、より広範な範囲を網羅したNetAppドキュメントが用意されています。このドキュメントの目的は、 Azure NetApp Filesストレージと Azure コンピューティング インスタンスにデプロイされた Oracle データベースを保護するために、 BlueXPコンソールを使用してSnapCenterサービスのデプロイに関する手順を段階的に提供することです。
@@ -119,6 +126,7 @@ video::48adf2d8-3f5e-4ab3-b25c-b04a014635ac[panopto]
 
 
 
+[[prerequisites-for-snapcenter-service-deployment]]
 === SnapCenterサービスの展開の前提条件
 
 [%collapsible%open]
@@ -134,6 +142,7 @@ video::48adf2d8-3f5e-4ab3-b25c-b04a014635ac[panopto]
 ====
 
 
+[[onboarding-to-bluexp-preparation]]
 === BlueXPへのオンボーディングの準備
 
 [%collapsible%open]
@@ -147,6 +156,7 @@ video::48adf2d8-3f5e-4ab3-b25c-b04a014635ac[panopto]
 ====
 
 
+[[deploy-a-connector-for-snapcenter-services]]
 === SnapCenterサービス用のコネクタを展開する
 
 [%collapsible%open]
@@ -196,6 +206,7 @@ image:snapctr-svcs-connector-011-azure.png["GUI でこの手順を示すスク�
 ====
 
 
+[[define-a-credential-in-bluexp-for-azure-resources-access]]
 === AzureリソースへのアクセスのためにBlueXPで資格情報を定義する
 
 [%collapsible%open]
@@ -219,6 +230,7 @@ image:snapctr-svcs-credential-003-azure.png["GUI でこの手順を示すスク�
 ====
 
 
+[[snapcenter-services-setup]]
 === SnapCenterサービスのセットアップ
 
 [%collapsible%open]
@@ -280,6 +292,7 @@ image:snapctr-svcs-setup-019-azure.png["GUI でこの手順を示すスクリー
 ====
 
 
+[[oracle-database-backup]]
 === Oracleデータベースのバックアップ
 
 [%collapsible%open]
@@ -337,6 +350,7 @@ image:snapctr-svcs-bkup-006-azure.png["GUI でこの手順を示すスクリー�
 ====
 
 
+[[oracle-database-restore-and-recovery]]
 === Oracleデータベースの復元と回復
 
 [%collapsible%open]
@@ -370,6 +384,7 @@ image:snapctr-svcs-restore-006-azure.png["GUI でこの手順を示すスクリ�
 ====
 
 
+[[oracle-database-clone]]
 === Oracle データベースクローン
 
 [%collapsible%open]
@@ -418,6 +433,7 @@ image:snapctr-svcs-clone-007-azure.png["入出力ダイアログまたは書か�
 ====
 
 
+[[additional-information]]
 == 追加情報
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

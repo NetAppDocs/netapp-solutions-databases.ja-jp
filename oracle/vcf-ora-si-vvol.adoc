@@ -20,6 +20,7 @@ summary: 'このソリューションは、プライマリ データベース �
 
 
 
+[[purpose]]
 == 目的
 
 VMware vSphere Virtual Volumes (vVols) は、仮想ディスクをネイティブ ストレージ オブジェクトとして公開し、仮想ディスク レベルでアレイベースの操作を可能にする SAN/NAS 管理および統合フレームワークです。つまり、 vVolsは SAN/NAS デバイスを VM 対応にし、単一の仮想ディスクの粒度で VM 中心のアプローチによるアレイベースのデータ サービスを利用できるようにしますvVolsにより、お客様は現在のストレージ投資の独自の機能を活用し、あらゆるストレージ タイプで動作する仮想環境向けに最適化された、よりシンプルで効率的な運用モデルに中断なく移行できます。
@@ -35,6 +36,7 @@ VMware vSphere Virtual Volumes (vVols) は、仮想ディスクをネイティ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ VMware vSphere Virtual Volumes (vVols) は、仮想ディスクをネイティ�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるNetApp ONTAP AFFストレージ上のvVolsデータストアを備えた VCF を使用したラボ環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:vcf-ora-si-vvols-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -105,6 +110,7 @@ image:vcf-ora-si-vvols-architecture.png["この画像は、iSCSI と ASM を使�
 |===
 
 
+[[oracle-database-configuration-in-vcf]]
 === VCF での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -124,6 +130,7 @@ image:vcf-ora-si-vvols-architecture.png["この画像は、iSCSI と ASM を使�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * * vVolsからONTAPクラスタへの接続のためのプロトコル。* NFS または iSCSI が適切な選択です。パフォーマンスレベルは同等です。このソリューションのデモンストレーションでは、下線付きのONTAPストレージ クラスターへのvVols接続用のストレージ プロトコルとして NFS を使用しました。  VCF インフラストラクチャがサポートしている場合、 NetApp ONTAP上のvVolsデータストアでは FC/FCoE、NVMe/FC プロトコルもサポートされます。
@@ -135,12 +142,14 @@ image:vcf-ora-si-vvols-architecture.png["この画像は、iSCSI と ASM を使�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、Oracle 単一インスタンス構成のNetApp ONTAPストレージ上のvVolsデータストアを使用して VCF に Oracle 19c を導入するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -159,6 +168,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[create-storage-capability-profile]]
 === ストレージ機能プロファイルの作成
 
 [%collapsible%open]
@@ -198,6 +208,7 @@ image:vcf-ora-vvol-scp-007.png["カスタム ストレージ機能プロファ�
 ====
 
 
+[[create-and-configure-vvols-datastore]]
 === vVolsデータストアの作成と構成
 
 [%collapsible%open]
@@ -243,6 +254,7 @@ NOTE: Oracle データベースのクローンが作成されると、データ�
 ====
 
 
+[[create-vm-storage-policy-based-on-storage-capability-profile]]
 === ストレージ機能プロファイルに基づいて VM ストレージ ポリシーを作成する
 
 [%collapsible%open]
@@ -286,6 +298,7 @@ image:vcf-ora-vvol-vm-policy-007.png["VM ストレージ ポリシー構成を�
 ====
 
 
+[[allocate-disks-to-db-vm-from-vvols-datastores-and-configure-db-storage]]
 === vVolsデータストアからDB VMにディスクを割り当て、DBストレージを構成する
 
 [%collapsible%open]
@@ -430,6 +443,7 @@ UUID=aff942c4-b224-4b62-807d-6a5c22f7b623 /boot                   xfs     defaul
 ====
 
 
+[[oracle-database-deployment-in-vcf]]
 === VCF での Oracle データベースの導入
 
 [%collapsible%open]
@@ -495,6 +509,7 @@ ansible-playbook -i hosts 5-destroy.yml -u admin -e @vars/vars.yml
 ====
 
 
+[[oracle-backup-restore-and-clone-in-vcf-with-snapcenter]]
 === SnapCenterを使用した VCF での Oracle のバックアップ、リストア、クローン作成
 
 
@@ -848,6 +863,7 @@ SQL>
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

@@ -20,6 +20,7 @@ summary: このソリューションは、NFS プロトコルを使用したプ�
 
 
 
+[[purpose]]
 == 目的
 
 NetApp AFF C シリーズは、オールフラッシュをよりアクセスしやすく、手頃な価格で統合ストレージに提供する大容量フラッシュ ストレージです。パフォーマンス的には、多くの Tier 1 または Tier 2 Oracle データベース ワークロードに十分です。  NetApp ONTAPデータ管理ソフトウェアを搭載したAFF C シリーズ システムは、業界をリードする効率性、優れた柔軟性、クラス最高のデータ サービス、クラウド統合を提供し、IT インフラストラクチャの拡張、データ管理の簡素化、ストレージ コストと電力消費の削減に役立ちます。
@@ -34,6 +35,7 @@ NetApp AFF C シリーズは、オールフラッシュをよりアクセスし�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ NetApp AFF C シリーズは、オールフラッシュをよりアクセスし�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:automation-ora-c-series-nfs-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -104,6 +109,7 @@ image:automation-ora-c-series-nfs-architecture.png["この画像は、iSCSI と 
 |===
 
 
+[[oracle-database-configuration-in-the-lab-environment]]
 === ラボ環境での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -123,6 +129,7 @@ image:automation-ora-c-series-nfs-architecture.png["この画像は、iSCSI と 
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *Oracle データベースのストレージ レイアウト。*この自動化された Oracle デプロイメントでは、デフォルトで Oracle バイナリ、データ、およびログをホストするために、データベースごとに 3 つのデータベース ボリュームをプロビジョニングします。ボリュームは、NFS 経由で Oracle DB サーバーに /u01 - バイナリ、/u02 - データ、/u03 - ログとしてマウントされます。冗長性のために、/u02 および /u03 マウント ポイントにデュアル制御ファイルが構成されています。
@@ -134,12 +141,14 @@ image:automation-ora-c-series-nfs-architecture.png["この画像は、iSCSI と 
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、自動化された Oracle 19c デプロイメントの手順と、デプロイメント後の Oracle データベースの保護およびクローンに関する情報を段階的に提供します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -174,6 +183,7 @@ installer_archives:
 ====
 
 
+[[configure-networking-and-svm-on-c-series-for-oracle]]
 === CシリーズでOracle向けネットワークとSVMを構成する
 
 [%collapsible%open]
@@ -274,6 +284,7 @@ NOTE: 自動化が正しく機能するには、DB ボリュームの命名規�
 ====
 
 
+[[automation-parameter-files]]
 === 自動化パラメータファイル
 
 [%collapsible%open]
@@ -290,6 +301,7 @@ Ansible プレイブックは、事前定義されたパラメータを使用し
 ====
 
 
+[[parameter-files-configuration]]
 === パラメータファイルの構成
 
 [%collapsible%open]
@@ -368,6 +380,7 @@ nfs_lif: 172.30.136.68
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -432,6 +445,7 @@ ansible-playbook -i hosts 5-destroy.yml -u admin -e @vars/vars.yml
 ====
 
 
+[[post-execution-validation]]
 === 実行後の検証
 
 [%collapsible%open]
@@ -664,6 +678,7 @@ image:automation-ora-c-series-nfs-em-001.png["この画像はOracle Enterprise M
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 [%collapsible%open]
@@ -673,6 +688,7 @@ NetApp は、C シリーズに導入された Oracle データベースを管理
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

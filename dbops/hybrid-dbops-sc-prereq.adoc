@@ -18,6 +18,7 @@ keywords: workflow, prerequisites, licensing, networking, security
 
 
 
+[[on-premises]]
 == オンプレミス
 
 * SnapCenterのインストールと構成
@@ -29,6 +30,7 @@ keywords: workflow, prerequisites, licensing, networking, security
 
 
 
+[[public-cloud]]
 == パブリッククラウド
 
 * NetApp Cloud Centralログイン

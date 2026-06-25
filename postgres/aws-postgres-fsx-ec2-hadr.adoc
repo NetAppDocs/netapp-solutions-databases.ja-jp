@@ -20,6 +20,7 @@ summary: このソリューションは、FSx ONTAPストレージ オファリ�
 
 
 
+[[purpose]]
 == 目的
 
 PostgreSQLは広く使用されているオープンソースデータベースであり、最も人気のあるデータベースエンジンのトップ10の中で4位にランクされています。link:https://db-engines.com/en/ranking["DBエンジン"^] 。一方、PostgreSQL は、高度な機能を備えながらも、ライセンスフリーのオープンソース モデルであることから人気を博しています。一方、オープンソースであるため、特にパブリック クラウドにおける高可用性と災害復旧 (HA/DR) の領域における実稼働レベルのデータベース展開に関する詳細なガイダンスが不足しています。一般的に、ホットスタンバイ、ウォームスタンバイ、ストリーミングレプリケーションなどを備えた典型的な PostgreSQL HA/DR システムをセットアップするのは難しい場合があります。スタンバイ サイトを昇格させてからプライマリ サイトに戻すことで HA/DR 環境をテストすると、本番環境に混乱が生じる可能性があります。読み取りワークロードがストリーミング ホット スタンバイに展開されている場合、プライマリでパフォーマンスの問題が発生することが十分に文書化されています。
@@ -37,6 +38,7 @@ PostgreSQLは広く使用されているオープンソースデータベース�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -49,18 +51,21 @@ PostgreSQLは広く使用されているオープンソースデータベース�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx および EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-postgres-fsx-ec2-architecture.png["この画像は、オンプレミス側と AWS サイトを含む PostgreSQL ハイブリッド クラウド ソリューションの構成の詳細な図を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -95,6 +100,7 @@ image:aws-postgres-fsx-ec2-architecture.png["この画像は、オンプレミ�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *PostgreSQL データベースのバックアップ、リストア、リカバリ。* PostgreSQL データベースは、pg_dump を使用した論理バックアップ、pg_basebackup または低レベルの OS バックアップ コマンドを使用した物理的なオンライン バックアップ、ストレージ レベルの一貫性のあるスナップショットなど、さまざまなバックアップ方法をサポートしています。このソリューションでは、スタンバイ サイトでの PostgreSQL データベース データと WAL ボリュームのバックアップ、リストア、リカバリにNetApp の整合性グループ スナップショットを使用します。  NetApp の整合性グループ ボリューム スナップショットは、ストレージに書き込まれるときに I/O を順序付け、データベース データ ファイルの整合性を保護します。
@@ -108,6 +114,7 @@ image:aws-postgres-fsx-ec2-architecture.png["この画像は、オンプレミ�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 このソリューションの導入は、以下に示す詳細な手順に従って、 NetApp Ansible ベースの自動化ツールキットを使用して自動的に完了できます。
@@ -123,6 +130,7 @@ video::e479b91f-eacd-46bf-bfa1-b01200f0015a[panopto]
 
 
 
+[[prerequisites-for-automated-deployment]]
 === 自動展開の前提条件
 
 展開には次の前提条件が必要です。
@@ -155,6 +163,7 @@ ansible-galaxy collection install -r collections/requirements.yml --force --forc
 
 
 
+[[configure-the-hosts-file]]
 === ホストファイルを設定する
 
 プライマリ FSx ONTAPクラスタ管理 IP と EC2 インスタンスのホスト名を hosts ファイルに入力します。
@@ -180,6 +189,7 @@ psql_01s ansible_ssh_private_key_file=psql_01s.pem
 ....
 
 
+[[configure-the-hostname-yml-file-in-the-hostvars-folder]]
 === host_varsフォルダ内のhost_name.ymlファイルを設定します。
 
 [source, shell]
@@ -204,6 +214,7 @@ client_address: "172.30.15.0/24"
 ----
 
 
+[[configure-the-global-fsxvars-yml-file-in-the-vars-folder]]
 === varsフォルダ内のグローバルfsx_vars.ymlファイルを設定します。
 
 [source, shell]
@@ -291,6 +302,7 @@ redhat_sub_password: "xxxxx"
 ----
 
 
+[[postgresql-deployment-and-hadr-setup]]
 === PostgreSQLの導入とHA/DRのセットアップ
 
 次のタスクでは、PostgreSQL DB サーバー サービスをデプロイし、プライマリ EC2 DB サーバー ホスト上のプライマリ サイトでデータベースを初期化します。次に、スタンバイ サイトにスタンバイ プライマリ EC2 DB サーバー ホストがセットアップされます。最後に、災害復旧のために、プライマリ サイトの FSx クラスターからスタンバイ サイトの FSx クラスターへの DB ボリュームのレプリケーションが設定されます。
@@ -336,6 +348,7 @@ ansible-playbook -i hosts postgresql_standby_setup.yml -u ec2-user --private-key
 ----
 
 
+[[postgresql-database-snapshot-backup-and-replication-to-standby-site]]
 === PostgreSQLデータベースのスナップショットバックアップとスタンバイサイトへのレプリケーション
 
 PostgreSQL データベース スナップショットのバックアップとスタンバイ サイトへのレプリケーションは、ユーザーが定義した間隔で Ansible コントローラー上で制御および実行できます。間隔は 5 分程度まで短くなることが確認されています。したがって、プライマリ サイトで障害が発生した場合、次のスケジュールされたスナップショット バックアップの直前に障害が発生すると、5 分間のデータ損失が発生する可能性があります。
@@ -346,6 +359,7 @@ PostgreSQL データベース スナップショットのバックアップと�
 ----
 
 
+[[failover-to-standby-site-for-dr]]
 === DRのためのスタンバイサイトへのフェイルオーバー
 
 DR 演習として PostgreSQL HA/DR システムをテストするには、次のプレイブックを実行して、スタンバイ サイトのプライマリ スタンバイ EC2 DB インスタンスでフェイルオーバーと PostgreSQL データベースのリカバリを実行します。実際の DR シナリオでは、実際に DR サイトへのフェイルオーバーに対して同じことを実行します。
@@ -356,6 +370,7 @@ ansible-playbook -i hosts postgresql_failover.yml -u ec2-user --private-key psql
 ----
 
 
+[[resync-replicated-db-volumes-after-failover-test]]
 === フェイルオーバーテスト後に複製されたDBボリュームを再同期する
 
 フェイルオーバー テスト後に再同期を実行して、データベース ボリュームのSnapMirrorレプリケーションを再確立します。
@@ -366,12 +381,14 @@ ansible-playbook -i hosts postgresql_standby_resync.yml -u ec2-user --private-ke
 ----
 
 
+[[failover-from-primary-ec2-db-server-to-standby-ec2-db-server-due-to-ec2-compute-instance-failure]]
 === EC2 コンピューティングインスタンスの障害によるプライマリ EC2 DB サーバーからスタンバイ EC2 DB サーバーへのフェイルオーバー
 
 NetApp、手動フェイルオーバーを実行するか、ライセンスが必要になる可能性のある確立された OS クラスタウェアを使用することをお勧めします。
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

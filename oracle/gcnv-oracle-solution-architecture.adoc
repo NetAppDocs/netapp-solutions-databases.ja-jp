@@ -15,6 +15,7 @@ Google Cloud NetApp Volumes は、Oracle Database 26ai の高可用性アーキ�
 
 
 
+[[architecture-overview]]
 == アーキテクチャの概要
 
 このアーキテクチャは、*Google Cloud NetApp Volumes (GCNV)* iSCSI ブロックストレージを使用して、*Oracle Data Guard* により Google Cloud 上の *Oracle Database 26ai* の高可用性を提供します。
@@ -58,6 +59,7 @@ GCNV レプリケーションは、Oracle データベース チャネルを経�
 |===
 
 
+[[zoning]]
 === ゾーニング
 
 データベースゾーンごとに1つのGCNV Flex Unifiedプールをデプロイし、各ホストに専用ボリュームを割り当てます。起動ディスクはオペレーティングシステム専用に使用してください。
@@ -66,6 +68,8 @@ GCNV レプリケーションは、Oracle データベース チャネルを経�
 
 
 
+[[architecture-reference-diagram]]
+[[reference-diagram]]
 == アーキテクチャ参照図
 
 このソリューション アーキテクチャは、3つの独立したデータパスを提供します。ストレージ レプリケーションとData Guardのリドゥ転送は、別々のパスで行われます。
@@ -80,6 +84,7 @@ image::gcnv-oracle-26ai-ha.png[GCNVリファレンス アーキテクチャ]
 
 
 
+[[platform-roles]]
 == プラットフォームロール
 
 以下の表は、どのプラットフォーム レイヤがストレージ サービスを提供し、どのレイヤがデータベースの同期とフェイルオーバー制御を提供するかをまとめたものです。
@@ -98,6 +103,7 @@ GCNV レプリケーションは、まずベースラインコピーを実行し
 
 
 
+[[topology-and-storage]]
 == トポロジとストレージ
 
 このトポロジーでは、プライマリ、スタンバイ、オブザーバーの役割を別々のゾーンに配置し、各データベースホストを専用のGCNVプールとiSCSIボリュームにマッピングします。
@@ -133,6 +139,7 @@ GCNV レプリケーションは、まずベースラインコピーを実行し
 
 
 
+[[whats-next]]
 == 次の手順
 
 復旧と可用性の目標に合った展開パスを選択するには、xref:gcnv-oracle-deployment-options.adoc[Google Cloud NetApp Volumes 上の Oracle Database 26ai のデプロイオプションについて説明します]にアクセスしてください。

@@ -18,10 +18,12 @@ summary: このページでは、 NetApp ONTAPストレージに Oracle19c を�
 
 
 
+[[awxtower-deployment-oracle-19c-database]]
 == AWX/Tower 導入 Oracle 19c データベース
 
 
 
+[[1-create-the-inventory-group-hosts-and-credentials-for-your-environment]]
 === 1.環境のインベントリ、グループ、ホスト、資格情報を作成します
 
 このセクションでは、 NetApp自動化ソリューションを使用するための環境を準備する、AWX/Ansible Tower でのインベントリ、グループ、ホスト、およびアクセス資格情報の設定について説明します。
@@ -91,6 +93,7 @@ extra_vars:
 
 
 
+[[2-create-a-project]]
 === 2.プロジェクトを作成する
 
 . 「リソース」→「プロジェクト」に移動し、「追加」をクリックします。
@@ -106,6 +109,7 @@ extra_vars:
 
 
 
+[[3-configure-oracle-hostvars]]
 === 3.Oracle の host_vars を構成する
 
 このセクションで定義された変数は、個々の Oracle サーバーおよびデータベースに適用されます。
@@ -118,6 +122,7 @@ NOTE: 青色の項目は、環境に合わせて変更する必要がありま�
 
 
 
+[[host-vars-config]]
 === ホストVARS構成
 
 [source, shell]
@@ -164,6 +169,7 @@ host_datastores_nfs:
 
 
 
+[[4-configure-global-variables]]
 === 4.グローバル変数を設定する
 
 このセクションで定義されている変数は、すべての Oracle ホスト、データベース、およびONTAPクラスタに適用されます。
@@ -274,6 +280,7 @@ initial_pwd_all: "netapp123"
 
 
 
+[[5-configure-and-launch-the-job-template]]
 === 5.ジョブ テンプレートを構成して起動します。
 
 . ジョブ テンプレートを作成します。
@@ -321,6 +328,7 @@ NOTE: requirements_config は、他のロールを実行するための正しい
 
 
 
+[[6-deploy-additional-database-on-same-oracle-host]]
 === 6.同じOracleホストに追加のデータベースを導入する
 
 プレイブックの Oracle 部分では、実行ごとに Oracle サーバー上に単一の Oracle コンテナ データベースが作成されます。同じサーバー上に追加のコンテナ データベースを作成するには、次の手順を実行します。
@@ -424,6 +432,7 @@ CDB2_PDB1
 
 
 
+[[where-to-go-for-help]]
 === どこに助けを求めたらいいですか?
 
 ツールキットに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

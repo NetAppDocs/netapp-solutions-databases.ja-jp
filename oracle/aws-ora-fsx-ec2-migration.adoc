@@ -20,6 +20,7 @@ keywords: HA, DR, database, Oracle, RDS, AWS, SnapCenter
 
 
 
+[[ontap-storage-is-available-on-premises]]
 == ONTAPストレージはオンプレミスで利用可能
 
 オンプレミスの Oracle データベースがONTAPストレージアレイ上に配置されている場合は、AWS FSx ONTAPストレージに組み込まれているNetApp SnapMirrorテクノロジーを使用して、データベース移行のレプリケーションを設定する方が簡単です。移行プロセスは、 NetApp BlueXPコンソールを使用して調整できます。
@@ -39,6 +40,7 @@ keywords: HA, DR, database, Oracle, RDS, AWS, SnapCenter
 video::c0df32f8-d6d3-4b79-b0bd-b01200f3a2e8[panopto]
 
 
+[[ontap-storage-is-not-available-on-premises]]
 == ONTAPストレージはオンプレミスでは利用できません
 
 オンプレミスの Oracle データベースがONTAP以外のサードパーティ製ストレージでホストされている場合、データベースの移行は Oracle データベースのバックアップ コピーの復元に基づいて行われます。切り替える前に、アーカイブ ログを再生して最新の状態にする必要があります。
@@ -58,6 +60,7 @@ AWS S3 は、データベースの移動と移行のためのステージング�
 
 
 
+[[migrate-on-premises-oracle-databases-to-aws-fsxec2-using-pdb-relocation-with-maximum-availability]]
 == 最大限の可用性を備えた PDB 再配置を使用してオンプレミスの Oracle データベースを AWS FSx/EC2 に移行する
 
 この移行アプローチは、すでに PDB/CDB マルチテナント モデルに導入されている Oracle データベースに最適であり、オンプレミスではONTAPストレージを使用できません。  PDB 再配置方法では、Oracle PDB ホット クローン テクノロジを利用して、サービスの中断を最小限に抑えながら、ソース CDB とターゲット CDB 間で PDB を移動します。

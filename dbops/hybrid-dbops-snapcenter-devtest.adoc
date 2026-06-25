@@ -18,6 +18,7 @@ keywords: hybrid cloud, database, solutions, devtest, workflow
 
 
 
+[[clone-an-oracle-database-for-devtest-from-a-replicated-snapshot-backup]]
 == 複製されたスナップショットバックアップから開発/テスト用の Oracle データベースをクローンする
 
 . Oracle のデータベース管理ユーザー ID を使用してSnapCenterにログインします。  [リソース] タブに移動すると、 SnapCenterによって保護されている Oracle データベースが表示されます。
@@ -86,6 +87,7 @@ image:snapctr-ora-clone-015.png["入出力ダイアログまたは書かれた�
 
 
 
+[[clone-a-sql-database-for-devtest-from-a-replicated-snapshot-backup]]
 == 複製されたスナップショット バックアップから開発/テスト用の SQL データベースをクローンする
 
 . SQL Server のデータベース管理ユーザー ID を使用してSnapCenterにログインします。  [リソース] タブに移動すると、 SnapCenterによって保護されている SQL Sever ユーザー データベースと、パブリック クラウド内のターゲット スタンバイ SQL インスタンスが表示されます。
@@ -135,6 +137,7 @@ image:snapctr-sql-clone-010.png["入出力ダイアログまたは書かれた�
 
 
 
+[[post-clone-configuration]]
 == クローン後の構成
 
 . オンプレミスの Oracle 本番データベースは通常、ログ アーカイブ モードで実行されています。このモードは、開発データベースまたはテスト データベースには必要ありません。ログ アーカイブ モードをオフにするには、sysdba として Oracle DB にログインし、ログ モード変更コマンドを実行して、データベースを起動してアクセスします。
@@ -144,6 +147,7 @@ image:snapctr-sql-clone-010.png["入出力ダイアログまたは書かれた�
 
 
 
+[[refresh-clone-database]]
 == クローンデータベースを更新
 
 . クローンされたデータベースを削除し、クラウド DB サーバー環境をクリーンアップします。次に、前の手順に従って、新しいデータで新しい DB のクローンを作成します。新しいデータベースのクローンを作成するのには数分しかかかりません。
@@ -152,6 +156,7 @@ image:snapctr-sql-clone-010.png["入出力ダイアログまたは書かれた�
 
 
 
+[[where-to-go-for-help]]
 == どこに助けを求めたらいいですか?
 
 このソリューションとユースケースに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

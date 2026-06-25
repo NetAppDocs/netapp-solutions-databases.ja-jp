@@ -20,6 +20,7 @@ summary: このソリューションは、プライマリ データベースか�
 
 
 
+[[purpose]]
 == 目的
 
 プライベート データ センターまたはパブリック クラウドの特定のストレージ サービスでシン クローン機能が有効になっている場合、お客様はNetApp ONTAPストレージのFlexClone機能を使用して、数分で大規模なデータベース クローンを迅速に作成し、追加のストレージを節約できます。この Ansible ベースのツールキットは、 NetApp SnapCenterコマンドライン ユーティリティを使用して、スケジュールに従ってクローン Oracle データベースのセットアップ、クローン作成、更新を自動化し、ライフサイクル管理を合理化します。このツールキットは、オンプレミスまたはパブリック クラウド (AWS または Azure) のONTAPストレージに展開され、 NetApp SnapCenter UI ツールによって管理される Oracle データベースに適用されます。
@@ -32,6 +33,7 @@ summary: このソリューションは、プライマリ データベースか�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -43,6 +45,7 @@ summary: このソリューションは、プライマリ データベースか�
 
 
 
+[[license]]
 == ライセンス
 
 このGitHubリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://github.com/NetApp/na_ora_hadr_failover_resync/blob/master/LICENSE.TXT["ライセンスファイル"^] 。
@@ -52,10 +55,12 @@ NOTE: この GitHub リポジトリのコンテンツを使用した派生作品
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -89,6 +94,7 @@ NOTE: 簡素化のため、クローン先の Oracle サーバーは、Oracle �
 ====
 
 
+[[download-the-toolkit]]
 === ツールキットをダウンロードする
 
 [%collapsible%open]
@@ -103,6 +109,7 @@ NOTE: 現時点では、このツールキットにアクセスできるのは�
 ====
 
 
+[[ansible-target-hosts-file-configuration]]
 === Ansibleターゲットホストファイルの設定
 
 [%collapsible%open]
@@ -120,6 +127,7 @@ ora_04.cie.netapp.com ansible_host=10.61.180.29 ansible_ssh_private_key_file=ora
 ====
 
 
+[[global-variables-configuration]]
 === グローバル変数の設定
 
 [%collapsible%open]
@@ -138,6 +146,7 @@ snapctr_pwd: 'xxxxxxxx'
 ====
 
 
+[[host-variables-configuration]]
 === ホスト変数の設定
 
 [%collapsible%open]
@@ -158,6 +167,7 @@ clone_db_sid: NTAP1DEV
 ====
 
 
+[[additional-clone-target-oracle-server-configuration]]
 === 追加のクローンターゲットOracleサーバー構成
 
 [%collapsible%open]
@@ -179,6 +189,7 @@ export ORACLE_HOME=/u01/app/oracle/product/19.0.0/NTAP1
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -213,6 +224,7 @@ NOTE: SnapCenter構成のために、ユーザー名を sudo ユーザーに変�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]

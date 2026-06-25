@@ -20,6 +20,7 @@ summary: このソリューションでは、Google クラウドの Oracle Data 
 
 
 
+[[purpose]]
 == 目的
 
 高いスループットとミッションクリティカルな Oracle VLDB では、バックエンドのデータベース ストレージに大きな要求が課せられます。サービス レベル アグリーメント (SLA) を満たすには、データベース ストレージは、ミリ秒未満のレイテンシ パフォーマンスを維持しながら、必要な容量と 1 秒あたりの高い入出力操作 (IOPS) を提供する必要があります。これは、共有ストレージ リソース環境を備えたパブリック クラウドにこのようなデータベース ワークロードを展開する場合に特に困難になります。すべてのストレージ プラットフォームが同じように作成されるわけではありません。 GCNV は、Google が提供するプレミアム ストレージ サービスであり、持続的な IOPS と低レイテンシのパフォーマンス特性を必要とする、Google クラウドでのミッション クリティカルな Oracle データベースの導入をサポートできます。このアーキテクチャは、さまざまなパフォーマンス プロファイルをサポートする構成可能なサービス層を備え、OLTP および OLAP ワークロードに対応します。  GCNV は、ミリ秒未満のレイテンシで超高速のパフォーマンスを提供し、読み取り/書き込み混合ワークロードでボリュームあたり最大 4.5 GiBps のスループットを実現します。
@@ -36,6 +37,7 @@ GCNV の高速スナップショット バックアップ (数秒) とクロー�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -48,18 +50,21 @@ GCNV の高速スナップショット バックアップ (数秒) とクロー�
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、実際のユーザーの展開環境と一致しない可能性のある Google Cloud ラボ設定で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:gcnv-ora-vldb-dg-architecture.png["この画像は、GCNV 上の Google Cloud における Oracle Data Guard の実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -100,6 +105,7 @@ image:gcnv-ora-vldb-dg-architecture.png["この画像は、GCNV 上の Google Cl
 |===
 
 
+[[oracle-vldb-data-guard-configuration-with-a-simulated-ny-to-la-dr-setup]]
 === Oracle VLDB Data Guard 構成と NY から LA への DR セットアップのシミュレーション
 
 [cols="33%, 33%, 33%"]
@@ -119,6 +125,7 @@ image:gcnv-ora-vldb-dg-architecture.png["この画像は、GCNV 上の Google Cl
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * * Google Cloud NetApp Volumes の構成。* GCNVはGoogleクラウド内で次のように割り当てられます。 `Storage Pools` 。これらのテストと検証では、East4 リージョンで Oracle プライマリ データベースをホストするために 2 TiB のストレージ プールを展開し、West4 リージョンでスタンバイ データベースと DB クローンをホストするために 4 TiB のストレージ プールを展開しました。  GCNV ストレージ プールには、Flex、Standard、Premium、Extreme の 4 つのサービス レベルがあります。 ANF 容量プールの IO 容量は、容量プールのサイズとサービス レベルによって決まります。容量プールの作成時に、ストレージ プールの場所、サービス レベル、可用性ゾーン、およびストレージ プールの容量を設定します。  Oracle Data Guard 構成の場合、ゾーン レベルの障害によるデータベース フェイルオーバー保護を Data Guard が提供するため、ゾーン可用性で十分です。
@@ -130,12 +137,14 @@ image:gcnv-ora-vldb-dg-architecture.png["この画像は、GCNV 上の Google Cl
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、GCNV ストレージを備えた東部リージョンの Google Cloud のプライマリ Oracle DB と、GCNV ストレージを備えた西部リージョンの Google Cloud の物理スタンバイ Oracle DB 間の Oracle Data Guard 設定における GCNV 上の Oracle VLDB の構成について説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -167,6 +176,7 @@ image:gcnv-ora-vldb-dg-vol-001.png["GCNV 環境構成を示すスクリーンシ
 ====
 
 
+[[primary-oracle-vldb-configuration-for-data-guard]]
 === Data GuardのプライマリOracle VLDB構成
 
 [%collapsible%open]
@@ -589,6 +599,7 @@ DIRNAME
 ====
 
 
+[[standby-oracle-vldb-configuration-for-data-guard]]
 === Data GuardのスタンバイOracle VLDB構成
 
 [%collapsible%open]
@@ -941,6 +952,7 @@ DIRNAME
 ====
 
 
+[[setup-data-guard-broker-and-fsfo-with-an-observer]]
 === オブザーバーを使用して Data Guard Broker と FSFO を設定する
 
 
@@ -1329,6 +1341,7 @@ NOTE: データ損失ゼロを実現するには、Oracle Data Guard保護モー
 ====
 
 
+[[clone-standby-database-for-other-use-cases-via-automation]]
 === 自動化により他のユースケース用にスタンバイデータベースをクローン
 
 [%collapsible%open]
@@ -1345,6 +1358,7 @@ NOTE: 現時点では、このツールキットにアクセスできるのは�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

@@ -15,6 +15,7 @@ Google Cloud NetApp Volumes iSCSI ブロックストレージを使用して、�
 
 
 
+[[prerequisites]]
 == 前提条件
 
 続行する前に、Google Cloud ドキュメントにある構成の前提条件の手順を完了してください：
@@ -27,6 +28,7 @@ Google Cloud NetApp Volumes iSCSI ブロックストレージを使用して、�
 
 
 
+[[before-you-begin]]
 == 開始する前に
 
 次の要件が満たされていることを確認してください：
@@ -43,6 +45,7 @@ NOTE: 新規Google Cloudユーザーは、link:https://cloud.google.com/free["�
 
 
 
+[[objectives]]
 == 目的
 
 SQL Server Always On 可用性グループの構成には、次の概要タスクが含まれます。
@@ -57,6 +60,7 @@ SQL Server Always On 可用性グループの構成には、次の概要タス�
 
 
 
+[[cost-considerations]]
 == コストに関する考慮事項
 
 このチュートリアルでは、Google Cloud の課金対象コンポーネントを使用します。link:https://console.cloud.google.com/compute/overview?["Compute Engineインスタンス"^]とlink:https://console.cloud.google.com/netapp/volumes?["Google Cloud NetApp Volumes"^]ストレージが含まれます。
@@ -65,6 +69,7 @@ link:https://cloud.google.com/products/calculator?dl=CjhDaVF4T1dJeU5XRTBZUzFtTmp
 
 
 
+[[configure-domain-accounts]]
 == ドメインアカウントを設定する
 
 Active Directory に 2 つのアカウントを構成します。1 つはインストール アカウント（管理者アカウント）、もう 1 つは両方の SQL Server VM 用のサービス アカウントです。
@@ -86,6 +91,7 @@ NOTE: この例では、 `cvsdemo`をドメイン名として使用します。 
 |===
 
 
+[[create-compute-engine-vms-for-sql-server]]
 == SQL Server 用の Compute Engine VM を作成する
 
 可用性グループのレプリカをホストするために、Windows Server 2025にSQL Server 2022 Enterpriseがプレインストールされた2つのGoogle Compute Engine VMインスタンスを作成します。
@@ -125,6 +131,7 @@ NOTE: この例では、 `cvsdemo`をドメイン名として使用します。 
 
 
 
+[[join-servers-to-the-domain]]
 === サーバーをドメインに参加させる
 
 VM を作成したら、それらを Active Directory ドメインに参加させ、フェールオーバークラスタリングと iSCSI 接続に必要な Windows 機能をインストールします。
@@ -147,6 +154,7 @@ NOTE: SQL インスタンスは、クラスタリングとフェールオーバ�
 
 
 
+[[install-required-windows-features]]
 === 必要なWindows機能をインストールする
 
 サーバーマネージャーまたはPowerShellを使用して、両方のSQL ServerVMにフェイルオーバークラスタリングとMPIOをインストールします。
@@ -178,6 +186,7 @@ Install-WindowsFeature RSAT-AD-PowerShell
 ----
 
 
+[[obtain-iscsi-initiator-names]]
 === iSCSIイニシエーター名を取得する
 
 iSCSIイニシエーターGUIまたはPowerShellを使用して、ホストグループに含める各SQL Server VMのiSCSI修飾名（IQN）を取得します。
@@ -200,12 +209,14 @@ Get-InitiatorPort | Select-Object NodeAddress
 ----
 
 
+[[create-netapp-block-storage-volumes]]
 == NetAppブロックストレージボリュームを作成する
 
 Google Cloud NetApp Volumes を使用して iSCSI ブロックストレージボリュームを作成し、SQL Server データベース用のハイパフォーマンスな共有ストレージを提供します。このプロセスには、ホストグループ、ストレージプール、およびデータ、ログ、一時、バックアップ用の個別のボリュームの作成が含まれます。
 
 
 
+[[create-the-host-group]]
 === ホストグループを作成する
 
 .手順
@@ -242,6 +253,7 @@ image::gcnv-sql-storage-pool.png[ストレージプールの設定]
 
 
 
+[[create-storage-pool]]
 === ストレージプールを作成する
 
 .手順
@@ -279,6 +291,7 @@ gcloud netapp storage-pools create POOL_NAME \
 
 
 
+[[create-volumes]]
 === ボリュームの作成
 
 . データ、ログ、一時、バックアップ用のボリュームを作成します。各ボリュームタイプに対して次のコマンドを実行します：
@@ -317,6 +330,7 @@ NOTE: データ、ログ、一時、バックアップの各ボリュームタ�
 
 
 
+[[mount-iscsi-volumes]]
 === iSCSI ボリュームをマウントする
 
 各 SQL インスタンスに非共有 iSCSI ボリュームをマウントします：
@@ -371,6 +385,7 @@ $paths | % { New-Item -ItemType Directory -Path $_ -Force }
 
 
 
+[[configure-sql-server]]
 == SQL Server を設定する
 
 両方のノードでSQL Serverをドメインサービスアカウントを使用するように構成し、デフォルトのパスをNetAppボリュームを使用するように更新し、システムデータベースを新しいストレージの場所に移動します。
@@ -545,12 +560,14 @@ image::gcnv-sql-aoag-003.png[SQL Server Configuration Manager - 起動パラメ�
 
 
 
+[[set-up-failover-cluster]]
 == フェールオーバークラスタを設定する
 
 SQL Server に高可用性を提供するために、Windows Server フェールオーバー クラスタリングをセットアップします。詳細については、link:https://learn.microsoft.com/en-us/windows-server/failover-clustering/failover-clustering-overview["Windows Server フェールオーバー クラスタリングのドキュメント"^]を参照してください。
 
 
 
+[[configure-firewall-rules]]
 === ファイアウォールルールを設定する
 
 クラスター通信、SQL Server 接続、および可用性グループのレプリケーションを有効にするには、両方の SQL ノードで必要なネットワークポートを開きます。
@@ -588,6 +605,7 @@ Get-NetAdapterBinding -ComponentID ms_tcpip6
 
 
 
+[[create-the-failover-cluster]]
 === フェールオーバークラスタを作成する
 
 高可用性と自動フェールオーバー機能を有効にするには、両方の SQL Server ノードを使用して Windows Server フェールオーバークラスタを作成します。
@@ -609,12 +627,14 @@ image::gcnv-sql-failover-confirm.png[フェイルオーバー クラスタの作
 
 
 
+[[configure-cluster-quorum-with-file-share-witness]]
 == ファイル共有監視を使用してクラスタ クォーラムを設定する
 
 2ノードクラスタ構成でクォーラムを維持するためにファイル共有監視を設定します。監視は、スプリット ブレイン シナリオを防ぎ、クラスタの可用性を確保するために追加の投票を提供します。
 
 
 
+[[create-file-share]]
 === ファイル共有の作成
 
 ネットワーク接続があり、同じ Active Directory ドメイン内にある別のゾーンまたはリージョンの VM にファイル共有を作成します。
@@ -641,6 +661,7 @@ image::gcnv-sql-cluster-new-share.png[クラスタ クォーラム監視用の�
 
 
 
+[[configure-quorum-settings]]
 === クォーラム設定を構成する
 
 クォーラム投票にファイル共有監視を使用するようにクラスタを構成します。
@@ -665,6 +686,7 @@ image::gcnv-sql-file-share-confirm.png[ファイル共有監視で構成され�
 
 
 
+[[enable-always-on-availability-groups]]
 == Always On 可用性グループを有効にする
 
 両方の SQL Server VM で Always On 可用性グループを有効にします：
@@ -684,6 +706,7 @@ image::gcnv-sql-always-on-group.png[Always On高可用性を有効にする]
 
 
 
+[[create-a-database-on-the-first-sql-server-instance]]
 == 最初の SQL Server インスタンスにデータベースを作成する
 
 最初の SQL Server インスタンスにデータベースを作成します。
@@ -704,6 +727,7 @@ GO
 
 
 
+[[create-and-configure-availability-group]]
 == 可用性グループの作成と設定
 
 同期コミットと自動フェールオーバーを備えた Always On 可用性グループを作成して、SQL Server データベースに高可用性を提供します。
@@ -779,6 +803,7 @@ image::gcnv-sql-avail-group-replica.png[可用性グループが正常に作成�
 
 
 
+[[create-dnn-listener-resource]]
 == DNN リスナー リソースを作成する
 
 ロード バランサーを必要とせずにトラフィックを適切なクラスター化されたリソースにルーティングするための分散ネットワーク名（DNN）リスナーを作成します。
@@ -807,6 +832,7 @@ Set-ClusterResourceDependency -Resource $AagResource -Dependency "[$Dns]"
 ----
 
 
+[[configure-possible-owners]]
 === 可能な所有者を設定する
 
 デフォルトでは、クラスタは DNN DNS 名をすべてのノードにバインドします。可用性グループに参加していないノードを除外します：
@@ -826,6 +852,7 @@ image::gcnv-sql-configure-dns.png[DNN の可能な所有者を設定する]
 
 
 
+[[update-application-connection-strings]]
 == アプリケーション接続文字列を更新する
 
 DNNリスナー名を使用するように接続文字列を更新し、 `MultiSubnetFailover=True`パラメータを含めます：
@@ -840,6 +867,7 @@ NOTE: クライアントが MultiSubnetFailover パラメータをサポート�
 
 
 
+[[test-failover]]
 == テスト フェイルオーバー
 
 可用性グループの構成を確認し、フェイルオーバーをテストして、ノード間で自動フェイルオーバーが正しく機能することを確認します。
@@ -890,6 +918,7 @@ image::gcnv-sql-success-failover.png[フェイルオーバーの成功を示すA
 
 
 
+[[clean-up-resources]]
 == リソースをクリーンアップする
 
 チュートリアルを完了したら、追加料金が発生しないように、作成したリソースを削除します。
@@ -904,6 +933,7 @@ link:https://cloud.google.com/netapp/volumes/docs/configure-and-use/volumes/dele
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 Google Cloud上のNetAppストレージを使用したSQL Serverの詳細については、次のドキュメントを確認してください：

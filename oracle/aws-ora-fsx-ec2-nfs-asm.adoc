@@ -20,6 +20,7 @@ summary: このソリューションは、NFS プロトコルを使用した AWS
 
 
 
+[[purpose]]
 == 目的
 
 ASM (Automatic Storage Management) は、多くの Oracle インストールで採用されている一般的な Oracle ストレージ ボリューム マネージャです。これは、Oracle が推奨するストレージ管理ソリューションでもあります。従来のボリューム マネージャーおよびファイル システムに代わる手段を提供します。 Oracle バージョン 11g 以降、ASM はデータベースではなくグリッド インフラストラクチャにパッケージ化されています。そのため、RAC を使用せずに Oracle ASM をストレージ管理に利用するには、Oracle Restart とも呼ばれるスタンドアロン サーバーに Oracle Grid Infrastructure をインストールする必要があります。そうすることで、本来は単純な Oracle データベースの導入がさらに複雑になります。ただし、名前が示すように、Oracle が再起動モードでデプロイされている場合、失敗した Oracle サービスは、ユーザーの介入なしにホストの再起動後に再起動され、ある程度の高可用性または HA 機能が提供されます。
@@ -35,6 +36,7 @@ Oracle ASM は通常、FC、iSCSI ストレージ プロトコル、および LU
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ Oracle ASM は通常、FC、iSCSI ストレージ プロトコル、および LU
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のある AWS FSx および EC2 環境で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:aws-ora-fsx-ec2-nfs-asm-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -93,6 +98,7 @@ image:aws-ora-fsx-ec2-nfs-asm-architecture.png["この画像は、iSCSI と ASM 
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *EC2 コンピューティングインスタンス。*これらのテストと検証では、Oracle データベース コンピューティング インスタンスに AWS EC2 t2.xlarge インスタンス タイプを使用しました。 NetApp、データベース ワークロードに最適化されているため、本番環境での Oracle のコンピューティング インスタンスとして M5 タイプの EC2 インスタンスを使用することを推奨しています。実際のワークロード要件に基づいて、vCPU の数と RAM の量に応じて EC2 インスタンスのサイズを適切に設定する必要があります。
@@ -106,12 +112,14 @@ image:aws-ora-fsx-ec2-nfs-asm-architecture.png["この画像は、iSCSI と ASM 
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、段階的な展開手順について説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -134,6 +142,7 @@ NOTE: Oracle インストール ファイルをステージングするための
 ====
 
 
+[[ec2-instance-kernel-configuration]]
 === EC2インスタンスのカーネル構成
 
 [%collapsible%open]
@@ -243,6 +252,7 @@ usermod -a -G asm oracle
 ====
 
 
+[[provision-and-export-nfs-volumes-to-be-mounted-to-ec2-instance-host]]
 === EC2 インスタンス ホストにマウントする NFS ボリュームをプロビジョニングしてエクスポートします。
 
 [%collapsible%open]
@@ -295,6 +305,7 @@ svm_ora   svm_ora_root aggr1        online     RW          1GB    972.1MB    0%
 ====
 
 
+[[database-storage-configuration]]
 === データベースストレージ構成
 
 [%collapsible%open]
@@ -404,6 +415,7 @@ chmod 640 /oralogs/asm/*
 ====
 
 
+[[oracle-grid-infrastructure-installation]]
 === Oracle グリッド インフラストラクチャのインストール
 
 [%collapsible%open]
@@ -540,6 +552,7 @@ ora.evmd            ONLINE  ONLINE       ip-172-30-15-58          STABLE
 ====
 
 
+[[oracle-database-installation]]
 === Oracleデータベースのインストール
 
 [%collapsible%open]
@@ -895,18 +908,21 @@ This completes Oracle 19c version 19.18 Restart deployment on an Amazon FSx ONTA
 ====
 
 
+[[automated-deployment-option]]
 === 自動展開オプション
 
 NetApp は、このソリューションの実装を容易にするために、Ansible を使用した完全に自動化されたソリューション導入ツールキットをリリースする予定です。ツールキットの可用性については再度ご確認ください。公開後、こちらにリンクを掲載いたします。
 
 
 
+[[oracle-database-backup-restore-and-clone-with-snapcenter-service]]
 == SnapCenterサービスによる Oracle データベースのバックアップ、リストア、クローン作成
 
 現時点では、NFSおよびASMストレージオプションを備えたOracleデータベースは、従来のSnapCenter Server UIツールでのみサポートされています。link:../dbops/hybrid-dbops-snapcenter-usecases.html["SnapCenterを使用したハイブリッド クラウド データベース ソリューション"^] NetApp SnapCenter UI ツールを使用した Oracle データベースのバックアップ、リストア、およびクローン作成の詳細については、こちらをご覧ください。
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

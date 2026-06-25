@@ -18,12 +18,14 @@ keywords: AWS, Oracle, RDS, HA, DR, database
 
 
 
+[[deploy-an-ec2-linux-instance-for-oracle-via-ec2-console]]
 == EC2 コンソール経由で Oracle 用の EC2 Linux インスタンスをデプロイする
 
 AWS を初めて使用する場合は、まず AWS 環境をセットアップする必要があります。 AWS ウェブサイトのランディングページにあるドキュメントタブには、AWS EC2 コンソール経由で Oracle データベースをホストするために使用できる Linux EC2 インスタンスをデプロイする方法に関する EC2 手順リンクが提供されています。次のセクションでは、これらの手順の概要を説明します。詳細については、リンクされた AWS EC2 固有のドキュメントを参照してください。
 
 
 
+[[setting-up-your-aws-ec2-environment]]
 === AWS EC2 環境の設定
 
 EC2 および FSx サービスで Oracle 環境を実行するために必要なリソースをプロビジョニングするには、AWS アカウントを作成する必要があります。必要な詳細は、次の AWS ドキュメントに記載されています。
@@ -40,6 +42,7 @@ EC2 および FSx サービスで Oracle 環境を実行するために必要な
 
 
 
+[[enabling-multiple-availability-zones-in-aws-account-attributes]]
 === AWSアカウント属性で複数のアベイラビリティゾーンを有効にする
 
 アーキテクチャ図に示されている Oracle の高可用性構成の場合、リージョン内で少なくとも 4 つの可用性ゾーンを有効にする必要があります。災害復旧に必要な距離を満たすために、複数のアベイラビリティーゾーンを異なるリージョンに配置することもできます。
@@ -48,6 +51,7 @@ image:aws-ora-fsx-ec2-inst-001.png["入出力ダイアログまたは書かれ�
 
 
 
+[[creating-and-connecting-to-an-ec2-instance-for-hosting-oracle-database]]
 === Oracle データベースをホストするための EC2 インスタンスの作成と接続
 
 チュートリアルを見るlink:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html["Amazon EC2 Linuxインスタンスを使い始める"^]段階的な展開手順とベスト プラクティスについて説明します。
@@ -107,12 +111,14 @@ ssh -i ora-db1v2.pem ec2-user@54.80.114.77
 
 
 
+[[provision-fsx-ontap-file-systems-for-oracle-database-storage]]
 == Oracle データベース ストレージ用の FSx ONTAPファイル システムをプロビジョニングする
 
 EC2 インスタンスのデプロイメントでは、OS に EBS ルート ボリュームが割り当てられます。  FSx ONTAPファイル システムは、Oracle バイナリ、データ、ログ ボリュームを含む Oracle データベース ストレージ ボリュームを提供します。  FSx ストレージ NFS ボリュームは、AWS FSx コンソールまたは Oracle インストールからプロビジョニングでき、自動化パラメータファイルでユーザーが構成したとおりにボリュームを割り当てる構成自動化が可能です。
 
 
 
+[[creating-fsx-ontap-file-systems]]
 === FSx ONTAPファイルシステムの作成
 
 このドキュメントを参照 https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/managing-file-systems.html["FSx ONTAPファイルシステムの管理"^]FSx ONTAPファイルシステムを作成します。
@@ -168,6 +174,7 @@ image:aws-ora-fsx-ec2-stor-008.png["入出力ダイアログまたは書かれ�
 
 
 
+[[provisioning-of-database-volumes-for-oracle-database]]
 === Oracleデータベースのデータベースボリュームのプロビジョニング
 
 見るlink:https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/managing-volumes.html["FSx ONTAPボリュームの管理 - ボリュームの作成"^]詳細については。
@@ -193,18 +200,21 @@ NOTE: iSCSI LUN の作成は、現在 FSx コンソールではサポートさ�
 
 
 
+[[install-and-configure-oracle-on-an-ec2-instance-with-fsx-database-volumes]]
 == FSx データベースボリュームを使用して EC2 インスタンスに Oracle をインストールして設定する
 
 NetApp自動化チームは、ベスト プラクティスに従って EC2 インスタンス上で Oracle のインストールと構成を実行するための自動化キットを提供しています。自動化キットの現在のバージョンは、デフォルトの RU パッチ 19.8 を使用して NFS 上の Oracle 19c をサポートしています。自動化キットは、必要に応じて他の RU パッチに簡単に適応できます。
 
 
 
+[[prepare-a-ansible-controller-to-run-automation]]
 === 自動化を実行するためのAnsibleコントローラーを準備する
 
 「<<Oracle データベースをホストするための EC2 インスタンスの作成と接続>> 「Ansible コントローラーを実行するための小さな EC2 Linux インスタンスをプロビジョニングします。」  RedHat を使用する代わりに、2vCPU と 8G RAM を搭載した Amazon Linux t2.large で十分なはずです。
 
 
 
+[[retrieve-netapp-oracle-deployment-automation-toolkit]]
 === NetApp Oracle導入自動化ツールキットを取得する
 
 ステップ1でプロビジョニングしたEC2 Ansibleコントローラインスタンスにec2-userとしてログインし、ec2-userのホームディレクトリから以下を実行します。 `git clone`自動化コードのコピーを複製するコマンド。
@@ -219,6 +229,7 @@ git clone https://github.com/NetApp-Automation/na_rds_fsx_oranfs_config.git
 ----
 
 
+[[execute-automated-oracle-19c-deployment-using-automation-toolkit]]
 === 自動化ツールキットを使用して Oracle 19c の自動デプロイメントを実行する
 
 詳細な説明をご覧くださいlink:../automation/cli-automation.html["CLI デプロイメント Oracle 19c データベース"^]CLI 自動化を使用して Oracle 19c をデプロイします。ホスト アクセス認証にパスワードではなく SSH キー ペアを使用しているため、プレイブック実行のコマンド構文が少し変更されます。次のリストは概要です。
@@ -262,6 +273,7 @@ ansible-playbook -i hosts all_playbook.yml -u ec2-user --private-key accesststke
 
 
 
+[[setting-up-snapmirror-between-primary-and-standby-fsx-ha-cluster]]
 == プライマリとスタンバイの FSx HA クラスタ間のSnapMirror の設定
 
 高可用性と災害復旧のために、プライマリ FSx ストレージ クラスターとスタンバイ FSx ストレージ クラスター間にSnapMirrorレプリケーションを設定できます。他のクラウド ストレージ サービスとは異なり、FSx を使用すると、ユーザーは希望する頻度とレプリケーション スループットでストレージ レプリケーションを制御および管理できます。また、可用性に影響を与えることなく HA/DR をテストすることもできます。
@@ -401,16 +413,19 @@ NOTE: Oracle バイナリをプライマリ クラスターからスタンバイ
 
 
 
+[[snapcenter-deployment]]
 == SnapCenterの展開
 
 
 
+[[snapcenter-installation]]
 === SnapCenterのインストール
 
 フォローするlink:https://docs.netapp.com/ocsc-41/index.jsp?topic=%2Fcom.netapp.doc.ocsc-isg%2FGUID-D3F2FBA8-8EE7-4820-A445-BC1E5C0AF374.html["SnapCenter Serverのインストール"^]SnapCenterサーバーをインストールします。このドキュメントでは、スタンドアロンのSnapCenterサーバーのインストール方法について説明します。 SnapCenterの SaaS バージョンはベータ版レビュー中であり、まもなく利用可能になる可能性があります。必要に応じて、 NetApp の担当者に可用性を確認してください。
 
 
 
+[[configure-snapcenter-plugin-for-ec2-oracle-host]]
 === EC2 Oracle ホスト用のSnapCenterプラグインを構成する
 
 . SnapCenter の自動インストールが完了したら、 SnapCenterサーバーがインストールされている Windows ホストの管理ユーザーとしてSnapCenterにログインします。
@@ -474,6 +489,7 @@ image:aws-rds-custom-deploy-snp-008.png["入出力ダイアログまたは書か
 
 
 
+[[configure-backup-policy-for-oracle-database]]
 === Oracle データベースのバックアップ ポリシーを構成する
 
 このセクションを参照してくださいlink:../dbops/hybrid-dbops-sc-gs-onprem.html#7-setup-database-backup-policy-in-snapcenter["SnapCenterでデータベースバックアップポリシーを設定する"^]Oracle データベース バックアップ ポリシーの構成の詳細。
@@ -485,6 +501,7 @@ NOTE: バックアップ ポリシーで Oracle アーカイブ ログ プルー
 
 
 
+[[configure-oracle-database-backup-and-scheduling]]
 === Oracle データベースのバックアップとスケジュールを構成する
 
 SnapCenterのデータベース バックアップはユーザーが構成可能で、個別に設定することも、リソース グループ内のグループとして設定することもできます。バックアップ間隔は、RTO と RPO の目標によって異なります。  NetApp、迅速なリカバリを実現するために、数時間ごとに完全なデータベース バックアップを実行し、10 ～ 15 分などのより高い頻度でログ バックアップをアーカイブすることを推奨しています。

@@ -20,6 +20,7 @@ NetAppソリューションエンジニアリングチーム
 
 
 
+[[purpose]]
 == 目的
 
 このツールキットは、FSx ONTAPストレージと EC2 コンピューティングインスタンスをターゲットインフラストラクチャとして使用し、オンプレミスから AWS クラウドへの Oracle データベースの移行を自動化します。顧客がすでに CDB/PDB モデルでオンプレミスの Oracle データベースを導入していることを前提としています。このツールキットを使用すると、顧客は、最大可用性オプションを指定した Oracle PDB 再配置手順を使用して、Oracle ホスト上のコンテナ データベースから名前付き PDB を再配置できるようになります。つまり、オンプレミスのストレージ アレイ上のソース PDB は、サービスの中断を最小限に抑えながら新しいコンテナ データベースに再配置されます。 Oracle の再配置手順では、データベースがオンラインのときに Oracle データ ファイルが移動されます。その後、すべてのデータファイルが AWS クラウドに移動されると、切り替え時にユーザーセッションがオンプレミスから再配置されたデータベースサービスに再ルーティングされます。下線部のテクノロジーは、実証済みの Oracle PDB ホット クローン方法論です。
@@ -35,6 +36,7 @@ NOTE: 移行ツールキットは AWS クラウド インフラストラクチ�
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,6 +49,7 @@ NOTE: 移行ツールキットは AWS クラウド インフラストラクチ�
 
 
 
+[[license]]
 == ライセンス
 
 このGitHubリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたは以下のライセンス条項に同意したことになります。link:https://github.com/NetApp/na_ora_hadr_failover_resync/blob/master/LICENSE.TXT["ライセンスファイル"^] 。
@@ -56,10 +59,12 @@ NOTE: この GitHub リポジトリのコンテンツを使用した派生作品
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -89,6 +94,7 @@ Network connectivity
 ====
 
 
+[[download-the-toolkit]]
 === ツールキットをダウンロードする
 
 [%collapsible%open]
@@ -100,6 +106,7 @@ git clone https://github.com/NetApp/na_ora_aws_migration.git
 ====
 
 
+[[host-variables-configuration]]
 === ホスト変数の設定
 
 [%collapsible%open]
@@ -129,6 +136,7 @@ Target Oracle CDB - define host specific variables for the target CDB including 
 ====
 
 
+[[db-server-host-file-configuration]]
 === DBサーバーのホストファイル構成
 
 [%collapsible%open]
@@ -144,6 +152,7 @@ AWS EC2 インスタンスは、デフォルトでホスト名の命名に IP �
 ====
 
 
+[[playbook-execution-executed-in-sequence]]
 === プレイブックの実行 - 順番に実行
 
 [%collapsible%open]
@@ -176,6 +185,7 @@ ansible-playbook -i hosts ora_pdb_relocate.yml -u ec2-user --private-key db1.pem
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]

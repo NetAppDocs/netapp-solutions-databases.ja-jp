@@ -18,12 +18,14 @@ summary: このページでは、 NetApp ONTAPストレージに Oracle19c を�
 
 
 
+[[cli-deployment-oracle-19c-database]]
 == CLI デプロイメント Oracle 19c データベース
 
 このセクションでは、CLI を使用して Oracle19c データベースを準備およびデプロイするために必要な手順について説明します。必ず確認し、link:getting-started-requirements.html["開始と要件のセクション"]それに応じて環境を準備しました。
 
 
 
+[[download-oracle19c-repo]]
 === Oracle19cリポジトリをダウンロード
 
 . Ansible コントローラーから、次のコマンドを実行します。
@@ -37,6 +39,7 @@ git clone https://github.com/NetApp-Automation/na_oracle19c_deploy.git
 
 
 
+[[edit-the-hosts-file]]
 === ホストファイルを編集する
 
 展開前に次の作業を完了してください。
@@ -72,6 +75,7 @@ NOTE: プレイブックは、デプロイする Oracle ホストとデータベ
 
 
 
+[[edit-the-hostname-yml-file-under-hostvars]]
 === host_varsの下のhost_name.ymlファイルを編集します。
 
 各 Oracle ホストには、ホスト固有の変数を含むホスト名で識別されるホスト変数ファイルがあります。ホストには任意の名前を指定できます。編集してコピーする `host_vars`ホストVARS設定セクションからコピーして、希望する場所に貼り付けます。 `host_name.yml`ファイル。
@@ -81,6 +85,7 @@ NOTE: 青色の項目は、環境に合わせて変更する必要がありま�
 
 
 
+[[host-vars-config]]
 === ホストVARS構成
 
 [source, shell]
@@ -119,6 +124,7 @@ host_datastores_nfs:
 ----
 
 
+[[edit-the-vars-yml-file]]
 === vars.ymlファイルを編集する
 
 その `vars.yml`ファイルは、Oracle デプロイメントのすべての環境固有の変数 (ONTAP、Linux、または Oracle) を統合します。
@@ -222,6 +228,7 @@ initial_pwd_all: "netapp123"
 ----
 
 
+[[run-the-playbook]]
 === プレイブックを実行する
 
 必要な環境の前提条件を完了し、変数をコピーした後、 `vars.yml`そして `your_host.yml`これで、プレイブックをデプロイする準備が整いました。
@@ -251,6 +258,7 @@ ansible-playbook -i hosts all_playbook.yml -u username -k -K -t oracle_config -e
 
 
 
+[[deploy-additional-database-on-same-oracle-host]]
 === 同じOracleホストに追加のデータベースを導入する
 
 プレイブックの Oracle 部分では、実行ごとに Oracle サーバー上に単一の Oracle コンテナ データベースが作成されます。同じサーバー上に追加のコンテナ データベースを作成するには、次の手順を実行します。
@@ -269,6 +277,7 @@ ansible-playbook -i hosts all_playbook.yml -u username -k -K -t oracle_config -e
 
 
 
+[[validate-oracle-installation]]
 === Oracleのインストールを検証する
 
 . Oracle ユーザーとして Oracle サーバーにログインし、次のコマンドを実行します。
@@ -360,6 +369,7 @@ CDB2_PDB1
 
 
 
+[[where-to-go-for-help]]
 === どこに助けを求めたらいいですか?
 
 ツールキットに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

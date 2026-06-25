@@ -15,6 +15,8 @@ summary: 各データベースホスト用にGoogle Cloud NetApp Volumes iSCSI�
 
 
 
+[[step-1-install-grid-infrastructure-on-each-db-host]]
+[[install-grid-infrastructure]]
 == ステップ 1：各 DB ホストに Grid Infrastructure をインストールする
 
 各データベースホストに Oracle Grid Infrastructure GoldImage をインストールして、Oracle Restart と ASM を有効にします。どちらのホストも、それぞれ独自の Grid ホーム、ASM インスタンス、およびディスク グループが必要です。Data Guard は、共有ストレージではなく、Oracle Net を介してデータを複製します。すべてのステップを `oracdb1`で完了してから、 `oracdb2`で繰り返してください。
@@ -136,6 +138,8 @@ sudo /u01/app/26ai/grid/bin/crsctl stat res -t
 
 
 
+[[step-2-install-oracle-database-on-each-db-host]]
+[[install-oracle-db-home]]
 == ステップ2：各DBホストにOracle Databaseをインストールする
 
 最新のリリースアップデートを適用した上で、サイレントインストール（ソフトウェアのみのインストール）を使用して、各データベースホストにOracle Database 26aiソフトウェアホームをインストールします。すべてのステップを `oracdb1`で完了してから、 `oracdb2`で繰り返します。
@@ -204,6 +208,7 @@ EOF
 
 
 
+[[whats-next]]
 == 次の手順
 
 HAデプロイ用の本番プライマリ インスタンスを作成するには、 `oracdb1`のxref:gcnv-oracle-primary-database.adoc[Oracleプライマリデータベースを作成する]に移動します。

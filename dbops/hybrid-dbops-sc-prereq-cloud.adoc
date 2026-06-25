@@ -18,6 +18,7 @@ Cloud Manager コネクタとCloud Volumes ONTAPをインストールしてSnapM
 
 
 
+[[cloud-manager-and-cloud-volumes-ontap-deployment-prerequisites-checklist]]
 == Cloud Manager およびCloud Volumes ONTAP の導入前提条件チェックリスト
 
 * NetApp Cloud Centralログイン
@@ -31,10 +32,12 @@ Cloud Manager コネクタとCloud Volumes ONTAPをインストールしてSnapM
 
 
 
+[[considerations]]
 == 考慮事項
 
 
 
+[[1-what-is-a-cloud-manager-connector]]
 === 1.Cloud Manager コネクタとは何ですか?
 
 ほとんどの場合、Cloud Central アカウント管理者は、クラウドまたはオンプレミス ネットワークにコネクタを展開する必要があります。コネクタにより、Cloud Manager はパブリック クラウド環境内のリソースとプロセスを管理できるようになります。
@@ -43,6 +46,7 @@ Cloud Manager コネクタとCloud Volumes ONTAPをインストールしてSnapM
 
 
 
+[[2-cloud-volumes-ontap-sizing-and-architecture]]
 === 2.Cloud Volumes ONTAP のサイズとアーキテクチャ
 
 Cloud Volumes ONTAPをデプロイする場合、事前定義されたパッケージを選択するか、独自の構成を作成するかを選択できます。これらの値の多くは、後で中断することなく変更できますが、クラウドに展開されるワークロードに基づいて、展開前に行う必要がある重要な決定がいくつかあります。
@@ -60,6 +64,7 @@ Cloud Volumes ONTAPをデプロイする場合、事前定義されたパッケ�
 
 
 
+[[3-single-node-or-high-availability]]
 === 3.単一ノードか高可用性か?
 
 すべてのクラウドでは、CVO を単一ノードで展開するか、2 つのノードを持つクラスター化された高可用性ペアで展開するかを選択できます。ユースケースに応じて、コストを節約するために単一のノードを展開したり、可用性と冗長性をさらに高めるために HA ペアを展開したりすることができます。

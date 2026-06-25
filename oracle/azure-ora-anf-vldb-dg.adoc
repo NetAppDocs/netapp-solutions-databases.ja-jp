@@ -20,6 +20,7 @@ summary: 'このソリューションでは、Azure クラウドの Oracle Data 
 
 
 
+[[purpose]]
 == 目的
 
 高いスループットとミッションクリティカルな Oracle VLDB では、バックエンドのデータベース ストレージに大きな要求が課せられます。サービス レベル アグリーメント (SLA) を満たすには、データベース ストレージは、ミリ秒未満のレイテンシ パフォーマンスを維持しながら、必要な容量と 1 秒あたりの高い入出力操作 (IOPS) を提供する必要があります。これは、共有ストレージ リソース環境を備えたパブリック クラウドにこのようなデータベース ワークロードを展開する場合に特に困難になります。すべてのストレージ プラットフォームが同じように作成されるわけではありません。プレミアムAzure NetApp Filesストレージを Azure インフラストラクチャと組み合わせることで、要求の厳しい Oracle ワークロードのニーズを満たすことができます。検証されたパフォーマンスベンチマーク（link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/performance-oracle-multiple-volumes["Azure NetApp Files の複数ボリュームでの Oracle データベースのパフォーマンス"^] )、ANF は、SLOB ツールによる合成 100% ランダム選択ワークロードで、700 マイクロ秒のレイテンシで 250 万の読み取り IOPS を実現しました。標準の 8k ブロック サイズでは、これは約 20 GiB/s のスループットに相当します。
@@ -34,6 +35,7 @@ summary: 'このソリューションでは、Azure クラウドの Oracle Data 
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -46,18 +48,21 @@ summary: 'このソリューションでは、Azure クラウドの Oracle Data 
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、実際のユーザー展開環境と一致しない可能性のある Azure クラウド ラボ設定で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:azure-ora-anf-vldb-dg-architecture.png["この画像は、ANF 上の Azure クラウドにおける Oracle Data Guard 実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -98,6 +103,7 @@ image:azure-ora-anf-vldb-dg-architecture.png["この画像は、ANF 上の Azure
 |===
 
 
+[[oracle-vldb-data-guard-configuration-with-a-simulated-ny-to-la-dr-setup]]
 === Oracle VLDB Data Guard 構成と NY から LA への DR セットアップのシミュレーション
 
 [cols="33%, 33%, 33%"]
@@ -117,6 +123,7 @@ image:azure-ora-anf-vldb-dg-architecture.png["この画像は、ANF 上の Azure
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * * Azure NetApp Files の構成。* Azure NetApp FilesはAzure NetAppストレージアカウントに次のように割り当てられます。 `Capacity Pools` 。これらのテストと検証では、East リージョンで Oracle プライマリをホストするために 2 TiB の容量プールを展開し、West 2 リージョンでスタンバイ データベースと DB クローンをホストするために 4 TiB の容量プールを展開しました。  ANF 容量プールには、Standard、Premium、Ultra の 3 つのサービス レベルがあります。 ANF 容量プールの IO 容量は、容量プールのサイズとサービス レベルによって決まります。容量プールの作成時に、QoS を自動または手動に設定し、保存時のデータの暗号化をシングルまたはダブルに設定できます。
@@ -129,12 +136,14 @@ image:azure-ora-anf-vldb-dg-architecture.png["この画像は、ANF 上の Azure
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 Oracle Data Guard をセットアップするための開始点として、プライマリ Oracle データベースが既に VNet 内の Azure クラウド環境にデプロイされているものと想定されます。理想的には、プライマリ データベースは、NFS マウントを使用して ANF ストレージにデプロイされます。プライマリ Oracle データベースは、 NetApp ONTAPストレージ、または Azure エコシステム内またはプライベート データ センター内の任意の他のストレージで実行することもできます。次のセクションでは、ANF ストレージを備えた Azure のプライマリ Oracle DB と、ANF ストレージを備えた Azure の物理スタンバイ Oracle DB 間の Oracle Data Guard 設定での ANF 上の Oracle VLDB の構成について説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -175,6 +184,7 @@ Vnet ゲートウェイの接続ステータス:image:azure-ora-anf-dg-vnet-003.
 ====
 
 
+[[primary-oracle-vldb-configuration-for-data-guard]]
 === Data GuardのプライマリOracle VLDB構成
 
 [%collapsible%open]
@@ -503,6 +513,7 @@ DIRNAME
 ====
 
 
+[[standby-oracle-vldb-configuration-for-data-guard]]
 === Data GuardのスタンバイOracle VLDB構成
 
 [%collapsible%open]
@@ -823,6 +834,7 @@ DIRNAME
 ====
 
 
+[[setup-data-guard-broker]]
 === Data Guard Brokerのセットアップ
 
 [%collapsible%open]
@@ -920,6 +932,7 @@ DGMGRL>
 ====
 
 
+[[clone-standby-database-for-other-use-cases-via-automation]]
 === 自動化により他のユースケース用にスタンバイデータベースをクローン
 
 [%collapsible%open]
@@ -936,6 +949,7 @@ NOTE: 現時点では、このツールキットにアクセスできるのは�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

@@ -15,6 +15,8 @@ Google Compute Engine 仮想マシンをプロビジョニングして、Google 
 
 
 
+[[step-1-create-the-vms]]
+[[provision-compute-engine]]
 == ステップ1：VMを作成する
 
 ゾーン障害分離のために、同じリージョン内の異なるゾーンに3つのGoogle Compute Engine VMを作成します。Cloud Console、 `gcloud`、Terraform、または標準のプロビジョニング ワークフローを使用します。
@@ -54,6 +56,8 @@ GCEデータディスクを別途接続しないでください `/u01`。
 
 
 
+[[step-2-configure-vpc-firewall-for-tcp-1521]]
+[[vpc-firewall-allow-1521]]
 == ステップ2：VPC ファイアウォールを TCP 1521 用に構成する
 
 Oracle Net redoトランスポートとオブザーバー接続のために、3つのVMすべて間でTCP/1521を許可するVPCファイアウォールルールを作成します。ルールが欠落していると、Data Guardのレプリケーションが失敗します。
@@ -94,6 +98,8 @@ done
 
 
 
+[[step-3-configure-hostname-dns-and-etchosts]]
+[[hostname-dns-and-etchosts]]
 == ステップ 3: ホスト名、DNS、および `/etc/hosts`
 
 Oracle Net、Data Guard Broker、およびObserverの正引きおよび逆引き名前解決が正しく機能するように、3つのVMすべてでホスト名とDNS解決を設定します。
@@ -124,6 +130,8 @@ ping -c 1 oracdb1 && ping -c 1 oracdb2 && ping -c 1 oradg-obs
 
 
 
+[[step-4-prepare-the-os-on-db-hosts-only]]
+[[os-baseline-db-hosts-only]]
 == ステップ 4：DB ホストのみで OS を準備する
 
  `oracdb1`および `oracdb2`上のOSをOracle Database 26ai用に準備するには、プリインストールパッケージのインストール、ユーザーとグループの作成、iSCSIおよびマルチパスパッケージのインストール、iSCSIイニシエータの設定を行います。オブザーバーのセットアップについては、xref:gcnv-oracle-data-guard.adoc#install-instant-client-on-observer[ステップ4：オブザーバーホストにOracle Instant Clientをインストールする]を参照してください。
@@ -185,6 +193,8 @@ sudo reboot
 
 
 
+[[step-5-capture-the-iscsi-initiator-name-iqn]]
+[[capture-iscsi-initiator-iqn]]
 == ステップ 5：iSCSI イニシエータ名 IQN を取得する
 
 再起動後、各データベースホストからiSCSIイニシエータ名（IQN）を取得します。これらの IQN を使用して、xref:gcnv-oracle-provision-storage.adoc#create-host-groups[ステップ2：ホストグループを作成する] で GCNV ホスト グループを作成します。
@@ -207,6 +217,7 @@ sudo cat /etc/iscsi/initiatorname.iscsi
 
 
 
+[[whats-next]]
 == 次の手順
 
 OracleバイナリとASM ディスク グループに共有ストレージを提供するには、xref:gcnv-oracle-provision-storage.adoc[Google Cloud NetApp Volumes の iSCSI プール、ホスト グループ、およびボリュームをプロビジョニングする]に移動します。

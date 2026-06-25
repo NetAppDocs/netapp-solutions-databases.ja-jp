@@ -20,6 +20,7 @@ summary: このソリューションは、Google Cloud NetApp Volumesストレ�
 
 
 
+[[purpose]]
 == 目的
 
 Oracle Recovery Manager (RMAN) バックアップ ツールを使用して Oracle 内の非常に大規模なデータベース (VLDB) をリカバリすることは、非常に困難な作業になる可能性があります。障害発生時にバックアップ メディアからデータベースを復元するプロセスには時間がかかり、データベースの回復が遅れ、サービス レベル アグリーメント (SLA) に重大な影響を及ぼす可能性があります。コストを考慮して RMAN バックアップがオブジェクト ストレージにストリーミングされるのが一般的であるため、クラウドに導入された Oracle VLDB の状況はさらに悪化しています。その結果、SLA が不可欠な場合、VLDB を復元および回復することは実行可能ではありません。 Oracle はバージョン 10g 以降、ユーザーが DB サーバー ホストにある追加のディスク ストレージに Oracle データベース データ ファイルのステージングされたイメージ コピーを作成できるようにする RMAN 機能を導入しました。これらのイメージ コピーは、ユーザーが定義した間隔で RMAN を使用して増分更新できます。障害が発生した場合、データベース管理者 (DBA) は、Oracle データベースを障害の発生したメディアからイメージ コピーに迅速に切り替えることができるため、データベース メディアを完全に復元する必要がなくなります。その結果、必要なデータベース ストレージが 2 倍になるというコストはかかりますが、SLA は大幅に改善されます。
@@ -35,6 +36,7 @@ VLDB の SLA を重視し、Oracle データベースを Google Cloud Platform (
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ VLDB の SLA を重視し、Oracle データベースを Google Cloud Platform (
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な導入環境と一致しない可能性のあるGoogle Cloud NetApp Volumesストレージ プールと Google Compute Engine VM で実行されました。詳細については、セクションをご覧ください。 <<導入検討の重要な要素>> 。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:gcp-ora-gcnv-inc-merge-architecture.png["この画像は、GCNV を使用した Google Cloud での Oracle VLDB 増分マージ実装の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -99,6 +104,7 @@ image:gcp-ora-gcnv-inc-merge-architecture.png["この画像は、GCNV を使用�
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *GCNV ストレージ プールのサービス レベル。* GCNV ストレージ プールは、Standard、Premium、Extreme、Flex の 4 つのサービス レベルを提供します。デフォルトでは、ストレージ プール内に作成されたボリュームに自動 QoS が適用され、ボリュームのサイズとサービス レベルに基づいてボリュームのスループットが制限されます。唯一の例外は、Flex ストレージ プールから割り当てられたボリュームが、ストレージ プールで使用可能なスループットを共有することです。
@@ -111,12 +117,14 @@ image:gcp-ora-gcnv-inc-merge-architecture.png["この画像は、GCNV を使用�
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 このソリューションでは、Oracle VLDB がすでに VPC 内の Google Cloud 環境にデプロイされていることを前提としています。 Oracle VLDB は、GCNV ストレージまたは Google Cloud エコシステム内の他のストレージ オプションのいずれかで実行できます。次のセクションでは、GCNV ストレージ プールからマウントされた NFS ファイル システムへの RMAN 経由の Oracle VLDB イメージ バックアップと増分マージを設定するための、ステップごとの展開手順について説明します。  Oracle VLDB のプライマリ ストレージも、別の GCNV ストレージ プールでホストされています。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -137,6 +145,7 @@ image:gcp-ora-gcnv-inc-merge-vol-002.png["この画像は、Google クラウド 
 ====
 
 
+[[mount-a-nfs-volume-from-gcnv-to-the-primary-oracle-vldb-server]]
 === GCNVからプライマリOracle VLDBサーバーにNFSボリュームをマウントする
 
 [%collapsible%open]
@@ -175,6 +184,7 @@ sudo vi /etc/fstab
 ====
 
 
+[[setup-oracle-rman-incremental-merge-to-image-copy-on-gcnv-for-in-server-vldb-backup]]
 === サーバー内VLDBバックアップ用に、GCNV上のイメージコピーにOracle RMAN増分マージを設定する
 
 [%collapsible%open]
@@ -1202,6 +1212,7 @@ echo "End Oracle DB incremental backup/merge to copy at `date +"%Y-%m%d-%H%M%S"`
 ====
 
 
+[[oracle-vldb-quick-recovery-using-backup-image-copy]]
 === バックアップイメージコピーを使用したOracle VLDBのクイックリカバリ
 
 
@@ -4050,6 +4061,7 @@ NAME
 ====
 
 
+[[clone-a-oracle-vldb-for-other-use-cases-from-the-backup-image-copy]]
 === バックアップイメージコピーから他のユースケース用のOracle VLDBをクローンする
 
 [%collapsible%open]
@@ -4068,6 +4080,7 @@ NOTE: 現時点では、このツールキットにアクセスできるのは�
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

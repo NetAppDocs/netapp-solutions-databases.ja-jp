@@ -25,6 +25,7 @@ summary:
 
 
 
+[[snapcenter-configuration]]
 == SnapCenter の構成
 
 SnapCenter の構成と Microsoft SQL Server リソースの保護のために、次の手順を実行する必要があります。以下の各ステップについては、以降のセクションで詳しく説明します。
@@ -38,6 +39,7 @@ SnapCenter の構成と Microsoft SQL Server リソースの保護のために�
 
 
 
+[[snapcenter-newly-installed-user-interface]]
 == SnapCenterの新しくインストールされたユーザーインターフェイス
 
 SQL Server バックアップの資格情報を設定し、sysadmin 権限を持つユーザーを復元します。
@@ -144,6 +146,7 @@ image:sqlsb-aws-015.png["入出力ダイアログまたは書かれたコンテ�
 ====
 
 
+[[configure-a-backup-policy]]
 == バックアップポリシーを構成する
 
 バックアップ ポリシーは、バックアップの管理、スケジュール、および保持の方法を制御する一連のルールです。会社の SLA に基づいてバックアップの種類と頻度を決定するのに役立ちます。
@@ -196,6 +199,7 @@ image:sqlsb-aws-024.png["入出力ダイアログまたは書かれたコンテ�
 ====
 
 
+[[configure-and-protect-mssql-server-database]]
 == MSSQL Serverデータベースの構成と保護
 
 . バックアップ ポリシーの開始日と有効期限を設定します。
@@ -223,6 +227,7 @@ image:sqlsb-aws-029.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[snapcenter-backup-operations]]
 == SnapCenterバックアップ操作
 
 オンデマンドの SQL Server バックアップを作成するには、次の手順を実行します。
@@ -243,6 +248,7 @@ image:sqlsb-aws-032.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[monitor-backup-job]]
 == バックアップジョブを監視する
 
 . *モニター*タブでジョブをクリックし、右側の*詳細*を選択してジョブを表示します。
@@ -258,6 +264,7 @@ image:sqlsb-aws-034.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[backup-operation-for-multiple-databases]]
 == 複数のデータベースのバックアップ操作
 
 複数の SQL Server データベースのバックアップ ポリシーを構成するには、次の手順を実行してリソース グループ ポリシーを作成します。
@@ -326,6 +333,7 @@ image:sqlsb-aws-047.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[configure-and-protect-multiple-sql-server-databases]]
 == 複数の SQL Server データベースを構成および保護する
 
 . (*+*) 記号をクリックして、開始日と有効期限を設定します。
@@ -355,6 +363,7 @@ image:sqlsb-aws-053.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[trigger-on-demand-backup-for-multiple-sql-server-databases]]
 == 複数の SQL Server データベースのオンデマンド バックアップをトリガーする
 
 . *リソース*タブから、ビューを選択します。ドロップダウン メニューから、[*リソース グループ*] を選択します。
@@ -378,6 +387,7 @@ image:sqlsb-aws-057.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[monitor-multiple-database-backup-jobs]]
 == 複数のデータベースのバックアップジョブを監視する
 
 左側のナビゲーション バーから [モニター] をクリックし、バックアップ ジョブを選択して [詳細] をクリックし、ジョブの進行状況を表示します。
@@ -390,6 +400,7 @@ image:sqlsb-aws-059.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[transaction-log-backup-for-multiple-database-backup]]
 == 複数のデータベースのバックアップのためのトランザクション ログ バックアップ
 
 SnapCenter は、完全復旧モデル、一括ログ復旧モデル、およびシンプル復旧モデルをサポートしています。シンプル リカバリ モードでは、トランザクション ログのバックアップはサポートされません。
@@ -446,6 +457,7 @@ image:sqlsb-aws-069.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[configure-and-protect-multiple-mssql-server-databases]]
 == 複数の MSSQL Server データベースを構成および保護する
 
 . 新しく作成されたトランザクション ログ バックアップ ポリシーをクリックします。
@@ -477,6 +489,7 @@ image:sqlsb-aws-075.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[triggering-an-on-demand-transaction-log-backup-for-mutiple-sql-server-databases]]
 == 複数の SQL Server データベースのオンデマンド トランザクション ログ バックアップをトリガーする
 
 複数の SQL Server データベースのトランザクション ログのオンデマンド バックアップをトリガーするには、次の手順を実行します。
@@ -498,6 +511,7 @@ image:sqlsb-aws-078.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[monitoring]]
 == 監視
 
 *監視*タブに移動して、バックアップ ジョブの進行状況を監視します。
@@ -506,6 +520,7 @@ image:sqlsb-aws-079.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[restore-and-recovery]]
 == リストアとリカバリ
 
 SnapCenterで SQL Server データベースを復元するために必要な次の前提条件を参照してください。
@@ -519,6 +534,7 @@ SnapCenterで SQL Server データベースを復元するために必要な次�
 
 
 
+[[restoring-deleted-tables-on-a-sql-server-database-to-a-point-in-time]]
 == SQL Server データベース上の削除されたテーブルを特定の時点に復元する
 
 SQL Server データベースを特定の時点に復元するには、次の手順を実行します。
@@ -582,6 +598,7 @@ image:sqlsb-aws-090.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[monitoring-the-restore-progress]]
 == 復元の進行状況の監視
 
 . *監視* タブで復元ジョブの詳細をクリックし、復元ジョブの進行状況を表示します。
@@ -600,6 +617,7 @@ image:sqlsb-aws-093.png["入出力ダイアログまたは書かれたコンテ�
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

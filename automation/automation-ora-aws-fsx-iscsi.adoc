@@ -20,6 +20,7 @@ summary: このソリューションは、iSCSI プロトコルを使用した�
 
 
 
+[[purpose]]
 == 目的
 
 Amazon FSx ONTAPは、AWS クラウドで完全に管理されたNetApp ONTAPファイルシステムを起動して実行できるストレージサービスです。 NetAppファイルシステムの使い慣れた機能、パフォーマンス、機能、API に加え、完全に管理された AWS サービスの俊敏性、拡張性、シンプルさも提供します。これにより、Oracle などの最も要求の厳しいデータベースワークロードを AWS クラウドで安心して実行できるようになります。
@@ -35,6 +36,7 @@ Amazon FSx ONTAPは、AWS クラウドで完全に管理されたNetApp ONTAPフ
 
 
 
+[[audience]]
 == 観客
 
 このソリューションは次の人々を対象としています。
@@ -47,18 +49,21 @@ Amazon FSx ONTAPは、AWS クラウドで完全に管理されたNetApp ONTAPフ
 
 
 
+[[solution-test-and-validation-environment]]
 == ソリューションのテストおよび検証環境
 
 このソリューションのテストと検証は、最終的な展開環境と一致しない可能性のあるラボ設定で実行されました。セクションを参照<<導入検討の重要な要素>>詳細についてはこちらをご覧ください。
 
 
 
+[[architecture]]
 === アーキテクチャ
 
 image:automation-ora-aws-fsx-iscsi-architecture.png["この画像は、iSCSI と ASM を使用した AWS パブリッククラウドでの Oracle デプロイメント構成の詳細を示しています。"]
 
 
 
+[[hardware-and-software-components]]
 === ハードウェアおよびソフトウェアコンポーネント
 
 [cols="33%, 33%, 33%"]
@@ -99,6 +104,7 @@ image:automation-ora-aws-fsx-iscsi-architecture.png["この画像は、iSCSI と
 |===
 
 
+[[oracle-database-configuration-in-the-lab-environment]]
 === ラボ環境での Oracle データベース構成
 
 [cols="33%, 33%, 33%"]
@@ -118,6 +124,7 @@ image:automation-ora-aws-fsx-iscsi-architecture.png["この画像は、iSCSI と
 |===
 
 
+[[key-factors-for-deployment-consideration]]
 === 導入検討の重要な要素
 
 * *Oracle データベースのストレージ レイアウト。*この自動化された Oracle デプロイメントでは、デフォルトで Oracle バイナリ、データ、およびログをホストするための 4 つのデータベース ボリュームをプロビジョニングします。ボリューム内の単一の LUN が Oracle バイナリに割り当てられます。次に、データ LUN とログ LUN から 2 つの ASM ディスク グループを作成します。  +DATA asm ディスク グループ内で、ボリューム内に 2 つの LUN を持つ 2 つのデータ ボリュームをプロビジョニングします。  +LOGS asm ディスク グループ内で、ログ ボリュームに 2 つの LUN を作成します。  ONTAPボリューム内に複数の LUN を配置すると、一般的にパフォーマンスが向上します。
@@ -129,12 +136,14 @@ image:automation-ora-aws-fsx-iscsi-architecture.png["この画像は、iSCSI と
 
 
 
+[[solution-deployment]]
 == ソリューションの展開
 
 次のセクションでは、データベース ボリューム マネージャーとして Oracle ASM を使用して、単一ノードの再起動構成で iSCSI 経由で EC2 インスタンス VM に直接マウントされたデータベース LUN を使用して、 Amazon FSx ONTAPファイル システムに Oracle 19c を自動化して展開および保護するための手順を段階的に説明します。
 
 
 
+[[prerequisites-for-deployment]]
 === 展開の前提条件
 
 [%collapsible%open]
@@ -183,6 +192,7 @@ video::81e389a0-d9b8-495c-883b-b0d701710847[panopto,width=360]
 ====
 
 
+[[automation-parameter-files]]
 === 自動化パラメータファイル
 
 [%collapsible%open]
@@ -199,6 +209,7 @@ Ansible プレイブックは、事前定義されたパラメータを使用し
 ====
 
 
+[[parameter-files-configuration]]
 === パラメータファイルの構成
 
 [%collapsible%open]
@@ -279,6 +290,7 @@ memory_limit: 8192
 ====
 
 
+[[playbook-execution]]
 === プレイブックの実行
 
 [%collapsible%open]
@@ -354,6 +366,7 @@ ansible-playbook -i hosts 5-destroy.yml -u ec2-user -e @vars/vars.yml
 ====
 
 
+[[post-execution-validation]]
 === 実行後の検証
 
 [%collapsible%open]
@@ -576,6 +589,7 @@ image:automation-ora-aws-fsx-iscsi-em-001.png["この画像はOracle Enterprise 
 ====
 
 
+[[oracle-backup-restore-and-clone-with-snapcenter]]
 === SnapCenterによる Oracle のバックアップ、リストア、クローン作成
 
 [%collapsible%open]
@@ -585,6 +599,7 @@ TR-4979を参照してくださいlink:../oracle/aws-ora-fsx-vmc-guestmount.html
 ====
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。

@@ -20,6 +20,7 @@ NetAppソリューションエンジニアリングチーム
 
 
 
+[[the-challenge]]
 == 課題
 
 * 顧客は、サードパーティがホストするプライベート データ センターで SQL Server ワークロードを実行していました。ホスティングコストの増加が問題となっていました。
@@ -33,6 +34,7 @@ image:customer-usecase-mssql-fsx1-before.png["この画像は、移行前の顧�
 
 
 
+[[the-solution]]
 == 主要なソリューション・コンポーネント
 
 * オンプレミスのホスト型 Dell Unity SAN および AppSync 環境から、 NetApp SnapCenterを使用した AWS Amazon FSx ONTAPへの移行。
@@ -46,6 +48,7 @@ image:customer-usecase-mssql-fsx1-after.png["この画像は、移行後の顧�
 
 
 
+[[the-outcome]]
 == 結果
 
 * プライベート データ センターでホスティングを継続する場合と比較して 40% のコスト削減。
@@ -58,6 +61,7 @@ image:customer-usecase-mssql-fsx1-after.png["この画像は、移行後の顧�
 
 
 
+[[where-to-find-additional-information]]
 == 詳細情報の入手方法
 
 NetAppエンタープライズデータベースソリューションの詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions/databases/index.html["NetAppエンタープライズ データベース ソリューション"^]

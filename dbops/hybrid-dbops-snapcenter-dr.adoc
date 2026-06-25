@@ -18,6 +18,7 @@ keywords: 'netapp, solutions, database, SnapCenter, DR, "business continuity", "
 
 
 
+[[clone-an-on-premises-oracle-production-db-to-cloud-for-dr]]
 == オンプレミスの Oracle 本番環境 DB を DR 用にクラウドにクローンする
 
 . クローンリカバリが利用可能な最後のログを通じて実行されることを検証するために、小さなテスト テーブルを作成し、行を挿入しました。テスト データは、最後に利用可能なログに完全に回復した後に回復されます。
@@ -97,6 +98,7 @@ image:snapctr-ora-dr-016-a.png["入出力ダイアログまたは書かれたコ
 
 
 
+[[post-dr-clone-validation-and-configuration-for-oracle]]
 == Oracle の DR 後のクローン検証と構成
 
 . クラウド内の DR ロケーションでフラッシュ、複製、回復された最後のテスト トランザクションを検証します。
@@ -117,6 +119,7 @@ NOTE: クローン分割により、通常の操作よりもはるかに高い�
 
 
 
+[[clone-an-on-premises-sql-production-db-to-cloud-for-dr]]
 == オンプレミスの SQL 本番環境 DB を DR 用にクラウドにクローンする
 
 . 同様に、SQL クローン リカバリが最後に利用可能なログを通じて実行されたことを検証するために、小さなテスト テーブルを作成し、行を挿入しました。テスト データは、利用可能な最後のログまで完全に回復した後に回復されます。
@@ -162,6 +165,7 @@ image:snapctr-sql-dr-010.png["入出力ダイアログまたは書かれたコ�
 
 
 
+[[post-dr-clone-validation-and-configuration-for-sql]]
 == SQL の DR 後のクローン検証と構成
 
 . クローンジョブのステータスを監視します。
@@ -179,6 +183,7 @@ image:snapctr-sql-dr-012.png["入出力ダイアログまたは書かれたコ�
 
 
 
+[[where-to-go-for-help]]
 == どこに助けを求めたらいいですか?
 
 このソリューションとユースケースに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

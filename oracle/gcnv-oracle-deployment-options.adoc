@@ -15,6 +15,7 @@ Google Cloud NetApp Volumes は、開発とテスト環境から、Data Guard �
 
 
 
+[[deployment-requirements]]
 == 導入の要件
 
 Oracle Database 26ai 高可用性向けに Google Cloud NetApp Volumes をプロビジョニングする前に、以下の項目が揃っていることを確認してください：
@@ -62,6 +63,8 @@ timedatectl
 
 
 
+[[example-deployment-configuration]]
+[[example-configuration]]
 == デプロイメント構成例
 
 このソリューションでは、以下のデプロイメント構成を使用します。
@@ -83,6 +86,7 @@ timedatectl
 
 
 
+[[deployment-options]]
 == 導入オプション
 
 以下の表は、HA と DR の導入パターンを比較し、自動化によって運用上のメリットが最も大きい箇所を示しています。
@@ -111,6 +115,7 @@ timedatectl
 
 
 
+[[deployment-tasks-by-ha-tier]]
 == HA階層別のデプロイタスク
 
 xref:gcnv-oracle-deployment.html[デプロイメントワークフロー]は、すべての展開階層に対して、番号付きの手順シーケンスを提供します。すべての階層は、以下に示す基本デプロイメントタスクを完了した後、本番環境の高可用性を実現するための階層固有のタスクを追加します。
@@ -144,6 +149,7 @@ xref:gcnv-oracle-deployment.html[デプロイメントワークフロー]は、�
 |===
 
 
+[[whats-next]]
 == 次の手順
 
 デプロイ前に環境を準備するには、xref:gcnv-oracle-access-and-apis.html[Google Cloud NetApp Volumes 上の Oracle Database 26ai へのアクセスと API]に進んでください。

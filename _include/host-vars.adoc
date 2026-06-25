@@ -4,6 +4,7 @@
 
 
 
+[[host-vars-config]]
 === ホストVARS構成
 
 [source, shell]

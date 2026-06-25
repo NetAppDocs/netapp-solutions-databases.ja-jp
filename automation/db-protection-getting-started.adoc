@@ -18,6 +18,7 @@ summary: このページでは、 NetApp ONTAPストレージに Oracle Data Pro
 
 
 
+[[awxtower]]
 == AWX/タワー
 
 AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホスト名) のインベントリの作成、資格情報の作成、 NetApp Automation Github から Ansible コードを取得するプロジェクトの構成、自動化を起動するジョブ テンプレートの設定についてガイドされます。
@@ -31,6 +32,7 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 
 
 
+[[requirements]]
 == 要件
 
 [role="tabbed-block"]
@@ -133,6 +135,7 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 ====
 
 
+[[automation-details]]
 == 自動化の詳細
 
 [role="tabbed-block"]
@@ -266,12 +269,14 @@ AWX/Tower 環境では、 ONTAPクラスタ管理と Oracle サーバ (IP とホ
 ====
 
 
+[[default-parameters]]
 == デフォルトパラメータ
 
 自動化を簡素化するために、多くの必須 Oracle パラメータをデフォルト値で事前に設定してあります。通常、ほとんどの展開ではデフォルトのパラメータを変更する必要はありません。より上級のユーザーは、注意しながらデフォルトのパラメータを変更できます。デフォルトのパラメータは、defaults ディレクトリの下の各ロール フォルダにあります。
 
 
 
+[[license]]
 == ライセンス
 
 Github リポジトリに記載されているライセンス情報を読む必要があります。このリポジトリのコンテンツにアクセス、ダウンロード、インストール、または使用することにより、あなたはここに記載されたライセンスの条件に同意したことになります。link:https://github.com/NetApp-Automation/na_oracle19c_deploy/blob/master/LICENSE.TXT["ここをクリックしてください。"^] 。

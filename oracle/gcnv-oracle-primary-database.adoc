@@ -13,6 +13,7 @@ summary: Oracle Database Configuration Assistantをサイレントモードで�
 [role="lead"]
 Oracle Database Configuration Assistantをサイレントモードで使用して、Google Cloud NetApp VolumesのiSCSIストレージにOracleプライマリデータベースを作成します。この手順では、 `dbca`を実行して、GCNVを基盤とするASMディスク グループ上にコンテナ データベースとプラガブル データベースを作成し、アーカイブ ログの宛先を構成し、Data Guardを有効にした後の透過的なフェイルオーバーのためのロールベース アプリケーション サービスを追加する方法について説明します。
 
+[[create-primary-database]]
 .手順
 Oracleコンテナデータベースとプラガブルデータベースを `oracdb1`上に作成し、 `dbca`をサイレントモードで使用して、アーカイブログの宛先を構成し、Oracle Restartの登録を確認し、透過的なクライアントフェイルオーバーのためのロールベース アプリケーション サービスを追加します。
 
@@ -92,6 +93,7 @@ Data Guard Brokerが有効になった後、 `orclapp`はPRIMARYでのみ動作�
 
 
 
+[[whats-next]]
 == 次の手順
 
 スタンバイ保護を確立し、フェイルオーバーに備えるには、 `oracdb2` の xref:gcnv-oracle-standby-database.adoc[Oracleスタンバイデータベースを作成する] に移動します。

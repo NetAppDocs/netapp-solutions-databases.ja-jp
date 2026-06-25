@@ -19,6 +19,8 @@ summary: Prod HA Data GuardおよびFSFO層のみの場合、Google Cloud NetApp
 
 
 
+[[step-1-enable-data-guard-broker]]
+[[enable-broker-on-both-databases]]
 == ステップ 1：Data Guard Broker を有効にする
 
 両方のデータベースホストでData Guard Brokerを有効にし、プライマリデータベースとスタンバイデータベースを統合管理下に置くためのブローカー構成を作成します。
@@ -72,6 +74,8 @@ DGMGRL> SHOW CONFIGURATION VERBOSE;
 
 
 
+[[step-2-confirm-flashback-for-fsfo]]
+[[confirm-flashback-required-for-fsfo]]
 == ステップ2：FSFOのフラッシュバックを確認する
 
 両方のホストでフラッシュバックデータベースが有効になっていることを確認してください。FSFOの自動復旧にはフラッシュバックが必要です。これにより、フェイルオーバー後に以前のプライマリがスタンバイとして自動的に構成に復帰できるようになります。
@@ -102,6 +106,8 @@ SQL'
 
 
 
+[[step-3-configure-and-enable-fsfo]]
+[[configure-fsfo-properties-and-enable]]
 == ステップ3：FSFOの設定と有効化
 
 SYNC リドゥ転送を設定し、MaxAvailability 保護モードを構成し、各データベースで FSFO ターゲットを定義して、Fast-Start Failover を有効にします。
@@ -138,6 +144,8 @@ DGMGRL> SHOW FAST_START FAILOVER;
 
 
 
+[[step-4-install-instant-client-on-observer]]
+[[install-instant-client-on-observer]]
 == ステップ4：オブザーバーにInstant Clientをインストールする
 
 専用のオブザーバーVM（(`oradg-obs`）にOracle Instant Clientをインストールし、専用の `oracle` OSユーザーを作成して、ObserverがTCP/1521で両方のデータベースメンバーに接続できるようにOracle Net環境を構成します。
@@ -190,6 +198,8 @@ sudo chown oracle:oracle /etc/oracle/network/admin/tnsnames.ora
 
 
 
+[[step-5-run-observer-as-a-systemd-service]]
+[[start-observer-systemd]]
 == ステップ5：Observerをsystemdサービスとして実行する
 
 両方のデータベースメンバーの認証情報を含む自動ログインウォレットを作成し、Observerをsystemdサービスとして設定および起動して、再起動後も動作し、自動的に設定に再接続するようにします。
@@ -302,6 +312,8 @@ DGMGRL> SHOW CONFIGURATION;       -- Configuration Status: SUCCESS, FSFO: ENABLE
 
 
 
+[[step-6-test-fsfo]]
+[[test-fsfo-switchover-and-failover]]
 == ステップ6：FSFOをテストする
 
 Data Guard の構成を `VALIDATE DATABASE`で検証し、次に計画的なスイッチオーバーを実行して、テスト期間中に計画外の VM リセット フェイルオーバーを実行し、FSFO がエンドツーエンドで正常に動作していることを確認します。
@@ -323,6 +335,7 @@ VMの*リセット*（クラッシュ形式のテスト）を使用してくだ�
 
 
 
+[[whats-next]]
 == 次の手順
 
 このデプロイメントでは、Oracle Data Guard Broker、Fast-Start Failover、およびObserverの構成が完了しました。

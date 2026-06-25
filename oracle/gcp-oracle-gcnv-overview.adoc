@@ -20,6 +20,7 @@ Oracle Database のワークロードには、一貫した IO 応答時間、帯
 
 
 
+[[benfits-of-google-cloud-netapp-volumes]]
 == Google Cloud NetApp Volumesのメリット
 
 Google Cloud NetApp Volumes には次のような利点があります。
@@ -52,6 +53,7 @@ NetApp Volumes は、効率的なボリューム クローン作成機能を通�
 
 
 
+[[use-cases]]
 == ユースケース
 
 *高性能な生産環境:*
@@ -72,6 +74,7 @@ NetApp Volumes は、持続的な IOPS と低レイテンシのパフォーマ�
 
 
 
+[[architecture]]
 == アーキテクチャ
 
 1 つ以上のストレージ ボリュームを使用して、Google Compute Engine 上で Oracle データベースを実行できます。ボリュームの数は、データ分離のレベルによって異なります。たとえば、小さなデータベースは単一のボリュームに配置される場合があります。より厳しい IO または管理要件を持つ大規模なデータベースでは、個別のデータファイル、REDO ログ、およびアーカイブ ログ ボリュームが必要になる場合があります。アプリケーションまたはバックアップ データ用の追加ボリュームも追加できます。各ボリュームは、ホストされるデータのニーズに合わせて適切なサイズに調整できます。
@@ -80,6 +83,7 @@ image:oracle-gcnv-001.png["入出力ダイアログまたは書かれたコン�
 
 
 
+[[preparing-the-google-cloud-netapp-volumes]]
 == Google Cloud NetApp Volumesの準備
 
 必要な容量とサービス レベルのGoogle Cloud NetApp Volumesストレージ プールを作成します。 Google Cloud NetApp Volumesを設定するためのクイックスタートを確認してください。既存の Oracle データベースをオンプレミスから Google に移行する場合は、Metrics Explorer を使用して、 Google Cloud NetApp Volumesストレージ プールとボリュームのサイズ設定に必要な現在のスループット統計を取得できます。サービスの使用方法の詳細については、Oracle on Google スペシャリストにお問い合わせください。ストレージ プール内のボリュームで利用可能なスループットは、選択したストレージ プールのサイズとサービス レベル (Standard、Premium、Extreme など) によって定義されます。
@@ -100,6 +104,7 @@ NetAppボリュームは、多数の小さなボリュームをサポートし�
 
 
 
+[[key-benefits]]
 == 主なメリット
 
 この画像 (図 2) は、Google Cloud NetApp Volumes をOracle Database と併用する利点を示しています。
@@ -154,6 +159,7 @@ Google Cloud NetApp Volumes は、クラウド環境とハイブリッド環境�
 
 
 
+[[considerations]]
 == 考慮事項
 
 このソリューションには次の考慮事項が適用されます。
@@ -213,6 +219,7 @@ Google Cloud NetApp Volumes は、データを保護するための包括的な�
 
 
 
+[[conclusion]]
 == まとめ
 
 柔軟なスケーリング、最適化されたパフォーマンス、効率的なリソース利用の組み合わせにより、Google Cloud NetApp Volumes は、企業のストレージ ニーズにとって費用対効果の高い選択肢となります。ストレージとコンピューティング リソースの両方を適切なサイズに調整できるため、組織はコストを効果的に管理しながら高いパフォーマンスを維持できます。

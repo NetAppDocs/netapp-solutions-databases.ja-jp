@@ -61,13 +61,13 @@ indexpage:
     - title: オンプレミスの SQL ワークロードを FSx ONTAPに移行する
       url: "/mssql/customer-usecase-mssql-fsx1.html"
     - title: クラスタ化されたデータONTAPを使用した Windows 上の Microsoft SQL Server と SAP
-      url: https://www.netapp.com/pdf.html?item=/media/16865-tr-4467pdf.pdf
+      url: https://www.netapp.com/pdf.html?item=/media/16865-tr-4467.pdf
     - title: Microsoft SQL Server の最新化
       url: https://www.netapp.com/pdf.html?item=/media/15613-na-446.pdf
     - title: ONTAPを使用した Microsoft SQL Server のベスト プラクティス
       url: https://www.netapp.com/pdf.html?item=/media/8585-tr4590.pdf
     - title: EF シリーズを使用した Microsoft SQL Server のベスト プラクティス
-      url: https://www.netapp.com/pdf.html?item=/media/17086-tr4764pdf.pdf
+      url: https://www.netapp.com/pdf.html?item=/media/17086-tr4764.pdf
   - title: ハイブリッドクラウドデータベースソリューション
     links:
     - title: VCF のvVolsを使用して Oracle RAC を導入および保護する
@@ -81,7 +81,7 @@ indexpage:
     - title: ONTAPにOracle19cを自動化して導入
       url: "/automation/db-protection-overview.html"
     - title: NetApp EFシリーズでOracleデータベースを実行する
-      url: https://www.netapp.com/pdf.html?item=/media/17248-tr4794pdf.pdf
+      url: https://www.netapp.com/pdf.html?item=/media/17248-tr4794.pdf
   - title: オープンソースデータベース
     links:
     - title: AWS FSx/EC2 で PostgreSQL データベースをデプロイし、災害対策を設定する

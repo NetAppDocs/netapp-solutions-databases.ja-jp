@@ -622,9 +622,9 @@ image:sqlsb-aws-093.png["入出力ダイアログまたは書かれたコンテ�
 
 このドキュメントに記載されている情報の詳細については、次のドキュメントや Web サイトを参照してください。
 
-* https://www.netapp.com/pdf.html?item=/media/12400-tr4714pdf.pdf["TR-4714: NetApp SnapCenterを使用した Microsoft SQL Server のベスト プラクティス ガイド"^]
+* https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["TR-4714: NetApp SnapCenterを使用した Microsoft SQL Server のベスト プラクティス ガイド"^]
 +
-https://www.netapp.com/pdf.html?item=/media/12400-tr4714pdf.pdf["https://www.netapp.com/pdf.html?item=/media/12400-tr4714pdf.pdf"^]
+https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["https://www.netapp.com/pdf.html?item=/media/12400-tr4714pdf.pdf"^]
 
 * https://docs.netapp.com/us-en/snapcenter-45/protect-scsql/concept_requirements_for_restoring_a_database.html["データベースをリストアする際の要件"^]
 +

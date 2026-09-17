@@ -186,4 +186,4 @@ image:snapctr-sql-dr-012.png["入出力ダイアログまたは書かれたコ�
 [[where-to-go-for-help]]
 == どこに助けを求めたらいいですか?
 
-このソリューションとユースケースに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。
+ツールキットに関するヘルプが必要な場合は、link:https://community.netapp.com/["NetAppコミュニティ"^]にアクセスして、質問を投稿してください。

@@ -591,7 +591,7 @@ netsh advfirewall firewall add rule name="Allow SQL Server" dir=in action=allow 
 netsh advfirewall firewall add rule name="Allow SQL Server replication" dir=in action=allow protocol=TCP localport=5022
 ----
 +
-ファイアウォールの詳細な要件については、link:https://learn.microsoft.com/en-us/troubleshoot/windows-server/high-availability/service-overview-and-network-port-requirements["Windows Server サービスとネットワークポートの要件"^]を参照してください。
+ファイアウォールの詳細な要件については、link:https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements["Windows Server サービスとネットワークポートの要件"^]を参照してください。
 
 . クラスターを作成する前に、両方のノードで検証チェックを実行します：
 +

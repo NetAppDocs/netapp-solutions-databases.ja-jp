@@ -93,7 +93,7 @@ NOTE: このツールキット リポジトリのコンテンツを使用した�
 ====
 このツールキットは、Web ベースの HTML パーサーと、Oracle データベース情報を収集するための 2 つの SQL スクリプトで構成されています。次に、出力は Excel テンプレートに入力され、Oracle データベース サーバーのコンピューティングとストレージのサイズ設定ガイダンスが生成されます。
 
-* 使用link:https://app.atroposs.com/#/awr-module["HTMLパーサー"^]AWR レポートから現在の Oracle データベースのサイズ情報を取得する AWR モジュール。
+* HTMLパーサーAWRモジュールを使用して、AWRレポートから現在のOracleデータベースのサイジング情報を取得します。
 * DBA として ora_db_data_szie.sql を実行し、データベースから物理的な Oracle データ ファイル サイズを取得します。
 * DBA として ora_db_logs_size.sql を実行し、必要なアーカイブ ログ保存期間 (日数) で Oracle アーカイブ ログのサイズを取得します。
 * 上記で取得したサイズ情報を Excel テンプレート ファイル oracle_db_sizing_template_anf.xlsx に入力して、Oracle DB サーバーのコンピューティングとストレージに関するサイズ設定ガイダンスを作成します。

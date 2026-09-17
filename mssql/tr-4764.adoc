@@ -18,4 +18,4 @@ NetApp Mitch Blackburn、Pat Sinthusan
 [role="lead"]
 このベスト プラクティス ガイドは、ストレージ管理者とデータベース管理者がNetApp EF シリーズ ストレージに Microsoft SQL Server を正常に導入できるようにすることを目的としています。
 
-link:https://www.netapp.com/pdf.html?item=/media/17086-tr4764pdf.pdf["TR-4764: NetApp EFシリーズを使用したMicrosoft SQL Serverのベストプラクティス"^]
+link:https://www.netapp.com/pdf.html?item=/media/17086-tr4764.pdf["TR-4764: NetApp EFシリーズを使用したMicrosoft SQL Serverのベストプラクティス"^]

@@ -18,4 +18,4 @@ summary:
 [role="lead"]
 TR-4467 は、Windows 環境上の Microsoft SQL Server で実行される SAP Business Suite ソリューションをサポートするクラスタ化されたNetApp Data ONTAPを導入するためのベスト プラクティスを顧客とパートナーに提供します。
 
-link:https://www.netapp.com/pdf.html?item=/media/16865-tr-4467pdf.pdf["TR-4467: Windows 上の Microsoft SQL Server を使用した SAP - NetApp Clustered Data ONTAPとSnapCenterを使用したベスト プラクティス"^]
+link:https://www.netapp.com/pdf.html?item=/media/16865-tr-4467.pdf["TR-4467: Windows 上の Microsoft SQL Server を使用した SAP - NetApp Clustered Data ONTAPとSnapCenterを使用したベスト プラクティス"^]

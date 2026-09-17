@@ -526,7 +526,7 @@ TR-4979を参照してくださいlink:../oracle/aws-ora-fsx-vmc-guestmount.html
 
 * NETAPP ASA：オールフラッシュSANアレイ
 +
-link:https://www.netapp.com/data-storage/all-flash-san-storage-array/["https://www.netapp.com/data-storage/all-flash-san-storage-array/"^]
+link:https://www.netapp.com/pdf.html?item=/media/85736-ds-4254-asa.pdf["https://www.netapp.com/pdf.html?item=/media/85736-ds-4254-asa.pdf"^]
 
 * 新しいデータベースのインストールによるスタンドアロン・サーバーへのOracle Grid Infrastructureのインストール
 +

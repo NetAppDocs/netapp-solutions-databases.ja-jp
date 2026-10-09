@@ -153,10 +153,3 @@ image:snapctr-sql-clone-010.png["入出力ダイアログまたは書かれた�
 . クローンされたデータベースを削除し、クラウド DB サーバー環境をクリーンアップします。次に、前の手順に従って、新しいデータで新しい DB のクローンを作成します。新しいデータベースのクローンを作成するのには数分しかかかりません。
 . クローン データベースをシャットダウンし、CLI を使用してクローン更新コマンドを実行します。詳細については、次のSnapCenterドキュメントを参照してください。link:https://docs.netapp.com/us-en/snapcenter/protect-sco/task_refresh_a_clone.html["クローンの更新"^] 。
 
-
-
-
-[[where-to-go-for-help]]
-== どこに助けを求めたらいいですか?
-
-このソリューションとユースケースに関するサポートが必要な場合は、link:https://netapppub.slack.com/archives/C021R4WC0LC["NetAppソリューション オートメーション コミュニティ サポート Slack チャンネル"]質問や問い合わせを投稿するには、ソリューション自動化チャネルを探してください。

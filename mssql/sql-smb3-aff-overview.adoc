@@ -1,0 +1,115 @@
+---
+sidebar: sidebar 
+permalink: mssql/sql-smb3-aff-overview.html 
+keywords: Microsoft SQL server, SMB 3, AFF, ONTAP, continuous availability 
+summary: SQL Server 2025 は、ONTAP を実行している NetApp AFF システム上の SMB 3 継続的可用性共有にデータベースを保存できます。メリット、解決策の構成要素、設計原則、およびコントローラのフェイルオーバー時に継続的可用性によってデータベースをオンラインに保つ仕組みについて説明します。 
+---
+= SMB 3の継続的な可用性を備えたNetApp AFF上のSQL Server 2025について学ぶ
+:allow-uri-read: 
+:icons: font
+:experimental: 
+:nofooter: 
+:source-highlighter: highlight.js
+:svm: a50-sql
+:host: sql-1
+:svc-account: SAPCC\sql1admin
+:imagesdir: ../media/
+
+
+[role="lead"]
+SQL Server 2025は、ONTAPを実行しているNetApp AFFシステム上のSMB 3継続的可用性（CA）共有にデータベースを格納できます。この構成の利点、解決策のコンポーネント、設計原則、およびコントローラのフェイルオーバー時に継続的可用性によってデータベースをオンラインに保つ仕組みについて説明します。
+
+Microsoft SQL Serverは、SQL Server 2012以降、SMBファイル共有上にデータベースファイルを配置することをサポートしています。SMB 3の継続的可用性（CA）共有を使用すると、ファイル共有はSQL Serverデータベースでサポートされるストレージオプションとなり、ブロックストレージ（iSCSIまたはFCP LUN）の代替となります。
+
+AFFオールフラッシュシステム上のONTAPは、SMB 3をネイティブに実装しています。SQL Server 2025およびWindows Server 2025と組み合わせることで、NetAppのデータ保護と統合された耐障害性の高いストレージ アーキテクチャを提供します。
+
+この構成をデプロイするには、link:sql-smb3-aff.html["SMB 3 の継続的に利用可能な共有を使用して、NetApp AFF に SQL Server 2025 をデプロイする"]を参照してください。
+
+
+
+[[benefits-of-sql-server-on-smb-3-with-netapp-ontap]]
+[[why]]
+== NetApp ONTAPを使用したSMB 3上のSQL Serverの利点
+
+[cols="1,3"]
+|===
+| 利点 | 概要 
+
+
+| シンプルなプロビジョニング | 管理すべきLUN、igroup、MPIO、ディスク初期化、ドライブレターはありません。データベースファイルの場所は、次のようなUNCパスです `+\\a50-sql\sql1_data+`。 
+
+
+| オンライン容量管理 | ONTAPでボリュームをオンラインで拡張（または縮小）すると、SQL Serverは新しい容量を即座に認識します。Windowsのディスクやパーティション操作は不要で、autogrowが自動的に処理します。 
+
+
+| ノンストップ オペレーション | CA共有により、ONTAPのテイクオーバー / ギブバック、無停止アップグレード（NDU）、LIFの移行、ボリュームの移動中も、SQL Serverの実行が継続されます。 
+
+
+| パフォーマンスと回復力 | SMBマルチチャネルは、I/Oを複数のネットワークパスとNICに分散させ、単一のパスが切断されても動作を継続します。SMB共有は、SQL Serverフェールオーバークラスタインスタンス（FCI）もサポートしています。 
+
+
+| Storage Efficiency | インライン重複排除、圧縮、コンパクションは、シンプロビジョニングと組み合わせることで、データベースとバックアップで使用される物理容量を削減します。 
+
+
+| 統合データ保護 | ONTAPスナップショット、SnapRestore、FlexClone、およびSnapMirrorは、NetApp SnapCenterがオーケストレーションを行い、数秒でのバックアップ、数分でのリストア、瞬時のデータベースクローン作成を提供します。 
+
+
+| 柔軟性 | データベースは、ストレージのマッピングを変更することなく、別のサーバーに接続するだけでホスト間で移動できます。同じSVMは、ホームディレクトリ、ファイルサービス、その他のアプリケーションにも対応できます。 
+|===
+
+
+[[solution-components]]
+[[architecture]]
+== 解決策コンポーネント
+
+この解決策は、以下の構成要素から成り立っています：
+
+[cols="1,3"]
+|===
+| コンポーネント | ロール 
+
+
+| Windows Server 2025 ホスト(`{host}`） | SQL Server 2025が動作します。SQL Serverのバイナリとシステムデータベースはローカルディスク上にあり、すべてのユーザーデータベース、ログ、TempDB、およびバックアップはSMB 3経由でアクセスされます。 
+
+
+| SQL Server 2025 | SMB共有にアクセスできるドメインサービスアカウント(`{svc-account}`）で実行されるDatabase Engine 
+
+
+| Active DirectoryとDNS | SQL ServerサービスアカウントとCIFSサーバー（Kerberos）を認証し、名前解決と時刻同期を提供します。 
+
+
+| NetApp AFF A50 HAペア | 共有NVMeストレージを備えた2つのコントローラー。一方のコントローラーが故障またはアップグレードされた場合、パートナーがそのストレージとネットワークインターフェイスを引き継ぎます。 
+
+
+| SVM `{svm}` | 専用のActive Directory参加型CIFSサーバー。ノードごとに1つのSMBデータLIFを備え、CA共有を含む4つのボリュームをホストする。 
+|===
+image::sql25_smb_bp_001.svg[解決策アーキテクチャ：NetApp AFFを使用したSMB 3 CA共有上のSQL Server 2025]
+
+
+
+[[design-principles]]
+[[design]]
+== 設計原則
+
+設計は、SMB経由のSQL Serverに関するNetAppのベストプラクティスに従っています：
+
+* *ファイルタイプごとに個別のボリューム。*データ、トランザクションログ、TempDB、およびバックアップは、別々のFlexVolボリュームと共有に配置されます。各ボリュームは、それぞれ独自のサイズ、QoS、効率、スナップショット、およびレプリケーション設定を持つことができます。TempDBはバックアップから除外されます。
+* *ボリュームは両方のノードに分散されます。*データボリュームとバックアップボリュームはノード1に、ログボリュームとTempDBボリュームはノード2に配置されているため、両方のコントローラが有用な処理を実行できます。
+* *ノードごとに1つのSMBデータLIF。*ホストは常にボリュームを所有するノードへの直接パスを持っており、SMBマルチチャネルは両方のパスを使用できます。
+* *NTFSセキュリティスタイルとCA共有。*これらは、ONTAPでのSMB経由のSQL Serverに必須です。
+* *データベースボリュームにスケジュールされたONTAPスナップショットがないこと。*バックアップはアプリケーションと整合性が取れている必要があります。これらはSnapCenterで作成されます。
+
+
+image::sql25_smb_bp_002.svg[ストレージ構成：SQL Server ファイルを SMB 共有に保存]
+
+
+
+[[how-continuous-availability-works]]
+[[ca]]
+== 継続的可用性の仕組み
+
+標準的なSMB共有の場合、コントローラーのフェイルオーバーが発生すると、開いているファイルハンドルが閉じられます。その後、SQL Serverは影響を受けたデータベースをサスペクトとしてマークするため、手動で復旧する必要があります。
+
+CA共有を使用すると、ONTAPは開いているファイル（永続ハンドル）の状態をHAパートナーにミラーリングし続けます。テイクオーバー中、障害が発生したノードのSMB LIFはパートナーに移行します。SQL Serverホスト上のSMB 3クライアントは自動的に再接続し、ハンドルを再取得します。SQL Serverでは数秒の短いI/Oの一時停止が発生するだけで、データベースはオンラインのまま維持され、トランザクションが失われることはありません。ONTAPのアップグレード、ギブバック、LIFの移行、ボリュームの移動などの計画的なイベントにも同じことが当てはまります。
+
+image::sql25_smb_bp_003.svg[SMB 3 の継続的可用性が SQL Server をどのように保護するか]

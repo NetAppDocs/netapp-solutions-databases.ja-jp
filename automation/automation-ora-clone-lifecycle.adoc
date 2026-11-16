@@ -228,3 +228,10 @@ NOTE: SnapCenter構成のために、ユーザー名を sudo ユーザーに変�
 == 詳細情報の入手方法
 
 NetAppソリューションの自動化の詳細については、次のWebサイトをご覧ください。link:https://docs.netapp.com/us-en/netapp-solutions-dataops/automation/automation-introduction.html["NetAppソリューション自動化^"^]
+
+
+
+[[github-repository-link]]
+== GitHubリポジトリリンク：
+
+詳細情報およびリポジトリへのアクセスについては、以下をご覧ください： https://github.com/NetApp/na_oracle_clone_lifecycle["自動化 Oracle クローンライフサイクルリポジトリ"]

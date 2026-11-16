@@ -170,6 +170,13 @@ sidebar:
     - title: Google Cloud NetApp Volumes で SQL Server Always On を実現
       pdf-filename: Google Cloud NetApp Volumes で SQL Server Always On を実現
       url: "/mssql/gcnv-sql-aoag-setup.html"
+    - title: NetApp AFF上のSQL Server
+      pdf-filename: NetApp AFF上のSQL Server
+      entries:
+      - title: NetApp AFFでのSQL Server 2025について
+        url: "/mssql/sql-smb3-aff-overview.html"
+      - title: NetApp AFF に SQL Server 2025 をデプロイする
+        url: "/mssql/sql-smb3-aff.html"
     - title: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       pdf-filename: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       url: "/mssql/tr-4467.html"

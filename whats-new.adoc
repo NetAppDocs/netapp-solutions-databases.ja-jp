@@ -15,6 +15,13 @@ summary: NetAppデータベース ソリューション資料への最近の変�
 
 
 
+[[9-november-2026]]
+== 2026年11月9日
+
+SQL Server SMB に関するドキュメントを追加しました：link:https://docs.netapp.com/us-en/mssql/sql-smb3-aff.html["NetApp AFF 上の SMB 3 継続的可用性共有を使用して Windows Server 2025 に Microsoft SQL Server 2025 を展開"^]
+
+
+
 [[18-august-2025]]
 == 2025年8月18日
 

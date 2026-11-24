@@ -50,6 +50,14 @@ indexpage:
       url: "/oracle/gcp-oracle-gcnv-overview.html"
   - title: クラウドとオンプレミス向けのSQLサーバーソリューション
     links:
+    - title: SMBを使用するNetApp AFFでのSQL Server 2025について
+      url: "/mssql/sql-smb3-aff-overview.html"
+    - title: SMBを使用してNetApp AFFにSQL Server 2025をデプロイする
+      url: "/mssql/sql-smb3-aff.html"
+    - title: iSCSIを使用するNetApp AFF上のSQL Server 2025について学ぶ
+      url: "/mssql/sql-iscsi-aff-overview.html"
+    - title: iSCSIを使用してNetApp AFFにSQL Server 2025をデプロイする
+      url: "/mssql/sql-iscsi-aff.html"
     - title: AWS FSx ONTAPでの SQL Server のバックアップとリカバリ
       url: "/mssql/sqlsb-backup-restore-aws-fsxn.html"
     - title: FSx ONTAPを使用して AWS EC2 上で SQL Server を実行する
@@ -58,10 +66,6 @@ indexpage:
       url: "/mssql/sql-srv-anf-overview.html"
     - title: Google Cloud NetApp Volumes で SQL Server を実行する
       url: "/mssql/gcnv-sql-aoag-setup.html"
-    - title: SMB 3の継続的な可用性を備えたNetApp AFF上のSQL Server 2025について学ぶ
-      url: "/mssql/sql-smb3-aff-overview.html"
-    - title: SMB 3 の継続的に利用可能な共有を使用して、NetApp AFF に SQL Server 2025 をデプロイする
-      url: "/mssql/sql-smb3-aff.html"
     - title: オンプレミスの SQL ワークロードを FSx ONTAPに移行する
       url: "/mssql/customer-usecase-mssql-fsx1.html"
     - title: クラスタ化されたデータONTAPを使用した Windows 上の Microsoft SQL Server と SAP

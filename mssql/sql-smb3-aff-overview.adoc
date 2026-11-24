@@ -51,7 +51,7 @@ AFFオールフラッシュシステム上のONTAPは、SMB 3をネイティブ�
 | Storage Efficiency | インライン重複排除、圧縮、コンパクションは、シンプロビジョニングと組み合わせることで、データベースとバックアップで使用される物理容量を削減します。 
 
 
-| 統合データ保護 | ONTAPスナップショット、SnapRestore、FlexClone、およびSnapMirrorは、NetApp SnapCenterがオーケストレーションを行い、数秒でのバックアップ、数分でのリストア、瞬時のデータベースクローン作成を提供します。 
+| 統合データ保護 |  https://docs.netapp.com/us-en/snapcenter/protect-scsql/concept_snapcenter_plug_in_for_microsoft_sql_server_overview.html["NetApp SnapCenter"]によってオーケストレーションされるONTAPスナップショット、SnapRestore、FlexClone、SnapMirrorは、数秒でのバックアップ、数分でのリストア、瞬時のデータベースクローン作成を実現します。 
 
 
 | 柔軟性 | データベースは、ストレージのマッピングを変更することなく、別のサーバーに接続するだけでホスト間で移動できます。同じSVMは、ホームディレクトリ、ファイルサービス、その他のアプリケーションにも対応できます。 

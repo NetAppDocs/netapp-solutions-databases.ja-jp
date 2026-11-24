@@ -15,10 +15,16 @@ summary: NetAppデータベース ソリューション資料への最近の変�
 
 
 
+= 2026年11月23日
+
+SQL Server iSCSI ドキュメントを追加しました：link:https://docs.netapp.com/us-en/netapp-solutions-databases/mssql/sql-iscsi-aff-overview.html["NetApp AFFでiSCSIを使用したWindows Server 2025上のMicrosoft SQL Server 2025"^]
+
+
+
 [[9-november-2026]]
 == 2026年11月9日
 
-SQL Server SMB に関するドキュメントを追加しました：link:https://docs.netapp.com/us-en/mssql/sql-smb3-aff.html["NetApp AFF 上の SMB 3 継続的可用性共有を使用して Windows Server 2025 に Microsoft SQL Server 2025 を展開"^]
+SQL Server SMB に関するドキュメントを追加しました：link:https://docs.netapp.com/us-en/netapp-solutions-databases/mssql/sql-smb3-aff-overview.html["NetApp AFF上のSMB 3継続的可用性共有を使用したWindows Server 2025上のMicrosoft SQL Server 2025"^]
 
 
 

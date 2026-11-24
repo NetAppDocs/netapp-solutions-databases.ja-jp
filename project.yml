@@ -148,12 +148,28 @@ sidebar:
         url: "/oracle/tr-4794.html"
   - title: Microsoft SQL Server
     entries:
-    - title: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
-      pdf-filename: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
-      url: "/mssql/sqlsb-backup-restore-aws-fsxn.html"
-    - title: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
-      pdf-filename: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
-      url: "/mssql/sql-aws-ec2.html"
+    - title: NetApp AFF上のSQL Server
+      entries:
+      - title: SQL Server 2025とSMBについて
+        pdf-filename: SQL Server 2025とSMBについて
+        entries:
+        - title: SMBを使用してNetApp AFFにSQL Server 2025をデプロイする
+          url: "/mssql/sql-smb3-aff.html"
+        url: "/mssql/sql-smb3-aff-overview.html"
+      - title: SQL Server 2025とiSCSIについて
+        pdf-filename: SQL Server 2025とiSCSIについて
+        entries:
+        - title: SQL Server 2025をiSCSIでデプロイする
+          url: "/mssql/sql-iscsi-aff.html"
+        url: "/mssql/sql-iscsi-aff-overview.html"
+    - title: AWS FSx ONTAP上のSQL Server
+      entries:
+      - title: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
+        pdf-filename: AWS FSx ONTAPでの Microsoft SQL Server のバックアップとリカバリ
+        url: "/mssql/sqlsb-backup-restore-aws-fsxn.html"
+      - title: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
+        pdf-filename: Amazon FSx ONTAPを使用した AWS EC2 上の SQL Server
+        url: "/mssql/sql-aws-ec2.html"
     - title: Azure NetApp Files上の SQL Server
       pdf-filename: Azure NetApp Files上の SQL Server
       entries:
@@ -170,13 +186,6 @@ sidebar:
     - title: Google Cloud NetApp Volumes で SQL Server Always On を実現
       pdf-filename: Google Cloud NetApp Volumes で SQL Server Always On を実現
       url: "/mssql/gcnv-sql-aoag-setup.html"
-    - title: NetApp AFF上のSQL Server
-      pdf-filename: NetApp AFF上のSQL Server
-      entries:
-      - title: NetApp AFFでのSQL Server 2025について
-        url: "/mssql/sql-smb3-aff-overview.html"
-      - title: NetApp AFF に SQL Server 2025 をデプロイする
-        url: "/mssql/sql-smb3-aff.html"
     - title: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       pdf-filename: Clustered Data ONTAPを使用した Windows 上の Microsoft SQL Server と SAP
       url: "/mssql/tr-4467.html"
